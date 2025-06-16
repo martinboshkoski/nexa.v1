@@ -103,7 +103,7 @@ const ManageBlogs = () => {
                       <div key={blog._id} className={styles.blogCard}>
                         {blog.image && (
                           <img 
-                            src={`http://localhost:5002${blog.image}`}
+                            src={`${process.env.REACT_APP_API_URL || 'http://localhost:5002'}${blog.image}`}
                             alt={blog.title}
                             className={styles.blogImage}
                             onError={(e) => {

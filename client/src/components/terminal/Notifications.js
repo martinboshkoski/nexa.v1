@@ -49,7 +49,7 @@ const Notifications = () => {
   const markAsRead = async (notificationId) => {
     try {
       // Get CSRF token
-      const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+      const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -87,7 +87,7 @@ const Notifications = () => {
       setLoading(true);
       
       // Get CSRF token
-      const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+      const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
         method: 'GET',
         credentials: 'include'
       });

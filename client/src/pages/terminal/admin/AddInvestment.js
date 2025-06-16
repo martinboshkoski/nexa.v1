@@ -39,7 +39,7 @@ const AddInvestment = () => {
 
     try {
       // Get CSRF token
-      const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+      const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -50,7 +50,7 @@ const AddInvestment = () => {
 
       const { csrfToken } = await csrfResponse.json();
 
-      const response = await fetch('http://localhost:5002/api/investments', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/investments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

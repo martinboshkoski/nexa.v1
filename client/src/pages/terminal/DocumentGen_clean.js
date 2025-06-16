@@ -105,7 +105,7 @@ const DocumentGen = () => {
 
   const fetchDocuments = async () => {
     try {
-      const response = await fetch('http://localhost:5002/api/documents', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/documents`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -178,7 +178,7 @@ const DocumentGen = () => {
     
     try {
       // Get CSRF token
-      const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+      const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -189,7 +189,7 @@ const DocumentGen = () => {
 
       const { csrfToken } = await csrfResponse.json();
 
-      const response = await fetch('http://localhost:5002/api/documents/generate', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/documents/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -218,7 +218,7 @@ const DocumentGen = () => {
     if (window.confirm('Дали сте сигурни дека сакате да го избришете овој документ?')) {
       try {
         // Get CSRF token
-        const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+        const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
           method: 'GET',
           credentials: 'include'
         });
@@ -229,7 +229,7 @@ const DocumentGen = () => {
 
         const { csrfToken } = await csrfResponse.json();
 
-        const response = await fetch(`http://localhost:5002/api/documents/${id}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/documents/${id}`, {
           method: 'DELETE',
           headers: {
             'X-CSRF-Token': csrfToken,

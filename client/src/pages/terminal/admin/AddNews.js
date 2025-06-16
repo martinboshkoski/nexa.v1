@@ -47,7 +47,7 @@ const AddNews = () => {
       // Get CSRF token
       let csrfToken;
       try {
-        const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+        const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
           credentials: 'include'
         });
         if (csrfResponse.ok) {
@@ -58,7 +58,7 @@ const AddNews = () => {
         console.warn('Failed to fetch CSRF token:', error);
       }
 
-      const response = await fetch('http://localhost:5002/api/news', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/news`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

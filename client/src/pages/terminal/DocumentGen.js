@@ -42,7 +42,7 @@ const DocumentGen = () => {
 
   const fetchDocuments = async () => {
     try {
-      const response = await fetch('http://localhost:5002/api/documents', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/documents`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -102,7 +102,7 @@ const DocumentGen = () => {
       try {
         setLoading(true);
         
-        const response = await fetch(`http://localhost:5002${template.apiEndpoint}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002'}${template.apiEndpoint}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

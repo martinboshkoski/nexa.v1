@@ -15,7 +15,7 @@ const Investments = () => {
   useEffect(() => {
     const fetchInvestments = async () => {
       try {
-        const response = await fetch(`http://localhost:5002/api/investments?page=${currentPage}&limit=6`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/investments?page=${currentPage}&limit=6`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

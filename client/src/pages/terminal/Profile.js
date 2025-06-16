@@ -25,7 +25,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch('http://localhost:5002/api/users/profile', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -80,7 +80,7 @@ const Profile = () => {
     
     try {
       // Get CSRF token
-      const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+      const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -104,7 +104,7 @@ const Profile = () => {
       // });
       
       // Update company profile
-      const companyResponse = await fetch('http://localhost:5002/api/users/company', {
+      const companyResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/users/company`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

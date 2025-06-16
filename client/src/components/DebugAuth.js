@@ -18,7 +18,7 @@ const DebugAuth = () => {
     try {
       addLog('About to fetch CSRF token...', 'info');
       
-      const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+      const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
         credentials: 'include',
       });
       
@@ -39,7 +39,7 @@ const DebugAuth = () => {
       
       addLog(`Testing registration with username: ${testData.username}`, 'info');
       
-      const registerResponse = await fetch('http://localhost:5002/api/auth/register', {
+      const registerResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ const DebugAuth = () => {
       // Simulate the exact same flow as AuthContext.registerSimple
       addLog('Fetching CSRF token (AuthContext style)...', 'info');
       
-      const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+      const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
         credentials: 'include',
       });
       
@@ -94,7 +94,7 @@ const DebugAuth = () => {
       
       addLog(`Attempting registration with username: ${username}`, 'info');
 
-      const response = await fetch('http://localhost:5002/api/auth/register', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ const DebugAuth = () => {
       // Exact same flow as AuthContext.registerSimple
       addLog('Step 1: Fetching CSRF token...', 'info');
       
-      const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+      const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
         credentials: 'include',
       });
       
@@ -147,7 +147,7 @@ const DebugAuth = () => {
       addLog(`CSRF token: ${csrfToken.substring(0, 20)}...`, 'info');
       addLog('Step 2: Submitting registration...', 'info');
 
-      const response = await fetch('http://localhost:5002/api/auth/register', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

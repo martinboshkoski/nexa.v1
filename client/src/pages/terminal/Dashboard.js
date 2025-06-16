@@ -17,7 +17,7 @@ const Dashboard = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5002/api/users/profile",
+          `${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/users/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

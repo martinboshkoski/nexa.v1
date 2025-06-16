@@ -20,7 +20,7 @@ const SimpleTest = () => {
   const testFetch = async () => {
     addLog('Testing basic fetch...');
     try {
-      const response = await fetch('http://localhost:5002/api/csrf-token', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
         credentials: 'include'
       });
       if (response.ok) {

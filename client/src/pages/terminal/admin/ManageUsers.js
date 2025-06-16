@@ -16,7 +16,7 @@ const ManageUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:5002/api/users', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/users`, {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -39,7 +39,7 @@ const ManageUsers = () => {
   const handleRoleChange = async (userId, newRole) => {
     try {
       // Get CSRF token
-      const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+      const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -50,7 +50,7 @@ const ManageUsers = () => {
 
       const { csrfToken } = await csrfResponse.json();
 
-      const response = await fetch(`http://localhost:5002/api/users/${userId}/role`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/users/${userId}/role`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ const ManageUsers = () => {
   const handleStatusChange = async (userId, isActive) => {
     try {
       // Get CSRF token
-      const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+      const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -93,7 +93,7 @@ const ManageUsers = () => {
 
       const { csrfToken } = await csrfResponse.json();
 
-      const response = await fetch(`http://localhost:5002/api/users/${userId}/status`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/users/${userId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
