@@ -1,0 +1,37 @@
+[
+  {
+    "_id": "news1",
+    "title": "New Tax Regulations for Businesses in 2025",
+    "description": "Important changes to tax laws that will affect businesses starting next quarter.",
+    "content": "The government has announced significant changes to business tax regulations that will take effect in the third quarter of 2025. These changes include new deduction opportunities for small businesses, modified reporting requirements, and updated digital filing procedures. Businesses should consult with their tax advisors to ensure compliance with these new regulations.",
+    "date": "2025-05-01T08:30:00.000Z"
+  },
+  {
+    "_id": "news2",
+    "title": "Industry Conference Announced for September",
+    "description": "The annual Business Innovation Summit will be held in Chicago this year with a focus on sustainable business practices.",
+    "content": "The Business Innovation Summit, one of the most anticipated industry events of the year, has been scheduled for September 15-17, 2025, in Chicago. This year's theme is 'Sustainable Business Practices for a Changing World,' featuring keynote speakers from leading companies and workshops on implementing eco-friendly business strategies. Early registration discounts are available until July 1st.",
+    "date": "2025-04-20T14:15:00.000Z"
+  },
+  {
+    "_id": "news3",
+    "title": "New Partnership Opportunities in Emerging Markets",
+    "description": "Government initiative opens doors for businesses looking to expand into Southeast Asian markets.",
+    "content": "A new government initiative has been launched to facilitate business partnerships between domestic companies and firms in Southeast Asian markets. The program includes trade missions, networking events, and financial incentives for qualifying businesses. This represents a significant opportunity for companies looking to expand their global footprint and tap into rapidly growing economies in the region.",
+    "date": "2025-05-05T11:45:00.000Z"
+  },
+  {
+    "_id": "news4",
+    "title": "Cybersecurity Alert: New Threats Targeting Business Data",
+    "description": "Security experts warn of sophisticated phishing campaigns specifically targeting business financial information.",
+    "content": "Cybersecurity experts have identified a new wave of sophisticated phishing attacks targeting businesses across multiple industries. These attacks are designed to steal financial information and customer data. Companies are advised to update their security protocols, implement multi-factor authentication, and conduct employee training on recognizing and reporting suspicious communications. For more information, contact your IT security provider.",
+    "date": "2025-05-12T09:00:00.000Z"
+  },
+  {
+    "_id": "news5",
+    "title": "Economic Forecast: Growth Expected in Technology and Healthcare Sectors",
+    "description": "Analysts predict strong performance in key industries despite broader market uncertainties.",
+    "content": "According to the latest economic forecast, the technology and healthcare sectors are expected to show strong growth in the coming quarters, despite uncertainties in the broader market. Factors driving this growth include increased digital transformation initiatives, healthcare innovation, and continued investment in research and development. Businesses in these sectors may find new opportunities for expansion and partnership.",
+    "date": "2025-04-25T16:30:00.000Z"
+  }
+]

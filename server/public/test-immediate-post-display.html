@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Creation Test - Nexa Social</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .post {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+        .post-author {
+            font-weight: bold;
+            color: #333;
+        }
+        .post-content {
+            margin: 10px 0;
+        }
+        .post-meta {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Nexa Social Post Creation Test</h1>
+        <p>Test the immediate post display functionality after our fixes.</p>
+        
+        <div id="status"></div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter your email">
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter your password">
+        </div>
+        
+        <button onclick="login()">🔐 Login</button>
+        
+        <div id="postForm" style="display: none;">
+            <h2>Create a New Post</h2>
+            <div class="form-group">
+                <label for="postContent">Post Content:</label>
+                <textarea id="postContent" rows="4" placeholder="What's on your mind?"></textarea>
+            </div>
+            <button onclick="createPost()">📝 Create Post</button>
+        </div>
+        
+        <div id="posts">
+            <h2>Recent Posts</h2>
+            <div id="postsList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5002/api';
+        let authToken = '';
+        let currentUser = null;
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showStatus('Please enter both email and password', 'error');
+                return;
+            }
+            
+            try {
+                showStatus('Logging in...', 'info');
+                
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                console.log('Login response:', data);
+                
+                if (response.ok && data.success) {
+                    authToken = data.token;
+                    currentUser = data.user;
+                    showStatus(`✅ Logged in as ${currentUser.username || currentUser.email}. Can post: ${currentUser.canPost ? 'YES' : 'NO'}`, 'success');
+                    document.getElementById('postForm').style.display = 'block';
+                    loadPosts();
+                } else {
+                    showStatus(`❌ Login failed: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showStatus(`❌ Login error: ${error.message}`, 'error');
+            }
+        }
+
+        async function createPost() {
+            const content = document.getElementById('postContent').value.trim();
+            
+            if (!content) {
+                showStatus('Please enter post content', 'error');
+                return;
+            }
+            
+            if (!authToken) {
+                showStatus('Please login first', 'error');
+                return;
+            }
+            
+            try {
+                showStatus('Creating post...', 'info');
+                
+                const response = await fetch(`${API_BASE}/social/posts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ 
+                        content: content,
+                        language: 'mk'
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('Create post response:', data);
+                
+                if (response.ok && data.success) {
+                    showStatus('✅ Post created successfully!', 'success');
+                    document.getElementById('postContent').value = '';
+                    
+                    // Test immediate display - add the new post to the top
+                    if (data.post) {
+                        displayNewPost(data.post);
+                        showStatus('🎉 SUCCESS: Post appears immediately without refresh!', 'success');
+                    } else {
+                        showStatus('⚠️ Post created but no post data returned', 'error');
+                    }
+                    
+                    // Also refresh the full posts list to compare
+                    setTimeout(() => loadPosts(), 1000);
+                } else {
+                    showStatus(`❌ Failed to create post: ${data.message}`, 'error');
+                    if (response.status === 403) {
+                        showStatus('❌ Permission denied - this should be fixed now!', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Create post error:', error);
+                showStatus(`❌ Create post error: ${error.message}`, 'error');
+            }
+        }
+
+        function displayNewPost(post) {
+            const postsList = document.getElementById('postsList');
+            const postElement = createPostElement(post, true);
+            postsList.insertBefore(postElement, postsList.firstChild);
+        }
+
+        function createPostElement(post, isNew = false) {
+            const postDiv = document.createElement('div');
+            postDiv.className = 'post';
+            if (isNew) {
+                postDiv.style.background = '#e8f5e8';
+                postDiv.style.border = '2px solid #28a745';
+            }
+            
+            const author = post.author || { username: 'Unknown', email: 'unknown@email.com' };
+            
+            postDiv.innerHTML = `
+                ${isNew ? '<div style="color: #28a745; font-weight: bold; margin-bottom: 10px;">🆕 NEW POST (Immediate Display)</div>' : ''}
+                <div class="post-author">👤 ${author.username || author.email}</div>
+                <div class="post-content">${post.content}</div>
+                <div class="post-meta">
+                    📅 ${new Date(post.createdAt).toLocaleString()} | 
+                    👍 ${post.likesCount || 0} likes | 
+                    💬 ${post.commentsCount || 0} comments
+                </div>
+            `;
+            
+            return postDiv;
+        }
+
+        async function loadPosts() {
+            try {
+                const response = await fetch(`${API_BASE}/social/newsfeed`);
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const postsList = document.getElementById('postsList');
+                    const existingNewPosts = postsList.querySelectorAll('.post[style*="border: 2px solid #28a745"]');
+                    
+                    // Clear old posts but keep new ones
+                    const allPosts = postsList.querySelectorAll('.post');
+                    allPosts.forEach(post => {
+                        if (!post.style.border.includes('#28a745')) {
+                            post.remove();
+                        }
+                    });
+                    
+                    // Add loaded posts
+                    data.posts.forEach(post => {
+                        const postElement = createPostElement(post);
+                        postsList.appendChild(postElement);
+                    });
+                    
+                    showStatus(`📋 Loaded ${data.posts.length} posts from newsfeed`, 'info');
+                } else {
+                    showStatus(`❌ Failed to load posts: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Load posts error:', error);
+                showStatus(`❌ Load posts error: ${error.message}`, 'error');
+            }
+        }
+
+        // Load posts on page load
+        loadPosts();
+    </script>
+</body>
+</html>

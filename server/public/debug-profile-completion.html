@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Profile Completion</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        button { padding: 10px 20px; margin: 10px 0; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Profile Completion Issue</h1>
+    <p>This will help us understand why the companyInfo is not being saved.</p>
+    
+    <button onclick="testProfileCompletion()">🧪 Test Profile Completion</button>
+    <button onclick="testWithExistingUser()">👤 Test with Existing User (andrea@andrea.com)</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        async function testProfileCompletion() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="info">🚀 Starting debug test...</div>';
+            
+            try {
+                // 1. Get CSRF token
+                const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+                    credentials: 'include'
+                });
+                const csrfData = await csrfResponse.json();
+                const csrfToken = csrfData.csrfToken;
+                
+                // 2. Create test user
+                const timestamp = Date.now();
+                const testUser = {
+                    username: `debugtest${timestamp}`,
+                    email: `debugtest${timestamp}@example.com`,
+                    password: 'password123'
+                };
+                
+                const registerResponse = await fetch('http://localhost:5002/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken,
+                    },
+                    body: JSON.stringify(testUser),
+                    credentials: 'include'
+                });
+                
+                if (!registerResponse.ok) {
+                    throw new Error('Registration failed');
+                }
+                
+                const userData = await registerResponse.json();
+                const token = userData.token;
+                
+                results.innerHTML += '<div class="success">✅ Test user created</div>';
+                results.innerHTML += `<div class="info">User ID: ${userData.user.id}</div>`;
+                
+                // 3. Test profile completion with the EXACT data structure from CompleteProfile.js
+                const profileData = {
+                    fullName: 'Debug Test User',
+                    email: testUser.email,
+                    companyInfo: {
+                        companyName: 'Debug Test Company',
+                        industry: 'technology',
+                        companySize: '11-50',
+                        role: 'Founder'
+                    },
+                    profileComplete: true
+                };
+                
+                results.innerHTML += '<div class="info">📤 Sending profile data:</div>';
+                results.innerHTML += `<pre>${JSON.stringify(profileData, null, 2)}</pre>`;
+                
+                const updateResponse = await fetch('http://localhost:5002/api/auth/update-profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken,
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(profileData),
+                    credentials: 'include'
+                });
+                
+                if (!updateResponse.ok) {
+                    const errorData = await updateResponse.json();
+                    throw new Error(`Profile update failed: ${errorData.message}`);
+                }
+                
+                const updateData = await updateResponse.json();
+                
+                results.innerHTML += '<div class="success">✅ Profile update response received</div>';
+                results.innerHTML += '<div class="info">📥 Response data:</div>';
+                results.innerHTML += `<pre>${JSON.stringify(updateData.user.companyInfo, null, 2)}</pre>`;
+                
+                // Check server logs for debug information
+                results.innerHTML += '<div class="info">💡 Check the server console for detailed debug logs!</div>';
+                
+            } catch (error) {
+                results.innerHTML += `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testWithExistingUser() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="info">🚀 Testing with existing user andrea@andrea.com...</div>';
+            
+            try {
+                // 1. Get CSRF token
+                const csrfResponse = await fetch('http://localhost:5002/api/csrf-token', {
+                    credentials: 'include'
+                });
+                const csrfData = await csrfResponse.json();
+                const csrfToken = csrfData.csrfToken;
+                
+                // 2. Login with existing user
+                const loginResponse = await fetch('http://localhost:5002/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        email: 'andrea@andrea.com',
+                        password: 'password' // You might need to adjust this password
+                    }),
+                    credentials: 'include'
+                });
+                
+                if (loginResponse.ok) {
+                    const loginData = await loginResponse.json();
+                    const token = loginData.token;
+                    
+                    results.innerHTML += '<div class="success">✅ Logged in with existing user</div>';
+                    results.innerHTML += '<div class="info">Current companyInfo:</div>';
+                    results.innerHTML += `<pre>${JSON.stringify(loginData.user.companyInfo, null, 2)}</pre>`;
+                    
+                    // Test profile update
+                    const profileData = {
+                        fullName: 'Andrea Updated',
+                        email: 'andrea@andrea.com',
+                        companyInfo: {
+                            companyName: 'Andrea Test Company',
+                            industry: 'consulting',
+                            companySize: '2-10',
+                            role: 'CEO'
+                        },
+                        profileComplete: true
+                    };
+                    
+                    results.innerHTML += '<div class="info">📤 Updating profile with:</div>';
+                    results.innerHTML += `<pre>${JSON.stringify(profileData, null, 2)}</pre>`;
+                    
+                    const updateResponse = await fetch('http://localhost:5002/api/auth/update-profile', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': csrfToken,
+                            'Authorization': `Bearer ${token}`,
+                        },
+                        body: JSON.stringify(profileData),
+                        credentials: 'include'
+                    });
+                    
+                    if (updateResponse.ok) {
+                        const updateData = await updateResponse.json();
+                        results.innerHTML += '<div class="success">✅ Profile update completed</div>';
+                        results.innerHTML += '<div class="info">📥 Updated companyInfo:</div>';
+                        results.innerHTML += `<pre>${JSON.stringify(updateData.user.companyInfo, null, 2)}</pre>`;
+                    } else {
+                        const errorData = await updateResponse.json();
+                        results.innerHTML += `<div class="error">❌ Update failed: ${errorData.message}</div>`;
+                    }
+                    
+                } else {
+                    results.innerHTML += '<div class="error">❌ Login failed. User might not exist or password is incorrect.</div>';
+                }
+                
+            } catch (error) {
+                results.innerHTML += `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

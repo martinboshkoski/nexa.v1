@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "company1",
+    "userId": "user1",
+    "companyName": "Acme Technologies",
+    "companyAddress": "123 Tech Blvd, San Francisco, CA 94105",
+    "taxNumber": "12-3456789",
+    "businessActivity": "Software Development",
+    "createdAt": "2025-04-01T11:30:00.000Z"
+  },
+  {
+    "_id": "company2",
+    "userId": "user2",
+    "companyName": "Global Legal Solutions",
+    "companyAddress": "456 Law Street, New York, NY 10001",
+    "taxNumber": "98-7654321",
+    "businessActivity": "Legal Services",
+    "createdAt": "2025-04-05T15:45:00.000Z"
+  }
+]
