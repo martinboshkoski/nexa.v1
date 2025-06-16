@@ -217,7 +217,13 @@ async function initializeServices(database) {
 
 async function connectToDatabase() {
   try {
-    const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/nexa');
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/nexa';
+    // Debug log (hide password for security)
+    const safeUri = mongoUri.replace(/:([^:@]+)@/, ':****@');
+    console.log('Attempting to connect to MongoDB with URI:', safeUri);
+    console.log('MONGODB_URI environment variable is set:', !!process.env.MONGODB_URI);
+    
+    const client = new MongoClient(mongoUri);
     await client.connect();
     console.log('Connected to MongoDB');
     db = client.db();
