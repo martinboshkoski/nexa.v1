@@ -1,7 +1,7 @@
 // CSRF Token Service
 // Handles CSRF token retrieval and management
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5002/api';
 
 // Cache for CSRF token to avoid repeated fetches
 let cachedCSRFToken = null;
