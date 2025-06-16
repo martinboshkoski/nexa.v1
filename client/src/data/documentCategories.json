@@ -1,0 +1,172 @@
+[
+  {
+    "id": "labourLaw",
+    "title": "Работно право",
+    "icon": "👥",
+    "color": "#4F46E5",
+    "description": "Обрасци поврзани со договори за вработување, откази и работни односи.",
+    "templates": [
+      {
+        "id": "annex_employment_agreement",
+        "name": "Анекс за измена на времетраење на договор за вработување",
+        "description": "Продолжување на договор за вработување на определено време",
+        "route": "/terminal/documents/employment/annex-employment-agreement"
+      },
+      {
+        "id": "annual_leave_decision",
+        "name": "Решение за Годишен Одмор",
+        "description": "Издавање на решение за користење на годишен одмор.",
+        "route": "/terminal/documents/employment/annual-leave-decision"
+      },
+      {
+        "id": "confirmation_of_employment",
+        "name": "Потврда за Вработување",
+        "description": "Издавање на потврда за редовен работен однос.",
+        "route": "/terminal/documents/employment/confirmation-of-employment"
+      },
+      {
+        "id": "employment_contract",
+        "name": "Договор за вработување",
+        "description": "Креирајте стандарден договор за вработување.",
+        "apiEndpoint": "/api/documents/generate/employment-contract",
+        "fields": [
+          { "name": "employeeName", "label": "Име на вработен", "type": "text", "required": true, "placeholder": "пр. Петар Петровски" },
+          { "name": "position", "label": "Работна позиција", "type": "text", "required": true, "placeholder": "пр. Софтверски инженер" },
+          { "name": "salary", "label": "Бруто плата", "type": "number", "required": true, "placeholder": "пр. 60000" },
+          { "name": "startDate", "label": "Датум на започнување", "type": "date", "required": true },
+          { "name": "workingHours", "label": "Работни часови неделно", "type": "number", "required": true, "placeholder": "пр. 40" }
+        ]
+      },
+      {
+        "id": "termination_letter",
+        "name": "Изјава за отказ",
+        "description": "Подгответе изјава за престанок на работен однос.",
+        "apiEndpoint": "/api/documents/generate/termination-letter",
+        "fields": [
+          { "name": "employeeName", "label": "Име на вработен", "type": "text", "required": true },
+          { "name": "terminationDate", "label": "Датум на отказ", "type": "date", "required": true },
+          { "name": "reason", "label": "Причина за отказ", "type": "textarea", "required": true, "placeholder": "Наведете ја причината" },
+          { "name": "finalWorkingDay", "label": "Последен работен ден", "type": "date", "required": true }
+        ]
+      },
+      {
+        "id": "job_description",
+        "name": "Опис на работно место",
+        "description": "Дефинирајте ги одговорностите и барањата за работно место.",
+        "apiEndpoint": "/api/documents/generate/job-description",
+        "fields": [
+          { "name": "jobTitle", "label": "Назив на работно место", "type": "text", "required": true },
+          { "name": "department", "label": "Оддел", "type": "text", "required": true },
+          { "name": "responsibilities", "label": "Одговорности", "type": "textarea", "required": true, "placeholder": "Наведете ги клучните одговорности" },
+          { "name": "requirements", "label": "Потребни квалификации", "type": "textarea", "required": true, "placeholder": "Наведете ги потребните вештини и искуство" }
+        ]
+      },
+      {
+        "id": "performance_review",
+        "name": "Оценување на успешност",
+        "description": "Формулар за оценување на перформансите на вработените.",
+        "apiEndpoint": "/api/documents/generate/performance-review",
+        "fields": [
+          { "name": "employeeName", "label": "Име на вработен", "type": "text", "required": true },
+          { "name": "reviewPeriod", "label": "Период на оценување", "type": "text", "required": true, "placeholder": "пр. Q1 2024" },
+          { "name": "goals", "label": "Поставени цели", "type": "textarea", "required": true },
+          { "name": "achievements", "label": "Остварени резултати", "type": "textarea", "required": true },
+          { "name": "areasForImprovement", "label": "Области за подобрување", "type": "textarea", "required": false }
+        ]
+      },
+      {
+        "id": "disciplinary_action",
+        "name": "Дисциплинска мерка",
+        "description": "Документирајте дисциплинска постапка.",
+        "apiEndpoint": "/api/documents/generate/disciplinary-action",
+        "fields": [
+          { "name": "employeeName", "label": "Име на вработен", "type": "text", "required": true },
+          { "name": "incidentDate", "label": "Датум на инцидент", "type": "date", "required": true },
+          { "name": "incidentDescription", "label": "Опис на инцидентот", "type": "textarea", "required": true },
+          { "name": "actionTaken", "label": "Преземена мерка", "type": "text", "required": true, "placeholder": "пр. Писмена опомена" },
+          { "name": "effectiveDate", "label": "Датум на одлука", "type": "date", "required": true }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "healthAndSafety",
+    "title": "Безбедност и здравје при работа",
+    "icon": "🛡️",
+    "color": "#10B981",
+    "description": "Документи поврзани со политики и процедури за безбедност и здравје при работа.",
+    "templates": [
+      {
+        "id": "health_safety_policy",
+        "name": "Политика за безбедност и здравје при работа",
+        "description": "Креирање на политика за безбедност и здравје на работното место.",
+        "route": "/terminal/documents/health-safety/health-safety-policy"
+      },
+      {
+        "id": "workplace_harassment_policy",
+        "name": "Политика за спречување на вознемирување на работно место",
+        "description": "Креирање на политика за спречување и справување со вознемирување.",
+        "route": "/terminal/documents/health-safety/workplace-harassment-policy"
+      }
+    ]
+  },
+  {
+    "id": "personalDataProtection",
+    "title": "Заштита на лични податоци",
+    "icon": "🔒",
+    "color": "#F59E0B",
+    "description": "Документи поврзани со согласност и политики за заштита на лични податоци.",
+    "templates": [
+      {
+        "id": "consent_for_personal_data_processing",
+        "name": "Согласност за обработка на лични податоци",
+        "description": "Формулар за добивање согласност за обработка на лични податоци.",
+        "route": "/terminal/documents/personal-data-protection/consent-for-personal-data-processing"
+      },
+      {
+        "id": "privacy_policy",
+        "name": "Политика за приватност",
+        "description": "Креирање на политика за приватност на компанијата.",
+        "route": "/terminal/documents/personal-data-protection/privacy-policy"
+      }
+    ]
+  },
+  {
+    "id": "contracts",
+    "title": "Договори",
+    "icon": "📋",
+    "color": "#DC2626",
+    "description": "Различни видови договори за деловни потреби.",
+    "templates": [
+      {
+        "id": "nda",
+        "name": "Договор за доверливост (NDA)",
+        "description": "Стандарден договор за необјавување на доверливи информации.",
+        "apiEndpoint": "/api/documents/generate/nda",
+        "fields": [
+          { "name": "partyOneName", "label": "Страна 1 (која открива информации)", "type": "text", "required": true, "placeholder": "Име на компанија/лице" },
+          { "name": "partyTwoName", "label": "Страна 2 (која прима информации)", "type": "text", "required": true, "placeholder": "Име на компанија/лице" },
+          { "name": "effectiveDate", "label": "Датум на стапување во сила", "type": "date", "required": true },
+          { "name": "confidentialInformation", "label": "Опис на доверливи информации", "type": "textarea", "required": true, "placeholder": "пр. деловни планови, финансиски податоци, технички спецификации" },
+          { "name": "purposeOfDisclosure", "label": "Цел на откривање на информациите", "type": "text", "required": true, "placeholder": "пр. деловна соработка, евалуација на проект" },
+          { "name": "termOfAgreement", "label": "Времетраење на договорот (години)", "type": "number", "required": true, "placeholder": "пр. 2" }
+        ]
+      },
+      {
+        "id": "service_agreement",
+        "name": "Договор за услуги",
+        "description": "Договор за обезбедување на услуги помеѓу две страни.",
+        "apiEndpoint": "/api/documents/generate/service-agreement",
+        "fields": [
+          { "name": "serviceProviderName", "label": "Давател на услуги", "type": "text", "required": true, "placeholder": "Име на компанија/лице" },
+          { "name": "clientName", "label": "Клиент", "type": "text", "required": true, "placeholder": "Име на компанија/лице" },
+          { "name": "serviceDescription", "label": "Опис на услугите", "type": "textarea", "required": true, "placeholder": "Детален опис на услугите кои ќе бидат обезбедени" },
+          { "name": "startDate", "label": "Датум на почеток", "type": "date", "required": true },
+          { "name": "endDate", "label": "Датум на завршување (опционално)", "type": "date", "required": false },
+          { "name": "paymentTerms", "label": "Услови за плаќање", "type": "textarea", "required": true, "placeholder": "пр. Цена, начин на плаќање, рокови" },
+          { "name": "confidentialityClause", "label": "Клаузула за доверливост (Да/Не)", "type": "checkbox", "required": false }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,214 @@
+/* Global styles for Nexa application */
+
+:root {
+  /* Color scheme - Modern Business Professional */
+  --color-dark: #1e293b;          /* Slate 800 - softer than pure black */
+  --color-darker: #0f172a;        /* Slate 900 - darkest shade */
+  --color-gray: #475569;          /* Slate 600 - professional gray */
+  --color-light-gray: #64748b;    /* Slate 500 - lighter gray */
+  --color-medium-gray: #9ca3af;   /* Gray 400 - medium gray */
+  --color-dark-gray: #374151;     /* Gray 700 - darker gray */
+  --color-gray-dark: #555555;     /* Custom dark gray for borders */
+  --color-white: #ffffff;
+  --color-off-white: #f8fafc;     /* Slate 50 - softer white */
+  --color-accent: #729ee4;        /* Blue 500 - modern professional blue */
+  --color-accent-hover: #2563eb;  /* Blue 600 - hover state */
+  --color-accent-light: #dbeafe;  /* Blue 100 - light accent */
+  --color-accent-soft: rgba(59, 130, 246, 0.2);  /* Soft accent for borders */
+  --color-accent-bright: #60a5fa; /* Blue 400 - brighter accent */
+  --color-success: #10b981;       /* Emerald 500 */
+  --color-warning: #f59e0b;       /* Amber 500 */
+  --color-error: #ef4444;         /* Red 500 */
+  --color-danger: #ef4444;        /* Red 500 - alias for error */
+  --color-danger-light: #fee2e2;  /* Red 100 - light red background */
+  --color-danger-lighter: #fecaca; /* Red 200 - lighter red background */
+  --color-danger-dark: #991b1b;   /* Red 800 - dark red text */
+  --color-danger-darker: #7f1d1d; /* Red 900 - darker red text */
+  --color-border: #e2e8f0;        /* Slate 200 - subtle borders */
+  --color-text-muted: #94a3b8;    /* Slate 400 - muted text */
+  --color-text-primary: #f1f5f9;  /* Slate 100 - primary text on dark */
+  --color-text-secondary: #cbd5e1; /* Slate 300 - secondary text on dark */
+  
+  /* Gradient colors for modern depth */
+  --gradient-primary: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  --gradient-secondary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --gradient-accent: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  --gradient-text: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  
+  /* Shadow system */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Font sizes */
+  --font-size-small: 0.875rem;
+  --font-size-medium: 1rem;
+  --font-size-large: 1.25rem;
+  --font-size-xlarge: 1.5rem;
+  --font-size-xxlarge: 2rem;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  
+  /* Border radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-white);
+  color: var(--color-dark);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: var(--spacing-md);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--font-size-xxlarge);
+}
+
+h2 {
+  font-size: var(--font-size-xlarge);
+}
+
+h3 {
+  font-size: var(--font-size-large);
+}
+
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-dark);
+}
+
+button {
+  cursor: pointer;
+  background-color: var(--color-dark);
+  color: var(--color-white);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-medium);
+  transition: background-color var(--transition-fast);
+}
+
+button:hover {
+  background-color: var(--color-gray);
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  border: 1px solid var(--color-light-gray);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-medium);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.section {
+  padding: var(--spacing-xl) 0;
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-sm {
+  gap: var(--spacing-sm);
+}
+
+.gap-md {
+  gap: var(--spacing-md);
+}
+
+.gap-lg {
+  gap: var(--spacing-lg);
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .section {
+    padding: var(--spacing-lg) 0;
+  }
+  
+  h1 {
+    font-size: var(--font-size-xlarge);
+  }
+  
+  h2 {
+    font-size: var(--font-size-large);
+  }
+}
