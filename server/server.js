@@ -43,7 +43,9 @@ app.use(cors({
     'http://localhost:3004',
     'http://127.0.0.1:3000',
     'http://127.0.0.1:3003',
-    'http://127.0.0.1:3004'
+    'http://127.0.0.1:3004',
+    'https://nexa-v1.vercel.app',
+    'https://nexa-v1-git-main-martinboshkoskis-projects.vercel.app' // Alternative Vercel URL
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
