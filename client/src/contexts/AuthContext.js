@@ -5,7 +5,7 @@ import ApiService from '../services/api';
 import { clearCSRFTokenCache } from '../services/csrfService';
 
 // API Configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || '${API_BASE_URL}';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5002/api';
 
 // Create auth context
 const AuthContext = createContext();
@@ -172,7 +172,7 @@ export const AuthProvider = ({ children }) => {
       // Fetch CSRF token
       console.log('Fetching CSRF token...');
       
-      const csrfResponse = await fetch('${API_BASE_URL}/csrf-token', {
+      const csrfResponse = await fetch(`${API_BASE_URL}/csrf-token`, {
         credentials: 'include',
       });
       
@@ -188,7 +188,7 @@ export const AuthProvider = ({ children }) => {
       console.log('CSRF token obtained:', csrfToken.substring(0, 20) + '...');
       console.log('Sending registration request...');
 
-      const response = await fetch('${API_BASE_URL}/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (email, password, companyInfo = {}) => {
     try {
       // Fetch CSRF token
-      const csrfResponse = await fetch('${API_BASE_URL}/csrf-token', {
+      const csrfResponse = await fetch(`${API_BASE_URL}/csrf-token`, {
         credentials: 'include', // Include cookies
       });
       if (!csrfResponse.ok) {
@@ -269,7 +269,7 @@ export const AuthProvider = ({ children }) => {
   const loginWithToken = async (newToken) => {
     try {
       // Validate the token
-      const response = await fetch('${API_BASE_URL}/auth/validate', {
+      const response = await fetch(`${API_BASE_URL}/auth/validate`, {
         headers: {
           Authorization: `Bearer ${newToken}`
         }
@@ -297,7 +297,7 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       // Fetch CSRF token
-      const csrfResponse = await fetch('${API_BASE_URL}/csrf-token', {
+      const csrfResponse = await fetch(`${API_BASE_URL}/csrf-token`, {
         credentials: 'include',
       });
       if (!csrfResponse.ok) {
@@ -306,7 +306,7 @@ export const AuthProvider = ({ children }) => {
       const csrfData = await csrfResponse.json();
       const csrfToken = csrfData.csrfToken;
 
-      const response = await fetch('${API_BASE_URL}/auth/update-profile', {
+      const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -336,7 +336,7 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(async () => {
     try {
       if (token) {
-        await fetch('${API_BASE_URL}/auth/logout', {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
