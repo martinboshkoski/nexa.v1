@@ -29,11 +29,33 @@ async function seedDatabase() {
 
     const db = client.db();
 
-    // Clear existing collections
+    // SAFETY CHECK: Ask for confirmation before clearing data
+    console.log("⚠️  WARNING: This will DELETE ALL existing data!");
+    console.log("📊 Current collections status:");
+    
+    const newsCount = await db.collection("news").countDocuments();
+    const investmentsCount = await db.collection("investments").countDocuments();
+    const usersCount = await db.collection("users").countDocuments();
+    const companiesCount = await db.collection("companies").countDocuments();
+    
+    console.log(`📰 News items: ${newsCount}`);
+    console.log(`💰 Investments: ${investmentsCount}`);
+    console.log(`👥 Users: ${usersCount}`);
+    console.log(`🏢 Companies: ${companiesCount}`);
+    
+    if (usersCount > 0) {
+      console.log("\n❌ STOPPING: Users found in database!");
+      console.log("🛡️  To protect existing users, this script will not run.");
+      console.log("💡 If you really want to reset the database, manually delete users first or use a different script.");
+      return;
+    }
+
+    // Only clear collections if no users exist (safer approach)
     await db.collection("news").deleteMany({});
     await db.collection("investments").deleteMany({});
-    await db.collection("users").deleteMany({});
     await db.collection("companies").deleteMany({});
+
+    console.log("✅ Cleared existing collections (users were already empty)");
 
     // Insert sample data
 
