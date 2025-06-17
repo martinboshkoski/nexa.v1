@@ -252,8 +252,10 @@
 }
 
 .profile-button:hover {
-  background: rgba(59, 130, 246, 0.1); /* Subtle hover background */
-  color: var(--color-accent); /* Accent color on hover for text */
+  background: var(--color-neutral-600); /* Darker background for better contrast */
+  color: var(--color-white); /* White text on hover */
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .profile-icon {
@@ -262,7 +264,7 @@
 }
 
 .profile-button:hover .profile-icon {
-  color: var(--color-accent); /* Accent color on hover for icon */
+  color: var(--color-white); /* White icon on hover */
 }
 
 .profile-name {
@@ -275,7 +277,7 @@
 }
 
 .profile-button:hover .profile-name {
-  color: var(--color-accent);
+  color: var(--color-white);
 }
 
 .dropdown-arrow {
@@ -285,7 +287,7 @@
 }
 
 .profile-button:hover .dropdown-arrow {
-  color: var(--color-accent); /* Accent color on hover for arrow */
+  color: var(--color-white); /* White arrow on hover */
 }
 
 .dropdown-arrow-open {
@@ -296,12 +298,13 @@
   position: absolute;
   top: calc(100% + 8px); /* Position below button with small gap */
   right: 0;
-  background-color: #1e293b; /* Updated background color */
+  background-color: var(--color-white); /* Clean white background to match app theme */
+  border: 1px solid var(--color-border); /* Subtle border */
   border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-dropdown); /* Elegant shadow */
+  box-shadow: var(--shadow-lg); /* Elegant shadow */
   padding: 0.5rem 0;
   z-index: 1050; /* Ensure it's above other elements */
-  min-width: 220px;
+  min-width: 240px;
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
@@ -319,32 +322,56 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1.25rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary); /* Darker text for better contrast on white */
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
 }
 
 .dropdown-item:hover {
-  background-color: rgba(59, 130, 246, 0.08); /* Very subtle hover */
-  color: var(--color-accent-dark); /* Darker accent on hover */
+  background-color: var(--color-neutral-100); /* Very subtle neutral hover */
+  color: var(--color-neutral-800); /* Darker neutral on hover */
 }
 
 .dropdown-icon {
   font-size: 1rem;
-  color: var(--color-text-tertiary); /* Muted icon color */
+  color: var(--color-text-secondary); /* Slightly muted icon color */
+  min-width: 1rem; /* Ensure consistent icon alignment */
 }
 
 .dropdown-item:hover .dropdown-icon {
-  color: var(--color-accent);
+  color: var(--color-neutral-800);
 }
 
 .dropdown-divider {
   height: 1px;
   background-color: var(--color-border-soft);
   margin: 0.5rem 0;
+}
+
+/* Dropdown User Info Section */
+.dropdown-user-info {
+  padding: 1rem 1.25rem 0.5rem;
+}
+
+.user-email {
+  font-size: 0.85rem;
+  color: var(--color-text-tertiary);
+  font-weight: 400;
+  margin-bottom: 0.25rem;
+}
+
+.user-company {
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+  font-weight: 600;
 }
 
 /* Mobile Menu Updates */
@@ -359,7 +386,7 @@
     justify-content: space-between;
     border-radius: var(--border-radius-lg);
     padding: 1rem 1.25rem;
-    background: rgba(59, 130, 246, 0.1);
+    background: var(--color-neutral-100);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: var(--shadow-md);
@@ -444,10 +471,10 @@
 
   .mobileMenuButton {
     display: block;
-    background: rgba(59, 130, 246, 0.1);
+    background: var(--color-neutral-100);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--color-accent);
+    border: 1px solid var(--color-neutral-300);
     border-radius: var(--border-radius-md);
     padding: 0.75rem;
     cursor: pointer;
@@ -458,7 +485,7 @@
   }
 
   .mobileMenuButton:hover {
-    background: rgba(59, 130, 246, 0.2);
+    background: var(--color-neutral-200);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
   }

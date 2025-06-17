@@ -4,6 +4,7 @@ import Header from "../../components/common/Header";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import Sidebar from "../../components/terminal/Sidebar";
+import RightSidebar from "../../components/terminal/RightSidebar";
 import SocialFeed from "../../components/terminal/SocialFeed";
 import ProfileReminderBanner from "../../components/terminal/ProfileReminderBanner";
 
@@ -54,17 +55,7 @@ const Dashboard = () => {
         <main className={styles["dashboard-main"]}>
           <ProfileReminderBanner />
           
-          <div className={styles["dashboard-header"]}>
-            {/* <h2>Вести</h2> */}
-            {companyData && (
-              <div className={styles["user-info"]}>
-                <span>{companyData.companyName}</span>
-                <Link to="/terminal/profile" className={styles["profile-link"]}>
-                  Уреди профил
-                </Link>
-              </div>
-            )}
-          </div>
+          {/* Removed dashboard-header section - profile info now in header dropdown */}
 
           {loading ? (
             <div className="text-center">
@@ -74,6 +65,8 @@ const Dashboard = () => {
 
           <SocialFeed />
         </main>
+
+        <RightSidebar />
       </div>
     </div>
   );

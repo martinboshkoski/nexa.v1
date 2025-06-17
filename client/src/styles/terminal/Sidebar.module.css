@@ -6,28 +6,29 @@
 }
 
 .dashboard-sidebar {
-  width: 280px;
-  background-color: var(--color-off-white); /* Changed from --color-dark */
-  color: var(--color-dark); /* Changed from --color-white */
-  padding: var(--spacing-lg);
+  width: 336px;
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-700);
+  padding: var(--spacing-xl) var(--spacing-lg);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-lg);
   position: fixed;
-  top: 64px; /* Assuming header height */
+  top: 64px;
   left: 0;
   height: calc(100vh - 64px);
   overflow-y: auto;
   z-index: 10;
-  transition: transform 0.3s ease;
-  border-right: 1px solid var(--color-light-gray); /* Added border for separation */
+  transition: var(--transition-medium);
+  border-right: 1px solid var(--color-neutral-200);
+  backdrop-filter: blur(8px);
 }
 
 .dashboard-main {
   flex: 1;
   padding: var(--spacing-lg);
-  margin-left: 280px;
-  max-width: calc(100% - 280px);
+  margin-left: 336px; /* Updated to match new sidebar width */
+  max-width: calc(100% - 336px); /* Updated calculation */
   background-color: var(--color-white);
   overflow-y: auto;
   min-height: calc(100vh - 64px);

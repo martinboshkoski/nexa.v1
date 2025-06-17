@@ -1,40 +1,97 @@
-/* Define light theme colors - ideally, these would be in a global :root {} definition */
+/* Professional Business Color Palette */
 :root {
-  --light-background: #f8f9fa; /* Very light gray / off-white */
-  --light-surface: #ffffff; /* White for cards, sidebars etc. */
-  --dark-purple-text: #4a0e6c; /* Dark purple for text */
-  --dark-purple-border: #6a1b9a; /* Dark purple for borders */
-  --dark-purple-accent: #8e24aa; /* Dark purple for accents/links */
-  --dark-purple-accent-hover: #7b1fa2; /* Darker purple for hover */
-
-  /* Retaining some existing variables for structure, will override as needed */
+  /* Primary Business Colors */
+  --color-primary: #2563eb; /* Professional blue - trust and reliability */
+  --color-primary-light: #3b82f6; /* Lighter blue for hover states */
+  --color-primary-dark: #1d4ed8; /* Darker blue for emphasis */
+  
+  /* Neutral Grays */
+  --color-neutral-50: #f8fafc; /* Very light gray - main background */
+  --color-neutral-100: #f1f5f9; /* Light gray - sidebar background */
+  --color-neutral-200: #e2e8f0; /* Border color */
+  --color-neutral-300: #cbd5e1; /* Subtle borders */
+  --color-neutral-600: #475569; /* Secondary text */
+  --color-neutral-700: #334155; /* Primary text */
+  --color-neutral-800: #1e293b; /* Dark text */
+  --color-neutral-900: #0f172a; /* Darkest text */
+  
+  /* Success and Status Colors */
+  --color-success: #059669; /* Professional green */
+  --color-success-light: #10b981;
+  --color-warning: #d97706; /* Professional orange */
+  --color-danger: #dc2626; /* Professional red */
+  
+  /* Surface Colors */
+  --color-white: #ffffff;
+  --color-surface: #ffffff; /* Cards and elevated surfaces */
+  --color-background: var(--color-neutral-50);
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  
+  /* Spacing and Typography */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
-  --border-radius-sm: 4px;
+  --spacing-xl: 32px;
+  --border-radius-sm: 6px;
   --border-radius-md: 8px;
-  --transition-medium: 0.2s ease-in-out;
-  --font-size-small: 0.875rem;
-  --font-size-medium: 1rem;
-  --font-size-large: 1.25rem;
+  --border-radius-lg: 12px;
+  --transition-fast: 0.15s ease-in-out;
+  --transition-medium: 0.25s ease-in-out;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 }
 
 .dashboard-layout {
   display: flex;
-  min-height: calc(100vh - 64px); /* Assuming 64px is header height */
-  background-color: var(--light-background); /* Light background for the whole layout */
+  min-height: calc(100vh - 64px);
+  background-color: var(--color-background);
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
 .dashboard-main {
   flex: 1;
-  padding: var(--spacing-lg);
-  margin-left: 280px; /* Assuming sidebar width */
-  max-width: calc(100% - 280px); /* Assuming sidebar width */
-  background-color: var(--light-background); /* Light background for main content area */
-  color: var(--dark-purple-text); /* Dark purple text */
+  padding: var(--spacing-xl);
+  margin-left: 336px;
+  margin-right: 336px;
+  max-width: calc(100% - 672px);
+  background-color: var(--color-white);
+  color: var(--color-neutral-800);
   overflow-y: auto;
-  min-height: calc(100vh - 64px); /* Assuming 64px is header height */
+  min-height: calc(100vh - 64px);
+  box-shadow: var(--shadow-xl);
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  border: 1px solid var(--color-neutral-200);
+  transition: var(--transition-medium);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1400px) {
+  .dashboard-main {
+    margin-right: 336px; /* Keep right sidebar width consistent */
+    max-width: calc(100% - 672px); /* Both sidebars: 336px + 336px = 672px */
+  }
+}
+
+@media (max-width: 1200px) {
+  .dashboard-main {
+    margin-right: 0; /* Hide right sidebar on small screens */
+    max-width: calc(100% - 280px);
+  }
 }
 
 .dashboard-sidebar { /* This class is used in Sidebar.module.css, applying general theme here */

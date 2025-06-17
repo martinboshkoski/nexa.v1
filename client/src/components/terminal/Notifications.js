@@ -141,19 +141,19 @@ const Notifications = () => {
   const getNotificationColor = (type) => {
     switch (type) {
       case 'post_liked':
-        return '#e91e63';
+        return 'var(--color-primary)';
       case 'new_comment':
-        return '#2196f3';
+        return 'var(--color-primary-light)';
       case 'new_post':
-        return '#4caf50';
+        return 'var(--color-success)';
       case 'verification_approved':
-        return '#4caf50';
+        return 'var(--color-success)';
       case 'verification_rejected':
-        return '#f44336';
+        return 'var(--color-error)';
       case 'investment':
-        return '#ff9800';
+        return 'var(--color-warning)';
       default:
-        return '#757575';
+        return 'var(--color-text-secondary)';
     }
   };
 

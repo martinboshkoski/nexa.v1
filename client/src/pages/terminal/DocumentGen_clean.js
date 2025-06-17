@@ -22,7 +22,7 @@ const DocumentGen = () => {
     labourLaw: {
       title: 'Работно право',
       icon: '👥',
-      color: '#4F46E5',
+      color: 'var(--color-primary)',
       description: 'Обрасци поврзани со договори за вработување, откази и работни односи.',
       templates: [
         { id: 'employment_contract', name: 'Договор за вработување', fields: ['employeeName', 'position', 'salary', 'startDate', 'workingHours'] },
@@ -35,7 +35,7 @@ const DocumentGen = () => {
     corporateLaw: {
       title: 'Корпоративно право',
       icon: '🏢',
-      color: '#059669',
+      color: 'var(--color-success)',
       description: 'Документи за основање, управување и усогласеност на компании.',
       templates: [
         { id: 'board_resolution', name: 'Одлука на одбор', fields: ['resolutionTitle', 'meetingDate', 'boardMembers', 'decision'] },
@@ -48,7 +48,7 @@ const DocumentGen = () => {
     contracts: {
       title: 'Договори',
       icon: '📋',
-      color: '#DC2626',
+      color: 'var(--color-error)',
       description: 'Различни видови договори за деловни потреби.',
       templates: [
         { id: 'nda', name: 'Договор за доверливост (NDA)', fields: ['partyName', 'disclosingParty', 'purpose', 'duration'] },
@@ -61,7 +61,7 @@ const DocumentGen = () => {
     dataProtection: {
       title: 'Заштита на податоци',
       icon: '🔒',
-      color: '#7C3AED',
+      color: 'var(--color-primary-dark)',
       description: 'Обрасци за GDPR и заштита на лични податоци.',
       templates: [
         { id: 'privacy_policy', name: 'Политика за приватност', fields: ['companyName', 'dataTypes', 'processingPurpose', 'retentionPeriod'] },
@@ -74,7 +74,7 @@ const DocumentGen = () => {
     workSafety: {
       title: 'Безбедност при работа',
       icon: '⚠️',
-      color: '#EA580C',
+      color: 'var(--color-warning)',
       description: 'Документи поврзани со безбедност и здравје при работа.',
       templates: [
         { id: 'safety_policy', name: 'Политика за безбедност', fields: ['policyScope', 'safetyRules', 'responsibilities', 'procedures'] },
@@ -87,7 +87,7 @@ const DocumentGen = () => {
     otherTemplates: {
       title: 'Останати обрасци',
       icon: '📄',
-      color: '#6B7280',
+      color: 'var(--color-text-secondary)',
       description: 'Разни корисни обрасци за секојдневна употреба.',
       templates: [
         { id: 'meeting_minutes', name: 'Записник од состанок', fields: ['meetingDate', 'attendees', 'agenda', 'decisions'] },

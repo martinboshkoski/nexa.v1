@@ -61,8 +61,10 @@ const Header = ({ isTerminal = false }) => {
           aria-expanded={profileDropdownOpen}
         >
           <span className={styles['profile-icon']}>👤</span>
-          {/* Display email since fullName is no longer available */}
-          <span className={styles['profile-name']}>{currentUser?.email}</span>
+          {/* Display company name if available, otherwise email */}
+          <span className={styles['profile-name']}>
+            {currentUser?.companyName || currentUser?.email || 'User'}
+          </span>
           <span 
             className={`${styles['dropdown-arrow']} ${profileDropdownOpen ? styles['dropdown-arrow-open'] : ''}`}
           >
@@ -73,6 +75,15 @@ const Header = ({ isTerminal = false }) => {
           <div 
             className={`${styles['profile-dropdown']} ${profileDropdownOpen ? styles['profile-dropdown-open'] : ''}`}
           >
+            {/* User info section */}
+            <div className={styles['dropdown-user-info']}>
+              <div className={styles['user-email']}>{currentUser?.email}</div>
+              {currentUser?.companyName && (
+                <div className={styles['user-company']}>{currentUser.companyName}</div>
+              )}
+            </div>
+            <div className={styles['dropdown-divider']}></div>
+            
             <Link 
               to="/terminal/profile" 
               className={styles['dropdown-item']}
