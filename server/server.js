@@ -135,10 +135,11 @@ async function fixDatabaseIndexes(database) {
       }
     }
     
-    // Step 2: Remove duplicate documents
-    console.log('🧹 Cleaning duplicate documents...');
+    // Step 2: DISABLED - Remove duplicate documents (this was deleting users)
+    console.log('⚠️ Duplicate cleanup DISABLED to prevent user deletion');
     
-    // Remove duplicate usernames (keep first)
+    // COMMENTED OUT: Remove duplicate usernames (keep first)
+    /*
     const duplicateUsernames = await collection.aggregate([
       { $group: { _id: "$username", ids: { $push: "$_id" }, count: { $sum: 1 } } },
       { $match: { count: { $gt: 1 } } }
@@ -162,6 +163,7 @@ async function fixDatabaseIndexes(database) {
       await collection.deleteMany({ _id: { $in: idsToRemove } });
       console.log(`✅ Removed ${idsToRemove.length} duplicate email(s): ${duplicate._id}`);
     }
+    */
     
     // Step 3: Create proper sparse unique indexes
     try {

@@ -4,6 +4,7 @@ import styles from './Header.module.css';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
+import ThemeToggle from './ThemeToggle';
 
 const Header = ({ isTerminal = false }) => {
   const { t } = useTranslation();
@@ -152,6 +153,7 @@ const Header = ({ isTerminal = false }) => {
           <nav className={styles['nav-links']}>
             {renderNavLinks()}
           </nav>
+          <ThemeToggle />
           <LanguageSwitcher />
         </div>
 
@@ -173,8 +175,11 @@ const Header = ({ isTerminal = false }) => {
         <div className={`${styles.mobileMenu} ${mobileMenuOpen ? styles.open : ''}`}>
           <nav className={styles.mobileNav}>
             {renderNavLinks()}
-            <div className={styles.mobileLangSwitcher}>
-              <LanguageSwitcher />
+            <div className={styles.mobileControls}>
+              <ThemeToggle />
+              <div className={styles.mobileLangSwitcher}>
+                <LanguageSwitcher />
+              </div>
             </div>
           </nav>
         </div>

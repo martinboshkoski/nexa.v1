@@ -252,8 +252,7 @@
 }
 
 .profile-button:hover {
-  background: var(--color-neutral-600); /* Darker background for better contrast */
-  color: var(--color-white); /* White text on hover */
+  /* No background change on hover */
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
@@ -264,7 +263,7 @@
 }
 
 .profile-button:hover .profile-icon {
-  color: var(--color-white); /* White icon on hover */
+  /* Keep original icon color on hover */
 }
 
 .profile-name {
@@ -518,7 +517,11 @@
     align-items: center;
   }
 
-  .mobileLangSwitcher {
+  .mobileControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-4);
     margin-top: var(--spacing-lg);
     padding-top: var(--spacing-lg);
     border-top: 1px solid var(--color-border);
