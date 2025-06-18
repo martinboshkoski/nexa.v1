@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 // Only Login page (now the main public page)
 import Login from './pages/website/Login';
@@ -48,42 +49,44 @@ import './styles/global.css';
 
 function App() {
   return (
-    <Routes>
-      {/* Public Routes - Only Login */}
-      <Route path="/" element={<Login />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/debug" element={<DebugAuth />} />
-      <Route path="/simple-test" element={<SimpleTest />} />
-      {/* <Route path="/complete-profile" element={<CompleteProfile />} /> */}
-      <Route path="/auth/success" element={<AuthCallback />} />
+    <ThemeProvider>
+      <Routes>
+        {/* Public Routes - Only Login */}
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/debug" element={<DebugAuth />} />
+        <Route path="/simple-test" element={<SimpleTest />} />
+        {/* <Route path="/complete-profile" element={<CompleteProfile />} /> */}
+        <Route path="/auth/success" element={<AuthCallback />} />
 
-      {/* Private Terminal Routes */}
-      <Route path="/terminal" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-      <Route path="/terminal/complete-profile" element={<PrivateRoute><SimpleCompleteProfile /></PrivateRoute>} />
-      <Route path="/terminal/documents" element={<PrivateRoute><DocumentGen /></PrivateRoute>} />
-      <Route path="/terminal/documents/generator" element={<PrivateRoute><DocumentGeneratorPage /></PrivateRoute>} />
-      <Route path="/terminal/documents/:categoryId/:templateId" element={<PrivateRoute><DocumentTemplateGenerator /></PrivateRoute>} />
-      <Route path="/terminal/documents/contracts/annex-employment-agreement" element={<PrivateRoute><AnnexEmploymentAgreement /></PrivateRoute>} />
-      <Route path="/terminal/documents/labourLaw/annual-leave-decision" element={<PrivateRoute><AnnualLeaveDecisionPage /></PrivateRoute>} />
-      <Route path="/terminal/documents/labourLaw/confirmation-of-employment" element={<PrivateRoute><ConfirmationOfEmploymentPage /></PrivateRoute>} />
-      <Route path="/terminal/documents/health-safety/health-safety-policy" element={<PrivateRoute><HealthAndSafetyPolicyPage /></PrivateRoute>} />
-      <Route path="/terminal/documents/health-safety/workplace-harassment-policy" element={<PrivateRoute><WorkplaceHarassmentPolicyPage /></PrivateRoute>} />
-      <Route path="/terminal/documents/personal-data-protection/consent-for-personal-data-processing" element={<PrivateRoute><ConsentForPersonalDataProcessingPage /></PrivateRoute>} />
-      <Route path="/terminal/documents/personal-data-protection/privacy-policy" element={<PrivateRoute><PrivacyPolicyPage /></PrivateRoute>} />
-      <Route path="/terminal/legal-screening" element={<PrivateRoute><LegalScreening /></PrivateRoute>} />
-      <Route path="/terminal/ai-chat" element={<PrivateRoute><AIChat /></PrivateRoute>} />
-      <Route path="/terminal/news" element={<PrivateRoute><News /></PrivateRoute>} />
-      <Route path="/terminal/investments" element={<PrivateRoute><Investments /></PrivateRoute>} />
-      <Route path="/terminal/contact" element={<PrivateRoute><Contact /></PrivateRoute>} />
-      <Route path="/terminal/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-      <Route path="/terminal/verification" element={<PrivateRoute><CompanyVerification /></PrivateRoute>} />
-      
-      {/* Admin Routes */}
-      <Route path="/terminal/admin/news/add" element={<PrivateRoute><AddNews /></PrivateRoute>} />
-      <Route path="/terminal/admin/investments/add" element={<PrivateRoute><AddInvestment /></PrivateRoute>} />
-      <Route path="/terminal/admin/users" element={<PrivateRoute><ManageUsers /></PrivateRoute>} />
-      <Route path="/terminal/admin/verification" element={<PrivateRoute><AdminVerification /></PrivateRoute>} />
-    </Routes>
+        {/* Private Terminal Routes */}
+        <Route path="/terminal" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/terminal/complete-profile" element={<PrivateRoute><SimpleCompleteProfile /></PrivateRoute>} />
+        <Route path="/terminal/documents" element={<PrivateRoute><DocumentGen /></PrivateRoute>} />
+        <Route path="/terminal/documents/generator" element={<PrivateRoute><DocumentGeneratorPage /></PrivateRoute>} />
+        <Route path="/terminal/documents/:categoryId/:templateId" element={<PrivateRoute><DocumentTemplateGenerator /></PrivateRoute>} />
+        <Route path="/terminal/documents/contracts/annex-employment-agreement" element={<PrivateRoute><AnnexEmploymentAgreement /></PrivateRoute>} />
+        <Route path="/terminal/documents/labourLaw/annual-leave-decision" element={<PrivateRoute><AnnualLeaveDecisionPage /></PrivateRoute>} />
+        <Route path="/terminal/documents/labourLaw/confirmation-of-employment" element={<PrivateRoute><ConfirmationOfEmploymentPage /></PrivateRoute>} />
+        <Route path="/terminal/documents/health-safety/health-safety-policy" element={<PrivateRoute><HealthAndSafetyPolicyPage /></PrivateRoute>} />
+        <Route path="/terminal/documents/health-safety/workplace-harassment-policy" element={<PrivateRoute><WorkplaceHarassmentPolicyPage /></PrivateRoute>} />
+        <Route path="/terminal/documents/personal-data-protection/consent-for-personal-data-processing" element={<PrivateRoute><ConsentForPersonalDataProcessingPage /></PrivateRoute>} />
+        <Route path="/terminal/documents/personal-data-protection/privacy-policy" element={<PrivateRoute><PrivacyPolicyPage /></PrivateRoute>} />
+        <Route path="/terminal/legal-screening" element={<PrivateRoute><LegalScreening /></PrivateRoute>} />
+        <Route path="/terminal/ai-chat" element={<PrivateRoute><AIChat /></PrivateRoute>} />
+        <Route path="/terminal/news" element={<PrivateRoute><News /></PrivateRoute>} />
+        <Route path="/terminal/investments" element={<PrivateRoute><Investments /></PrivateRoute>} />
+        <Route path="/terminal/contact" element={<PrivateRoute><Contact /></PrivateRoute>} />
+        <Route path="/terminal/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/terminal/verification" element={<PrivateRoute><CompanyVerification /></PrivateRoute>} />
+        
+        {/* Admin Routes */}
+        <Route path="/terminal/admin/news/add" element={<PrivateRoute><AddNews /></PrivateRoute>} />
+        <Route path="/terminal/admin/investments/add" element={<PrivateRoute><AddInvestment /></PrivateRoute>} />
+        <Route path="/terminal/admin/users" element={<PrivateRoute><ManageUsers /></PrivateRoute>} />
+        <Route path="/terminal/admin/verification" element={<PrivateRoute><AdminVerification /></PrivateRoute>} />
+      </Routes>
+    </ThemeProvider>
   );
 }
 
