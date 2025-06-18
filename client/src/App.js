@@ -19,6 +19,7 @@ import News from './pages/terminal/News';
 import Investments from './pages/terminal/Investments';
 import Contact from './pages/terminal/Contact';
 import Profile from './pages/terminal/Profile';
+import AIChat from './pages/terminal/AIChat';
 // import CompleteProfile from './pages/terminal/CompleteProfile';
 import SimpleCompleteProfile from './pages/terminal/SimpleCompleteProfile';
 
@@ -70,6 +71,7 @@ function App() {
       <Route path="/terminal/documents/personal-data-protection/consent-for-personal-data-processing" element={<PrivateRoute><ConsentForPersonalDataProcessingPage /></PrivateRoute>} />
       <Route path="/terminal/documents/personal-data-protection/privacy-policy" element={<PrivateRoute><PrivacyPolicyPage /></PrivateRoute>} />
       <Route path="/terminal/legal-screening" element={<PrivateRoute><LegalScreening /></PrivateRoute>} />
+      <Route path="/terminal/ai-chat" element={<PrivateRoute><AIChat /></PrivateRoute>} />
       <Route path="/terminal/news" element={<PrivateRoute><News /></PrivateRoute>} />
       <Route path="/terminal/investments" element={<PrivateRoute><Investments /></PrivateRoute>} />
       <Route path="/terminal/contact" element={<PrivateRoute><Contact /></PrivateRoute>} />

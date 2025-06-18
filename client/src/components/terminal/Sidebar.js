@@ -14,6 +14,7 @@ const Sidebar = () => {
     { path: '/terminal', label: 'common.dashboard', icon: '📊' },
     { path: '/terminal/documents', label: 'dashboard.documentGenerator', icon: '📄' },
     { path: '/terminal/legal-screening', label: 'dashboard.legalScreening', icon: '⚖️' },
+    { path: '/terminal/ai-chat', label: 'dashboard.nexaAI', icon: '🤖' },
     { path: '/terminal/contact', label: 'dashboard.contactUs', icon: '✉️' }
   ];
 
