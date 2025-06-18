@@ -96,20 +96,42 @@ class UserService {
       throw new Error('Invalid user ID');
     }
 
+    console.log('🔍 UserService.updateUser - Input data:', JSON.stringify(updateData, null, 2));
+
     const updateDoc = { updatedAt: new Date() };
 
     // Handle nested companyInfo update properly
     if (updateData.companyInfo) {
+      console.log('🔍 UserService.updateUser - Handling companyInfo update');
+      
       // Get current user to merge with existing companyInfo
       const currentUser = await this.findById(id);
       if (currentUser) {
-        // Merge existing companyInfo with new values
+        console.log('🔍 UserService.updateUser - Current companyInfo:', JSON.stringify(currentUser.companyInfo || {}, null, 2));
+        
+        // Merge existing companyInfo with new values, ensuring all fields are preserved
         const mergedCompanyInfo = {
-          ...currentUser.companyInfo,
-          ...updateData.companyInfo
+          companyName: '',
+          mission: '',
+          website: '',
+          industry: '',
+          companySize: '',
+          role: '',
+          description: '',
+          crnNumber: '',
+          address: '',
+          phone: '',
+          companyPIN: '',
+          taxNumber: '',
+          contactEmail: '',
+          ...currentUser.companyInfo, // Existing values
+          ...updateData.companyInfo   // New values (will override existing)
         };
+        
         updateDoc.companyInfo = mergedCompanyInfo;
+        console.log('🔍 UserService.updateUser - Merged companyInfo:', JSON.stringify(mergedCompanyInfo, null, 2));
       } else {
+        console.log('🔍 UserService.updateUser - No current user found, using provided companyInfo as-is');
         updateDoc.companyInfo = updateData.companyInfo;
       }
     }
@@ -121,11 +143,20 @@ class UserService {
       }
     });
 
+    console.log('🔍 UserService.updateUser - Final update document:', JSON.stringify(updateDoc, null, 2));
+
     const result = await this.collection.findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: updateDoc },
       { returnDocument: 'after' }
     );
+
+    console.log('🔍 UserService.updateUser - Update operation result:', result.value ? 'Success' : 'Failed');
+    
+    if (result.value) {
+      console.log('🔍 UserService.updateUser - Updated companyInfo:', JSON.stringify(result.value.companyInfo || {}, null, 2));
+      console.log('🔍 UserService.updateUser - Updated profileComplete:', result.value.profileComplete);
+    }
 
     return result.value;
   }

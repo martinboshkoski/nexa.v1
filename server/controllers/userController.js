@@ -112,86 +112,100 @@ class UserController {
   // Create or update company profile (separate companies collection)
   async createOrUpdateCompany(req, res) {
     try {
-      console.log('userController.js - createOrUpdateCompany - Step 6: Received request to create/update company profile');
-      console.log('userController.js - createOrUpdateCompany - Step 6.1: User ID:', req.user._id);
-      console.log('userController.js - createOrUpdateCompany - Step 6.2: Request body:', req.body);
+      console.log('🔍 userController.js - createOrUpdateCompany - Step 1: Received request');
+      console.log('🔍 User ID:', req.user._id);
+      console.log('🔍 Request body:', JSON.stringify(req.body, null, 2));
       
-      const { companyName, companyAddress, taxNumber, businessActivity, email, website } = req.body;
+      const { companyName, companyAddress, taxNumber, businessActivity, email, website, mission, logoUrl } = req.body;
       const db = req.app.locals.db;
       const userService = new UserService(db);
       const companiesCollection = db.collection('companies');
       
       // Validate required fields
       if (!companyName || !companyAddress || !taxNumber) {
-        console.log('userController.js - createOrUpdateCompany - Step 6.3: Missing required fields');
-        return res.status(400).json({ message: 'Missing required fields' });
+        console.log('❌ Missing required fields - companyName:', !!companyName, 'companyAddress:', !!companyAddress, 'taxNumber:', !!taxNumber);
+        return res.status(400).json({ message: 'Missing required fields: companyName, companyAddress, and taxNumber are required' });
       }
+      
+      console.log('✅ All required fields present');
       
       // Check if company profile already exists
       const existingCompany = await companiesCollection.findOne({ userId: req.user._id });
-      console.log('userController.js - createOrUpdateCompany - Step 6.4: Existing company found:', existingCompany ? 'Yes' : 'No');
+      console.log('🔍 Existing company found:', existingCompany ? 'Yes' : 'No');
       
-      const companyData = { // For 'companies' collection
+      // Prepare data for companies collection
+      const companyData = {
         companyName,
         companyAddress,
         taxNumber,
-        businessActivity, // businessActivity is stored here
+        businessActivity: businessActivity || 'General Business', // Provide default if not provided
         updatedAt: new Date()
       };
       
       // Add optional fields if provided
-      if (email) companyData.email = email; // This is company's contact email for 'companies' collection
+      if (email) companyData.email = email;
       if (website) companyData.website = website;
+      if (mission) companyData.mission = mission;
+      if (logoUrl) companyData.logoUrl = logoUrl;
       
-      console.log('userController.js - createOrUpdateCompany - Step 7: Company data prepared for DB (companies collection):', companyData);
+      console.log('🔍 Company data for companies collection:', JSON.stringify(companyData, null, 2));
 
-      // Prepare data for User.companyInfo
+      // Prepare data for User.companyInfo (this is the crucial part for your issue)
       const userCompanyInfoUpdate = {
         companyName: companyName,
         address: companyAddress, // Map companyAddress from form to address in User.companyInfo
         taxNumber: taxNumber,
-        contactEmail: email,     // Map email from form to contactEmail in User.companyInfo
-        website: website
-        // Note: 'businessActivity' is not in the User.companyInfo schema based on the provided doc.
-        // Other fields like mission, industry, etc., will not be populated from this form.
+        contactEmail: email || '',     // Map email from form to contactEmail in User.companyInfo
+        website: website || '',
+        mission: mission || '',
+        logoUrl: logoUrl || ''
       };
-      console.log('userController.js - createOrUpdateCompany - Step 7.1: Data prepared for User.companyInfo:', userCompanyInfoUpdate);
+      
+      console.log('🔍 User companyInfo update data:', JSON.stringify(userCompanyInfoUpdate, null, 2));
+
+      // Get current user to see existing data
+      const currentUser = await userService.findById(req.user._id);
+      console.log('🔍 Current user companyInfo before update:', JSON.stringify(currentUser?.companyInfo || {}, null, 2));
 
       const userUpdatePayload = {
         profileComplete: true,
         companyInfo: userCompanyInfoUpdate
       };
       
+      console.log('🔍 Final user update payload:', JSON.stringify(userUpdatePayload, null, 2));
+      
+      // Update or create company in companies collection
       if (existingCompany) {
-        // Update existing company in 'companies' collection
-        console.log('userController.js - createOrUpdateCompany - Step 8.1: Updating existing company in DB (companies collection)');
+        console.log('📝 Updating existing company in companies collection');
         await companiesCollection.updateOne(
           { userId: req.user._id },
           { $set: companyData }
         );
-        console.log('userController.js - createOrUpdateCompany - Step 8.2: Existing company updated in DB (companies collection)');
-        
-        // Also update User.companyInfo and ensure profileComplete is true
-        console.log('userController.js - createOrUpdateCompany - Step 9.2: Updating User.companyInfo and profileComplete status via userService for existing company');
-        await userService.updateUser(req.user._id, userUpdatePayload);
-        console.log('userController.js - createOrUpdateCompany - Step 9.3: User.companyInfo and profileComplete status updated for existing company');
-
+        console.log('✅ Company updated in companies collection');
       } else {
-        // Create new company in 'companies' collection
-        console.log('userController.js - createOrUpdateCompany - Step 8.3: Creating new company in DB (companies collection)');
+        console.log('📝 Creating new company in companies collection');
         companyData.userId = req.user._id;
         companyData.createdAt = new Date();
         await companiesCollection.insertOne(companyData);
-        console.log('userController.js - createOrUpdateCompany - Step 8.4: New company created in DB (companies collection)');
-        
-        // Update user profile completion status and User.companyInfo
-        console.log('userController.js - createOrUpdateCompany - Step 9: Updating User.companyInfo and marking profile as complete via userService for new company');
-        await userService.updateUser(req.user._id, userUpdatePayload);
-        console.log('userController.js - createOrUpdateCompany - Step 9.1: User.companyInfo and profile marked as complete via userService for new company');
+        console.log('✅ New company created in companies collection');
       }
       
-      console.log('userController.js - createOrUpdateCompany - Step 8.5: Company profile saved successfully overall');
-      res.json({ message: 'Company profile saved successfully' });
+      // CRITICAL: Update user's companyInfo and profileComplete status
+      console.log('📝 Updating user companyInfo and profileComplete status');
+      const userUpdateResult = await userService.updateUser(req.user._id, userUpdatePayload);
+      console.log('✅ User update result:', userUpdateResult ? 'Success' : 'Failed');
+      
+      // Verify the update by fetching the user again
+      const updatedUser = await userService.findById(req.user._id);
+      console.log('🔍 User companyInfo after update:', JSON.stringify(updatedUser?.companyInfo || {}, null, 2));
+      console.log('🔍 User profileComplete after update:', updatedUser?.profileComplete);
+      
+      res.json({ 
+        message: 'Company profile saved successfully',
+        companyInfo: updatedUser?.companyInfo,
+        profileComplete: updatedUser?.profileComplete
+      });
+      
     } catch (error) {
       console.error('❌ Company profile save error:', error);
       res.status(500).json({ message: 'Server error', error: error.message });

@@ -15,7 +15,9 @@ const SimpleCompleteProfile = () => {
     companyAddress: '',
     taxNumber: '',
     email: currentUser?.email || '',
-    website: ''
+    website: '',
+    mission: '',
+    logoUrl: ''
   });
   
   const [loading, setLoading] = useState(false);
@@ -39,11 +41,13 @@ const SimpleCompleteProfile = () => {
     setError('');
     setSuccess('');
     setLoading(true);
-    console.log('SimpleCompleteProfile.js - handleSubmit - Step 2: Submitting form with data', formData);
+    console.log('🔍 SimpleCompleteProfile.js - handleSubmit - Form data:', JSON.stringify(formData, null, 2));
 
     try {
       // Update company profile
       const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5002/api';
+      console.log('🔍 Making request to:', `${API_BASE_URL}/users/company`);
+      
       const response = await makeAuthenticatedRequest(`${API_BASE_URL}/users/company`, {
         method: 'POST',
         body: JSON.stringify({
@@ -52,19 +56,26 @@ const SimpleCompleteProfile = () => {
           taxNumber: formData.taxNumber,
           email: formData.email,
           website: formData.website,
+          mission: formData.mission,
+          logoUrl: formData.logoUrl,
           businessActivity: 'Правни услуги' // Default value
         })
       });
       
+      console.log('🔍 Response status:', response.status);
+      console.log('🔍 Response ok:', response.ok);
+      
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Неуспешно ажурирање на профилот: ${response.status} - ${errorText}`);
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        console.error('❌ Company update failed:', errorData);
+        throw new Error(`Неуспешно ажурирање на профилот: ${response.status} - ${errorData.message || 'Unknown error'}`);
       }
 
       const companyResult = await response.json();
-      console.log('SimpleCompleteProfile.js - handleSubmit - Step 3: Response from /users/company', companyResult);
+      console.log('✅ Company update successful:', companyResult);
 
-      // Mark profile as complete
+      // The company endpoint now also updates the user's profileComplete status
+      // But let's still make the profile update call for backwards compatibility
       const updateResponse = await makeAuthenticatedRequest(`${API_BASE_URL}/users/profile`, {
         method: 'PUT',
         body: JSON.stringify({
@@ -72,20 +83,23 @@ const SimpleCompleteProfile = () => {
         })
       });
 
-      if (!updateResponse.ok) {
-        const errorText = await updateResponse.text();
-        throw new Error(`Неуспешно ажурирање на статусот на профилот: ${updateResponse.status} - ${errorText}`);
+      let profileResult = { profileComplete: true };
+      if (updateResponse.ok) {
+        profileResult = await updateResponse.json();
+        console.log('✅ Profile status update successful:', profileResult);
+      } else {
+        console.log('⚠️ Profile status update failed, but company update succeeded');
       }
 
-      const profileResult = await updateResponse.json();
-      console.log('SimpleCompleteProfile.js - handleSubmit - Step 4: Response from /users/profile', profileResult);
-
       setSuccess('Профилот е успешно пополнет!');
+      
+      // Show success message for 2 seconds then redirect
       setTimeout(() => {
         navigate('/terminal');
       }, 2000);
 
     } catch (error) {
+      console.error('❌ Form submission error:', error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -189,6 +203,48 @@ const SimpleCompleteProfile = () => {
                   onChange={handleInputChange}
                   placeholder="https://example.com (опционално)"
                 />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="mission" className={styles.label}>
+                  Мисија на компанијата
+                </label>
+                <textarea
+                  id="mission"
+                  name="mission"
+                  className={styles.textarea}
+                  value={formData.mission}
+                  onChange={handleInputChange}
+                  placeholder="Опишете ја мисијата и целите на вашата компанија (опционално)"
+                  rows={3}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="logoUrl" className={styles.label}>
+                  Лого на компанијата (URL)
+                </label>
+                <input
+                  type="url"
+                  id="logoUrl"
+                  name="logoUrl"
+                  className={styles.input}
+                  value={formData.logoUrl}
+                  onChange={handleInputChange}
+                  placeholder="https://example.com/logo.png (опционално)"
+                />
+                {formData.logoUrl && (
+                  <div className={styles.logoPreview}>
+                    <img 
+                      src={formData.logoUrl} 
+                      alt="Преглед на лого" 
+                      className={styles.logoImage}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className={styles.actions}>

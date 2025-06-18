@@ -157,6 +157,45 @@
   margin-bottom: var(--spacing-4);
 }
 
+/* Textarea styles */
+.textarea {
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  font-size: var(--font-size-base);
+  transition: var(--transition-all);
+  background: var(--color-white);
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Logo preview styles */
+.logoPreview {
+  margin-top: var(--spacing-2);
+  padding: var(--spacing-3);
+  background: var(--color-background);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.logoImage {
+  max-width: 120px;
+  max-height: 80px;
+  object-fit: contain;
+  border-radius: var(--border-radius-sm);
+}
+
 /* Responsive design */
 @media (max-width: 1024px) {
   .mainContent {

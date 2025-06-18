@@ -268,36 +268,67 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
   const userName = postUser?.name || postUser?.username || 'Анонимен корисник';
   const userAvatar = postUser?.profilePicture || postUser?.avatar || ''; // Default avatar if none
 
+  // Debug: Log the company information to verify data structure
+  console.log('🔍 Social Post Debug - Post ID:', post._id);
+  console.log('🔍 Author CompanyInfo:', post.author?.companyInfo);
+  console.log('🔍 Available company data:', {
+    companyName: post.author?.companyInfo?.companyName,
+    address: post.author?.companyInfo?.address,
+    contactEmail: post.author?.companyInfo?.contactEmail,
+    website: post.author?.companyInfo?.website,
+    taxNumber: post.author?.companyInfo?.taxNumber
+  });
+
   return (
     <div className={styles.postCard}>
       {/* Company Information Section - 1/3 of the post */}
       <div className={styles.companySection}> {/* Ensure this class is styled for 1/3 width */}
         <div className={styles.companyDetails}>
-          <div className={styles.companyName}>
-            {/* Use companyName from post root, or fallback to author's company details */}
-            {post.companyName || postUser?.companyName || userName}
-          </div>
-          {/* Display company details from post root if available, otherwise from postUser */}
-          {(post.companyWebsite || postUser?.website) && (
-            <a href={post.companyWebsite || postUser.website} target="_blank" rel="noopener noreferrer" className={styles.companyWebsite}>
-              🌐 {post.companyWebsite || postUser.website}
-            </a>
-          )}
-          {(post.companyEmail || postUser?.email) && (
-            <a href={`mailto:${post.companyEmail || postUser.email}`} className={styles.companyEmail}>
-              ✉️ {post.companyEmail || postUser.email}
-            </a>
-          )}
-          {/* Assuming business type might be stored in companyIndustry or a new field */}
-          {(post.companyIndustry || postUser?.industry) && (
-            <div className={styles.companyIndustry}>
-              Тип на бизнис: {post.companyIndustry || postUser.industry}
+          {/* Display company logo if available - positioned at the top */}
+          {post.author?.companyInfo?.logoUrl && (
+            <div className={styles.companyLogoContainer}>
+              <img 
+                src={post.author.companyInfo.logoUrl} 
+                alt={`${post.author.companyInfo.companyName || 'Company'} logo`}
+                className={styles.companyLogo}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
             </div>
           )}
-           {/* Display company mission if available */}
-          {(post.companyMission || postUser?.companyMission) && (
+          <div className={styles.companyName}>
+            {/* Use company name from user's companyInfo */}
+            {post.author?.companyInfo?.companyName || 'Анонимен корисник'}
+          </div>
+          {/* Display company address */}
+          {post.author?.companyInfo?.address && (
+            <div className={styles.companyAddress}>
+              📍 {post.author.companyInfo.address}
+            </div>
+          )}
+          {/* Display company website */}
+          {post.author?.companyInfo?.website && (
+            <a href={post.author.companyInfo.website} target="_blank" rel="noopener noreferrer" className={styles.companyWebsite}>
+              🌐 {post.author.companyInfo.website}
+            </a>
+          )}
+          {/* Display company contact email */}
+          {post.author?.companyInfo?.contactEmail && (
+            <a href={`mailto:${post.author.companyInfo.contactEmail}`} className={styles.companyEmail}>
+              ✉️ {post.author.companyInfo.contactEmail}
+            </a>
+          )}
+          {/* Display company industry/business activity if available */}
+          {post.author?.companyInfo?.industry && (
+            <div className={styles.companyIndustry}>
+              📊 {post.author.companyInfo.industry}
+            </div>
+          )}
+          {/* Display company mission if available */}
+          {post.author?.companyInfo?.mission && (
             <div className={styles.companyMission}>
-              {post.companyMission || postUser.companyMission}
+              💼 {post.author.companyInfo.mission}
             </div>
           )}
         </div>
