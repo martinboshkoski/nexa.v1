@@ -284,47 +284,62 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
       {/* Company Information Section - 1/3 of the post */}
       <div className={styles.companySection}> {/* Ensure this class is styled for 1/3 width */}
         <div className={styles.companyDetails}>
-          {/* Display company logo if available - positioned at the top */}
-          {post.author?.companyInfo?.logoUrl && (
-            <div className={styles.companyLogoContainer}>
+          {/* Company Logo - Always show a logo (either the provided one or a placeholder) */}
+          <div className={styles.companyLogoContainer}>
+            {post.author?.companyInfo?.logoUrl ? (
               <img 
                 src={post.author.companyInfo.logoUrl} 
-                alt={`${post.author.companyInfo.companyName || 'Company'} logo`}
+                alt={`${post.author?.companyInfo?.companyName || 'Company'} logo`}
                 className={styles.companyLogo}
                 onError={(e) => {
+                  // If logo fails to load, show the first letter of company name as fallback
                   e.target.style.display = 'none';
+                  const placeholderElement = document.createElement('div');
+                  placeholderElement.className = styles.companyLogoPlaceholder;
+                  placeholderElement.innerText = (post.author?.companyInfo?.companyName || 'C').charAt(0).toUpperCase();
+                  e.target.parentNode.appendChild(placeholderElement);
                 }}
               />
-            </div>
-          )}
+            ) : (
+              <div className={styles.companyLogoPlaceholder}>
+                {(post.author?.companyInfo?.companyName || 'C').charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
+          
           <div className={styles.companyName}>
             {/* Use company name from user's companyInfo */}
             {post.author?.companyInfo?.companyName || 'Анонимен корисник'}
           </div>
+          
           {/* Display company address */}
           {post.author?.companyInfo?.address && (
             <div className={styles.companyAddress}>
               📍 {post.author.companyInfo.address}
             </div>
           )}
+          
           {/* Display company website */}
           {post.author?.companyInfo?.website && (
             <a href={post.author.companyInfo.website} target="_blank" rel="noopener noreferrer" className={styles.companyWebsite}>
               🌐 {post.author.companyInfo.website}
             </a>
           )}
+          
           {/* Display company contact email */}
           {post.author?.companyInfo?.contactEmail && (
             <a href={`mailto:${post.author.companyInfo.contactEmail}`} className={styles.companyEmail}>
               ✉️ {post.author.companyInfo.contactEmail}
             </a>
           )}
+          
           {/* Display company industry/business activity if available */}
           {post.author?.companyInfo?.industry && (
             <div className={styles.companyIndustry}>
               📊 {post.author.companyInfo.industry}
             </div>
           )}
+          
           {/* Display company mission if available */}
           {post.author?.companyInfo?.mission && (
             <div className={styles.companyMission}>

@@ -48,6 +48,8 @@ async function testSocialPostData() {
       console.log('- Contact Email:', samplePost[0].author?.companyInfo?.contactEmail || 'Not available');
       console.log('- Website:', samplePost[0].author?.companyInfo?.website || 'Not available');
       console.log('- Tax Number:', samplePost[0].author?.companyInfo?.taxNumber || 'Not available');
+      console.log('- Mission:', samplePost[0].author?.companyInfo?.mission || 'Not available');
+      console.log('- Logo URL:', samplePost[0].author?.companyInfo?.logoUrl || 'Not available');
     } else {
       console.log('No posts found in database');
     }

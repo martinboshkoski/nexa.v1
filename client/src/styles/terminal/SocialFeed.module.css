@@ -144,23 +144,42 @@
 .companyLogoContainer {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-bottom: 15px;
 }
 
 .companyLogo {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid #e5e7eb;
+  border-radius: 50%; /* Make it circular */
+  border: 2px solid #4b5563;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.companyLogoPlaceholder {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #4b5563;
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
+  border-radius: 50%;
+  border: 2px solid #4b5563;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   background: #f9fafb;
 }
 
 .companyName {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   color: #1f2937;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  text-align: center;
+  width: 100%;
 }
 
 .companyMission {
@@ -174,6 +193,8 @@
 .companyDetails {
   display: flex;
   flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  text-align: center; /* Center text */
   gap: 6px;
 }
 
