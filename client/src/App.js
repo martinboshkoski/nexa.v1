@@ -19,7 +19,7 @@ import LegalScreening from './pages/terminal/LegalScreening';
 import News from './pages/terminal/News';
 import Investments from './pages/terminal/Investments';
 import Contact from './pages/terminal/Contact';
-import Profile from './pages/terminal/Profile';
+import EditProfile from './pages/terminal/EditProfile';
 import AIChat from './pages/terminal/AIChat';
 // import CompleteProfile from './pages/terminal/CompleteProfile';
 import SimpleCompleteProfile from './pages/terminal/SimpleCompleteProfile';
@@ -71,7 +71,7 @@ function App() {
         <Route path="/terminal/news" element={<PrivateRoute><News /></PrivateRoute>} />
         <Route path="/terminal/investments" element={<PrivateRoute><Investments /></PrivateRoute>} />
         <Route path="/terminal/contact" element={<PrivateRoute><Contact /></PrivateRoute>} />
-        <Route path="/terminal/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/terminal/profile" element={<PrivateRoute><EditProfile /></PrivateRoute>} />
         <Route path="/terminal/verification" element={<PrivateRoute><CompanyVerification /></PrivateRoute>} />
         
         {/* Admin Routes */}

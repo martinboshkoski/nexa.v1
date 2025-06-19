@@ -15,6 +15,7 @@ const Sidebar = () => {
     { path: '/terminal/documents', label: 'dashboard.documentGenerator', icon: '📄' },
     { path: '/terminal/legal-screening', label: 'dashboard.legalScreening', icon: '⚖️' },
     { path: '/terminal/ai-chat', label: 'dashboard.nexaAI', icon: '🤖' },
+    { path: '/terminal/profile', label: 'Профил', icon: '👤', noTranslate: true },
     { path: '/terminal/contact', label: 'dashboard.contactUs', icon: '✉️' }
   ];
 
@@ -46,7 +47,7 @@ const Sidebar = () => {
 
         <nav className={styles["dashboard-menu"]}>
           {/* Regular Menu Items */}
-          {regularMenuItems.map(({ path, label, icon }) => (
+          {regularMenuItems.map(({ path, label, icon, noTranslate }) => (
             <Link
               key={path}
               to={path}
@@ -55,7 +56,7 @@ const Sidebar = () => {
               }`}
             >
               <span className={styles["menu-icon"]}>{icon}</span>
-              <h3>{t(label)}</h3>
+              <h3>{noTranslate ? label : t(label)}</h3>
             </Link>
           ))}
 

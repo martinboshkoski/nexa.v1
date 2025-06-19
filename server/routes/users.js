@@ -12,4 +12,7 @@ router.put('/profile', authenticateJWT, userController.updateProfile);
 // Create or update company profile
 router.post('/company', authenticateJWT, userController.createOrUpdateCompany);
 
+// Update company profile
+router.put('/company', authenticateJWT, userController.createOrUpdateCompany);
+
 module.exports = router;
