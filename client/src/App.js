@@ -41,10 +41,6 @@ import AdminVerification from './components/terminal/AdminVerification';
 import PrivateRoute from './components/common/PrivateRoute';
 import AuthCallback from './components/common/AuthCallback';
 
-// Debug Components
-import DebugAuth from './components/DebugAuth';
-import SimpleTest from './components/SimpleTest';
-
 import './styles/global.css';
 
 function App() {
@@ -54,8 +50,6 @@ function App() {
         {/* Public Routes - Only Login */}
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/debug" element={<DebugAuth />} />
-        <Route path="/simple-test" element={<SimpleTest />} />
         {/* <Route path="/complete-profile" element={<CompleteProfile />} /> */}
         <Route path="/auth/success" element={<AuthCallback />} />
 

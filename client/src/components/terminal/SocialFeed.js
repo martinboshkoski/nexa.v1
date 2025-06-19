@@ -268,17 +268,6 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
   const userName = postUser?.name || postUser?.username || 'Анонимен корисник';
   const userAvatar = postUser?.profilePicture || postUser?.avatar || ''; // Default avatar if none
 
-  // Debug: Log the company information to verify data structure
-  console.log('🔍 Social Post Debug - Post ID:', post._id);
-  console.log('🔍 Author CompanyInfo:', post.author?.companyInfo);
-  console.log('🔍 Available company data:', {
-    companyName: post.author?.companyInfo?.companyName,
-    address: post.author?.companyInfo?.address,
-    contactEmail: post.author?.companyInfo?.contactEmail,
-    website: post.author?.companyInfo?.website,
-    taxNumber: post.author?.companyInfo?.taxNumber
-  });
-
   return (
     <div className={styles.postCard}>
       {/* Company Information Section - 1/3 of the post */}
