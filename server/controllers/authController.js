@@ -229,7 +229,6 @@ class AuthController {
   async directLogin(req, res) {
     try {
       const { email, password } = req.body;
-      console.log('Direct login attempt for:', email);
       
       const db = req.app.locals.db;
       if (!db) {
@@ -241,11 +240,8 @@ class AuthController {
       const user = await userService.findByEmail(email);
       
       if (!user) {
-        console.log('User not found:', email);
         return res.status(401).json({ message: 'User not found' });
       }
-
-      console.log('User found:', { email: user.email, hasPassword: !!user.password });
       
       // For admin testing, allow hardcoded bypass
       let isMatch = false;
@@ -254,8 +250,6 @@ class AuthController {
       } else {
         isMatch = await bcrypt.compare(password, user.password);
       }
-      
-      console.log('Password matches:', isMatch);
       
       if (!isMatch) {
         return res.status(401).json({ message: 'Incorrect password' });
@@ -287,20 +281,14 @@ class AuthController {
   // Update user profile
   async updateProfile(req, res) {
     try {
-      console.log('🔍 Profile update request received:');
-      console.log('Request body:', JSON.stringify(req.body, null, 2));
-      
       // Get user ID - handle both req.user.id (from JWT payload) and req.user._id (from database object)
       const userId = req.user.id || req.user._id;
-      console.log('User ID:', userId);
       
       const { 
         email, 
         companyInfo,
         profileComplete
       } = req.body;
-
-      console.log('🏢 CompanyInfo received:', JSON.stringify(companyInfo, null, 2));
 
       const db = req.app.locals.db;
       const userService = new UserService(db);
@@ -343,12 +331,8 @@ class AuthController {
 
       if (typeof profileComplete === 'boolean') updateData.profileComplete = profileComplete;
 
-      console.log('📝 Update data being sent to userService:', JSON.stringify(updateData, null, 2));
-
       // Update user
       const updatedUser = await userService.updateUser(currentUser._id, updateData);
-
-      console.log('✅ User updated successfully. Final companyInfo:', JSON.stringify(updatedUser.companyInfo, null, 2));
 
       res.json({
         message: 'Profile updated successfully',

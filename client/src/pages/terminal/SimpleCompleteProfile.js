@@ -31,7 +31,6 @@ const SimpleCompleteProfile = () => {
         ...prev,
         [name]: value
       };
-      console.log('SimpleCompleteProfile.js - handleInputChange - Step 1: Form data changed', updatedFormData);
       return updatedFormData;
     });
   };
@@ -41,12 +40,10 @@ const SimpleCompleteProfile = () => {
     setError('');
     setSuccess('');
     setLoading(true);
-    console.log('🔍 SimpleCompleteProfile.js - handleSubmit - Form data:', JSON.stringify(formData, null, 2));
 
     try {
       // Update company profile
       const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5002/api';
-      console.log('🔍 Making request to:', `${API_BASE_URL}/users/company`);
       
       const response = await makeAuthenticatedRequest(`${API_BASE_URL}/users/company`, {
         method: 'POST',
@@ -62,9 +59,6 @@ const SimpleCompleteProfile = () => {
         })
       });
       
-      console.log('🔍 Response status:', response.status);
-      console.log('🔍 Response ok:', response.ok);
-      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
         console.error('❌ Company update failed:', errorData);
@@ -72,7 +66,6 @@ const SimpleCompleteProfile = () => {
       }
 
       const companyResult = await response.json();
-      console.log('✅ Company update successful:', companyResult);
 
       // The company endpoint now also updates the user's profileComplete status
       // But let's still make the profile update call for backwards compatibility
@@ -86,9 +79,6 @@ const SimpleCompleteProfile = () => {
       let profileResult = { profileComplete: true };
       if (updateResponse.ok) {
         profileResult = await updateResponse.json();
-        console.log('✅ Profile status update successful:', profileResult);
-      } else {
-        console.log('⚠️ Profile status update failed, but company update succeeded');
       }
 
       setSuccess('Профилот е успешно пополнет!');

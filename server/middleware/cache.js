@@ -15,7 +15,6 @@ const cacheMiddleware = (duration = 300) => {
     const cachedResponse = cache.get(key);
 
     if (cachedResponse) {
-      console.log(`🟢 Cache HIT for ${key}`);
       return res.json(cachedResponse);
     }
 
@@ -25,7 +24,6 @@ const cacheMiddleware = (duration = 300) => {
     // Override json function to cache response
     res.json = function(data) {
       cache.set(key, data, duration);
-      console.log(`🔵 Cache SET for ${key}`);
       return originalJson.call(this, data);
     };
 
@@ -38,7 +36,6 @@ const clearCache = (pattern) => {
   const keys = cache.keys();
   const matchingKeys = keys.filter(key => key.includes(pattern));
   cache.del(matchingKeys);
-  console.log(`🔴 Cache CLEARED for pattern: ${pattern}`);
 };
 
 module.exports = {

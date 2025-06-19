@@ -2,7 +2,6 @@ const passport = require('passport');
 
 // Custom JWT authentication middleware that ensures JSON responses
 const authenticateJWT = (req, res, next) => {
-  console.log('auth.js - authenticateJWT - Step 5: Attempting JWT authentication');
   passport.authenticate('jwt', { session: false }, (err, user, info) => {
     if (err) {
       console.error('auth.js - authenticateJWT - Step 5.1: Authentication error', err);
@@ -22,7 +21,6 @@ const authenticateJWT = (req, res, next) => {
     }
     
     req.user = user;
-    console.log('auth.js - authenticateJWT - Step 5.3: JWT Auth successful, user found:', user._id);
     next();
   })(req, res, next);
 };

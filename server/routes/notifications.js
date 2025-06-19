@@ -24,8 +24,6 @@ const addNotification = (userId, notification) => {
   if (userNotifications.length > 50) {
     userNotifications.splice(50);
   }
-  
-  console.log(`🔔 Notification added for user ${userId}: ${notification.message}`);
 };
 
 // Get user notifications

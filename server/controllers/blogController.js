@@ -41,9 +41,6 @@ class BlogController {
   // Get all blog posts
   async getAllBlogs(req, res) {
     try {
-      console.log('\n=== BLOG FETCH DEBUG ===');
-      console.log('Request query parameters:', req.query);
-      
       const db = req.app.locals.db;
       const blogsCollection = db.collection('blogs');
       
@@ -55,8 +52,6 @@ class BlogController {
       const search = req.query.search;
       // Handle both 'language' and 'lang' parameters for compatibility
       const language = req.query.language || req.query.lang || 'en'; // Default to English
-      
-      console.log('Processing blog request with language:', language);
       
       // Build query
       const query = {};
@@ -85,11 +80,8 @@ class BlogController {
         ];
       }
       
-      console.log('MongoDB query:', JSON.stringify(query, null, 2));
-      
       // Get total count for pagination
       const totalBlogs = await blogsCollection.countDocuments(query);
-      console.log('Total blogs found:', totalBlogs);
       
       // Calculate pagination
       const skip = (page - 1) * limit;
@@ -103,14 +95,6 @@ class BlogController {
         .limit(limit)
         .toArray();
       
-      console.log(`Fetched ${blogs.length} blogs for page ${page}`);
-      console.log('First blog:', blogs[0] ? { 
-        id: blogs[0]._id, 
-        title: blogs[0].title, 
-        language: blogs[0].language,
-        category: blogs[0].category 
-      } : 'None');
-      
       res.json({
         blogs,
         pagination: {
@@ -121,8 +105,6 @@ class BlogController {
           hasPrevPage: page > 1
         }
       });
-      
-      console.log('=== BLOG FETCH COMPLETE ===\n');
     } catch (error) {
       console.error('Error fetching blogs:', error);
       res.status(500).json({ message: 'Server error' });
