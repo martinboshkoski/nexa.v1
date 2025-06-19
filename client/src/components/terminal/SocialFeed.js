@@ -5,7 +5,7 @@ import ApiService from '../../services/api';
 import styles from '../../styles/terminal/SocialFeed.module.css';
 
 const SocialFeed = () => {
-  const { token } = useAuth();
+  const { token, currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,6 +13,9 @@ const SocialFeed = () => {
   const [posting, setPosting] = useState(false);
   const [filter, setFilter] = useState('all');
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Rotating placeholder texts
   const placeholderTexts = [
@@ -109,6 +112,58 @@ const SocialFeed = () => {
     } catch (error) {
       // setError('Настана грешка при додавање на коментарот.'); // Optional: user-facing error
     }
+  };
+
+  // Delete post functions
+  const handleDeletePost = async () => {
+    if (!postToDelete) return;
+
+    try {
+      setDeleting(true);
+      await ApiService.request(`/social/posts/${postToDelete._id}`, {
+        method: 'DELETE',
+      });
+
+      // Remove the deleted post from the posts array
+      setPosts(prevPosts => prevPosts.filter(post => post._id !== postToDelete._id));
+      
+      // Close modal and reset state
+      setDeleteModalOpen(false);
+      setPostToDelete(null);
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      
+      // Handle specific error types
+      if (error.isAuthError || error.status === 401) {
+        setError('Сесијата е истечена. Најавете се повторно.');
+      } else if (error.status === 403) {
+        setError('Немате дозвола да ја избришете оваа објава.');
+      } else {
+        setError('Настана грешка при бришење на објавата. Обидете се повторно.');
+      }
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const openDeleteModal = (post) => {
+    setPostToDelete(post);
+    setDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setPostToDelete(null);
+  };
+
+  // Check if current user can delete the post
+  const canDeletePost = (post) => {
+    if (!currentUser || !post.author) return false;
+    
+    // User can delete their own posts or if they are admin
+    return post.author._id === currentUser._id || 
+           post.author === currentUser._id || 
+           currentUser.isAdmin;
   };
 
   const formatDate = (dateString) => {
@@ -214,16 +269,36 @@ const SocialFeed = () => {
             onComment={handleComment}
             formatDate={formatDate}
             getPostTypeIcon={getPostTypeIcon}
-            currentUser={/* Pass current user if needed for edit/delete, not available from useAuth directly here */ null}
+            currentUser={currentUser}
+            onDelete={openDeleteModal} // Pass delete function
+            canDeletePost={canDeletePost} // Pass delete permission function
           />
         ))}
       </div>
+
+      {/* Delete confirmation modal */}
+      {deleteModalOpen && (
+        <div className={styles.deleteModal}>
+          <div className={styles.modalContent}>
+            <h3>Потврди бришење</h3>
+            <p>Дали сте сигурни дека сакате да ја избришете оваа објава?</p>
+            <div className={styles.modalActions}>
+              <button onClick={closeDeleteModal} className={styles.cancelButton}>
+                Откажи
+              </button>
+              <button onClick={handleDeletePost} className={styles.confirmButton} disabled={deleting}>
+                {deleting ? 'Бришење...' : 'Да, избриши'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 // Individual Post Component
-const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, currentUser }) => { // Removed onLike
+const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, currentUser, onDelete, canDeletePost }) => { // Removed onLike
   const [showComments, setShowComments] = useState(false);
   const [commentContent, setCommentContent] = useState('');
   const [linkPreview, setLinkPreview] = useState(null);
@@ -352,9 +427,20 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
               <div className={styles.postTime}>{formatDate(post.createdAt)}</div>
             </div>
           </div>
-          <div className={styles.postTypeInfo}>
-            <span className={styles.postTypeIcon}>{getPostTypeIcon(post.postType)}</span>
-            <span className={styles.postTypeLabel}>{getPostTypeLabel(post.postType)}</span>
+          <div className={styles.postHeaderRight}>
+            <div className={styles.postTypeInfo}>
+              <span className={styles.postTypeIcon}>{getPostTypeIcon(post.postType)}</span>
+              <span className={styles.postTypeLabel}>{getPostTypeLabel(post.postType)}</span>
+            </div>
+            {canDeletePost(post) && (
+              <button 
+                onClick={() => onDelete(post)} 
+                className={styles.deleteButton}
+                title="Избриши објава"
+              >
+                🗑️
+              </button>
+            )}
           </div>
         </div>
 
@@ -381,6 +467,12 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
             <span role="img" aria-label="comment">💬</span> 
             <span>Коментари ({post.comments?.length || 0})</span>
           </button>
+          {canDeletePost(post) && ( // Show delete button only for post owner or admin
+            <button onClick={() => onDelete(post)} className={styles.actionButton}>
+              <span role="img" aria-label="delete">🗑️</span> 
+              <span>Избриши</span>
+            </button>
+          )}
         </div>
 
         {showComments && (

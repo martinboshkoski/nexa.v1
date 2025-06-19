@@ -249,6 +249,12 @@
   margin-bottom: 15px;
 }
 
+.postHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .postTypeInfo {
   display: flex;
   align-items: center;
@@ -477,6 +483,148 @@
 .comment small {
   font-size: 12px;
   color: #9ca3af;
+}
+
+/* Delete Button and Confirmation Modal */
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  opacity: 0.6;
+}
+
+.deleteButton:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.deleteButton:active {
+  transform: scale(0.95);
+}
+
+/* Delete confirmation modal */
+.deleteModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modalContent {
+  background: var(--color-white);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalSlideIn 0.2s ease-out;
+}
+
+.modalContent h3 {
+  margin: 0 0 12px 0;
+  color: var(--color-text-primary);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modalContent p {
+  margin: 0 0 20px 0;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancelButton {
+  padding: 8px 16px;
+  border: 1px solid var(--color-neutral-300);
+  background: var(--color-white);
+  color: var(--color-text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.cancelButton:hover {
+  background: var(--color-neutral-50);
+  border-color: var(--color-neutral-400);
+}
+
+.confirmButton {
+  padding: 8px 16px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.confirmButton:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+.confirmButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Dark mode support for modal */
+[data-theme="dark"] .modalContent {
+  background: var(--color-neutral-800);
+  color: var(--color-white);
+}
+
+[data-theme="dark"] .modalContent h3 {
+  color: var(--color-white);
+}
+
+[data-theme="dark"] .modalContent p {
+  color: var(--color-neutral-300);
+}
+
+[data-theme="dark"] .cancelButton {
+  background: var(--color-neutral-700);
+  border-color: var(--color-neutral-600);
+  color: var(--color-white);
+}
+
+[data-theme="dark"] .cancelButton:hover {
+  background: var(--color-neutral-600);
+  border-color: var(--color-neutral-500);
 }
 
 /* Responsive Design */
