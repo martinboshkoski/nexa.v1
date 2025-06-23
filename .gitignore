@@ -72,3 +72,17 @@ test-cookies.txt
 
 # Vercel
 .vercel
+
+# Debug and test files
+**/debug-*.js
+**/test-*.js
+**/create-test-*.js
+**/check-*.js
+**/monitor-*.js
+**/force-*.js
+**/*.backup
+**/DebugAuth.js
+**/SimpleTest.js
+
+# Blog directory (separate deployment)
+blog/

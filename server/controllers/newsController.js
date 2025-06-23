@@ -2,6 +2,7 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs').promises;
+const axios = require('axios');
 
 class NewsController {
   constructor() {
@@ -35,6 +36,60 @@ class NewsController {
     this.deleteNews = this.deleteNews.bind(this);
     this.uploadImage = this.uploadImage.bind(this);
     this.getCategories = this.getCategories.bind(this);
+    this.sendToBlogAPI = this.sendToBlogAPI.bind(this);
+  }
+
+  // Helper method to send blog post to Next.js blog API
+  async sendToBlogAPI(newsData) {
+    try {
+      const BLOG_API_URL = process.env.BLOG_API_URL || 'http://localhost:3001/api/blog';
+      const BLOG_API_KEY = process.env.BLOG_API_KEY || 'nexa-blog-api-key-2025';
+      
+      // Create a slug from the title
+      const slug = newsData.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/-+/g, '-') // Replace multiple hyphens with single
+        .trim();
+      
+      // Create excerpt (approximately 30% of content)
+      const contentLength = newsData.content.length;
+      const excerptLength = Math.floor(contentLength * 0.3);
+      const excerpt = newsData.content.substring(0, excerptLength) + '...';
+      
+      // Prepare blog post data
+      const blogPostData = {
+        title: newsData.title,
+        slug: slug,
+        excerpt: excerpt,
+        image: newsData.featuredImage || 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&h=630&fit=crop',
+        meta: {
+          description: newsData.excerpt || excerpt,
+          keywords: [newsData.category, 'nexa', 'legal', 'business', 'news'].filter(Boolean)
+        },
+        publishedAt: newsData.createdAt.toISOString()
+      };
+      
+      console.log('📤 Sending blog post to Next.js API:', blogPostData.title);
+      
+      // Send to blog API
+      const response = await axios.post(BLOG_API_URL, blogPostData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': BLOG_API_KEY
+        },
+        timeout: 10000 // 10 second timeout
+      });
+      
+      console.log('✅ Blog post sent successfully:', response.data);
+      return response.data;
+      
+    } catch (error) {
+      console.error('❌ Error sending to blog API:', error.message);
+      // Don't throw error - blog API failure shouldn't break news creation
+      return null;
+    }
   }
 
   // Get all news with filtering and pagination
@@ -176,12 +231,60 @@ class NewsController {
         views: 0
       };
 
-      // Insert news
+      // Insert news into Terminal database
       await newsCollection.insertOne(newNews);
+
+      // Also save to blogs collection for the Next.js blog
+      const blogsCollection = db.collection('blogs');
+      
+      // Create blog post data
+      const slug = newNews.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/-+/g, '-') // Replace multiple hyphens with single
+        .trim();
+      
+      const blogPost = {
+        _id: uuidv4(),
+        title: newNews.title,
+        slug: slug,
+        excerpt: newNews.excerpt,
+        content: newNews.content, // Store full content for the blog
+        image: newNews.featuredImage || 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&h=630&fit=crop',
+        meta: {
+          description: newNews.excerpt,
+          keywords: [newNews.category, 'nexa', 'legal', 'business', 'news'].filter(Boolean)
+        },
+        publishedAt: newNews.createdAt.toISOString(),
+        status: newNews.status,
+        author: newNews.author,
+        createdAt: newNews.createdAt,
+        updatedAt: newNews.updatedAt
+      };
+
+      // Insert blog post if published
+      if (status === 'published') {
+        await blogsCollection.insertOne(blogPost);
+        console.log('✅ Blog post saved to blogs collection');
+      }
+
+      // Send to blog API (Next.js) - only if status is published
+      if (status === 'published') {
+        console.log('📨 Sending news to blog API...');
+        const blogResult = await this.sendToBlogAPI(newNews);
+        
+        if (blogResult) {
+          console.log('✅ News successfully sent to blog');
+        } else {
+          console.log('⚠️ Failed to send to blog, but news created in Terminal');
+        }
+      }
 
       res.status(201).json({
         message: 'News article created successfully',
-        news: newNews
+        news: newNews,
+        blogSync: status === 'published' ? 'attempted' : 'skipped'
       });
     } catch (error) {
       console.error('Error creating news:', error);
@@ -206,6 +309,7 @@ class NewsController {
 
       const db = req.app.locals.db;
       const newsCollection = db.collection('news');
+      const blogsCollection = db.collection('blogs');
 
       const result = await newsCollection.findOneAndUpdate(
         { _id: id },
@@ -217,9 +321,67 @@ class NewsController {
         return res.status(404).json({ message: 'News article not found' });
       }
 
+      // Update or create in blogs collection if published
+      if (result.value.status === 'published') {
+        const slug = result.value.title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim();
+        
+        const blogPost = {
+          title: result.value.title,
+          slug: slug,
+          excerpt: result.value.excerpt,
+          content: result.value.content,
+          image: result.value.featuredImage || 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&h=630&fit=crop',
+          meta: {
+            description: result.value.excerpt,
+            keywords: [result.value.category, 'nexa', 'legal', 'business', 'news'].filter(Boolean)
+          },
+          publishedAt: result.value.createdAt.toISOString(),
+          status: result.value.status,
+          author: result.value.author,
+          updatedAt: result.value.updatedAt
+        };
+
+        // Update or insert the blog post
+        await blogsCollection.findOneAndUpdate(
+          { slug: slug },
+          { $set: blogPost },
+          { upsert: true, returnDocument: 'after' }
+        );
+        console.log('✅ Blog post updated in blogs collection');
+      } else {
+        // Remove from blogs collection if unpublished
+        const slug = result.value.title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim();
+        
+        await blogsCollection.deleteOne({ slug: slug });
+        console.log('🗑️ Blog post removed from blogs collection (unpublished)');
+      }
+
+      // Send updated news to blog API if status is published
+      if (result.value.status === 'published') {
+        console.log('📨 Updating news in blog API...');
+        const blogResult = await this.sendToBlogAPI(result.value);
+        
+        if (blogResult) {
+          console.log('✅ News successfully updated in blog');
+        } else {
+          console.log('⚠️ Failed to update blog, but news updated in Terminal');
+        }
+      }
+
       res.json({
         message: 'News article updated successfully',
-        news: result.value
+        news: result.value,
+        blogSync: result.value.status === 'published' ? 'attempted' : 'skipped'
       });
     } catch (error) {
       console.error('Error updating news:', error);
