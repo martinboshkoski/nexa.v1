@@ -96,13 +96,17 @@ class UserService {
       throw new Error('Invalid user ID');
     }
 
+    console.log('🔄 UserService updateUser called with ID:', id);
+
     const updateDoc = { updatedAt: new Date() };
 
     // Handle nested companyInfo update properly
     if (updateData.companyInfo) {
+      console.log('🏢 Processing companyInfo update');
       // Get current user to merge with existing companyInfo
       const currentUser = await this.findById(id);
       if (currentUser) {
+        console.log('👤 Current user found, merging companyInfo');
         // Merge existing companyInfo with new values, ensuring all fields are preserved
         const mergedCompanyInfo = {
           companyName: '',
@@ -124,6 +128,7 @@ class UserService {
         
         updateDoc.companyInfo = mergedCompanyInfo;
       } else {
+        console.log('❌ Current user not found, using updateData directly');
         updateDoc.companyInfo = updateData.companyInfo;
       }
     }
@@ -131,15 +136,24 @@ class UserService {
     // Handle other fields normally
     Object.keys(updateData).forEach(key => {
       if (key !== 'companyInfo') {
-        updateDoc[key] = updateData[key];
+        // Handle email field specially to ensure proper format
+        if (key === 'email') {
+          updateDoc[key] = updateData[key] ? updateData[key].toLowerCase().trim() : updateData[key];
+        } else {
+          updateDoc[key] = updateData[key];
+        }
       }
     });
+
+    console.log('📤 Final update document keys:', Object.keys(updateDoc));
 
     const result = await this.collection.findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: updateDoc },
       { returnDocument: 'after' }
     );
+
+    console.log('✅ MongoDB update result:', result.value ? 'Success' : 'Failed');
 
     return result.value;
   }

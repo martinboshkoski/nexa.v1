@@ -102,25 +102,31 @@ const EditProfile = () => {
       const companyInfo = { ...formData };
       delete companyInfo.email; // Remove email from company info
 
+      console.log('Sending company update:', companyInfo);
+
       // Update company profile
       const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5002/api';
       
       const response = await ApiService.request(`/users/company`, {
-        method: 'PUT',
+        method: 'POST', // Use POST as that's what the backend expects
         body: JSON.stringify({
           ...companyInfo
         }),
       });
 
+      console.log('Company update response:', response);
+
       if (response) {
         // Also update email if changed
         if (formData.email !== currentUser.email) {
+          console.log('Updating email from', currentUser.email, 'to', formData.email);
           const profileResponse = await ApiService.request(`/users/profile`, {
             method: 'PUT',
             body: JSON.stringify({
               email: formData.email
             }),
           });
+          console.log('Profile update response:', profileResponse);
         }
 
         setSuccess('Профилот е успешно ажуриран!');
@@ -132,11 +138,22 @@ const EditProfile = () => {
       }
     } catch (error) {
       console.error('Error updating profile:', error);
+      console.error('Error details:', {
+        message: error.message,
+        status: error.status,
+        isAuthError: error.isAuthError
+      });
       
       if (error.isAuthError || error.status === 401) {
         setError('Сесијата е истечена. Најавете се повторно.');
+      } else if (error.status === 400) {
+        setError('Невалидни податоци. Проверете ги внесените информации.');
+      } else if (error.status === 403) {
+        setError('Немате дозвола за ова дејство.');
+      } else if (error.status === 500) {
+        setError('Серверска грешка. Обидете се повторно подоцна.');
       } else {
-        setError('Настана грешка при ажурирање на профилот. Обидете се повторно.');
+        setError(`Настана грешка при ажурирање на профилот: ${error.message || 'Непозната грешка'}`);
       }
     } finally {
       setSaving(false);

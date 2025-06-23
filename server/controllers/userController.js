@@ -15,11 +15,14 @@ class UserController {
       const userService = new UserService(db);
       const companiesCollection = db.collection('companies');
       
+      // Ensure user ID is properly formatted
+      const userId = req.user._id.toString ? req.user._id : req.user._id;
+      
       // Get user profile
-      const user = await userService.findById(req.user._id);
+      const user = await userService.findById(userId);
       
       // Get company profile if exists
-      const company = await companiesCollection.findOne({ userId: req.user._id });
+      const company = await companiesCollection.findOne({ userId: userId });
       
       res.json({
         user: userService.sanitizeUser(user),
@@ -35,6 +38,8 @@ class UserController {
   async updateProfile(req, res) {
     try {
       const { 
+        // Direct user fields
+        email,
         // Company Info fields from req.body
         companyName, 
         mission, 
@@ -54,8 +59,18 @@ class UserController {
       const db = req.app.locals.db;
       const userService = new UserService(db);
       
+      // Ensure user ID is properly formatted
+      const userId = req.user._id.toString ? req.user._id : req.user._id;
+      console.log('🔧 Profile update - Processed user ID:', userId);
+      console.log('📧 Email update requested:', email);
+      
       // Prepare update data for user's direct fields
       const updateData = {};
+      
+      // Handle email update if provided
+      if (email !== undefined) {
+        updateData.email = email;
+      }
 
       // Prepare companyInfo update
       const companyInfoUpdate = {};
@@ -86,11 +101,13 @@ class UserController {
         updateData.profileComplete = profileComplete;
       }
       
+      console.log('📤 Profile update data:', updateData);
+      
       // Update user profile
-      const result = await userService.updateUser(req.user._id, updateData);
+      const result = await userService.updateUser(userId, updateData);
       
       // Fetch the updated user to send back
-      const updatedUser = await userService.findById(req.user._id);
+      const updatedUser = await userService.findById(userId);
       
       res.json({ 
         message: 'Profile updated successfully',
@@ -105,70 +122,112 @@ class UserController {
   // Create or update company profile (separate companies collection)
   async createOrUpdateCompany(req, res) {
     try {
-      const { companyName, companyAddress, taxNumber, businessActivity, email, website, mission, logoUrl } = req.body;
+      const { 
+        companyName, 
+        address,
+        taxNumber, 
+        industry,
+        contactEmail,
+        website, 
+        mission, 
+        logoUrl,
+        role,
+        description,
+        crnNumber,
+        phone,
+        companyPIN,
+        companySize
+      } = req.body;
+      
       const db = req.app.locals.db;
       const userService = new UserService(db);
       const companiesCollection = db.collection('companies');
       
-      // Validate required fields
-      if (!companyName || !companyAddress || !taxNumber) {
-        return res.status(400).json({ message: 'Missing required fields: companyName, companyAddress, and taxNumber are required' });
+      // Ensure user ID is properly formatted
+      const userId = req.user._id;
+      
+      // Validate required fields - make companyName the only required field
+      if (!companyName) {
+        return res.status(400).json({ message: 'Company name is required' });
       }
       
-      // Check if company profile already exists
-      const existingCompany = await companiesCollection.findOne({ userId: req.user._id });
+      console.log('👤 Updating profile for user ID:', req.user._id);
+      console.log('📊 Company data received:', { companyName, industry, address });
       
-      // Prepare data for companies collection
+      // Check if company profile already exists
+      const existingCompany = await companiesCollection.findOne({ userId: userId });
+      
+      // Prepare data for companies collection (backward compatibility)
       const companyData = {
         companyName,
-        companyAddress,
-        taxNumber,
-        businessActivity: businessActivity || 'General Business', // Provide default if not provided
+        companyAddress: address || '', // Map address to companyAddress for backward compatibility
+        taxNumber: taxNumber || '',
+        businessActivity: industry || '', // Map industry to businessActivity
         updatedAt: new Date()
       };
       
       // Add optional fields if provided
-      if (email) companyData.email = email;
+      if (contactEmail) companyData.email = contactEmail;
       if (website) companyData.website = website;
       if (mission) companyData.mission = mission;
       if (logoUrl) companyData.logoUrl = logoUrl;
 
-      // Prepare data for User.companyInfo (this is the crucial part for your issue)
+      // Prepare comprehensive data for User.companyInfo
       const userCompanyInfoUpdate = {
-        companyName: companyName,
-        address: companyAddress, // Map companyAddress from form to address in User.companyInfo
-        taxNumber: taxNumber,
-        contactEmail: email || '',     // Map email from form to contactEmail in User.companyInfo
+        companyName: companyName || '',
+        address: address || '',
+        taxNumber: taxNumber || '',
+        contactEmail: contactEmail || '',
         website: website || '',
         mission: mission || '',
-        logoUrl: logoUrl || ''
+        logoUrl: logoUrl || '',
+        role: role || '',
+        description: description || '',
+        crnNumber: crnNumber || '',
+        phone: phone || '',
+        companyPIN: companyPIN || '',
+        industry: industry || '',
+        companySize: companySize || ''
       };
 
       // Get current user to see existing data
-      const currentUser = await userService.findById(req.user._id);
+      const currentUser = await userService.findById(userId);
+      
+      console.log('🔍 Current user found:', currentUser ? 'Yes' : 'No');
+      if (!currentUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
 
       const userUpdatePayload = {
         profileComplete: true,
         companyInfo: userCompanyInfoUpdate
       };
       
+      console.log('📤 User update payload:', userUpdatePayload);
+      
       // Update or create company in companies collection
       if (existingCompany) {
+        console.log('🔄 Updating existing company in companies collection');
         await companiesCollection.updateOne(
-          { userId: req.user._id },
+          { userId: userId },
           { $set: companyData }
         );
       } else {
-        companyData.userId = req.user._id;
+        console.log('✨ Creating new company in companies collection');
+        companyData.userId = userId;
         companyData.createdAt = new Date();
         await companiesCollection.insertOne(companyData);
       }
       
       // CRITICAL: Update user's companyInfo and profileComplete status
-      const userUpdateResult = await userService.updateUser(req.user._id, userUpdatePayload);
+      console.log('🔄 Updating user companyInfo...');
+      const userUpdateResult = await userService.updateUser(userId, userUpdatePayload);
+      console.log('✅ User update result:', userUpdateResult ? 'Success' : 'Failed');
       
       // Verify the update by fetching the user again
-      const updatedUser = await userService.findById(req.user._id);
+      const updatedUser = await userService.findById(userId);
+      console.log('🔍 Updated user companyInfo:', updatedUser?.companyInfo);
+      console.log('📊 Updated user profileComplete:', updatedUser?.profileComplete);
       
       res.json({ 
         message: 'Company profile saved successfully',
