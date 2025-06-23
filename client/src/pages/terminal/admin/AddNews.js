@@ -15,9 +15,14 @@ const AddNews = () => {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    image: null,
-    category: 'general'
+    excerpt: '',
+    category: 'general',
+    language: 'mk',
+    featuredImage: '',
+    status: 'published',
+    priority: 'normal'
   });
+  const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -29,7 +34,7 @@ const AddNews = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setFormData(prev => ({ ...prev, image: file }));
+    setImageFile(file);
   };
 
   const handleSubmit = async (e) => {
@@ -39,12 +44,56 @@ const AddNews = () => {
     setSuccess('');
 
     try {
-      const formDataToSend = new FormData();
-      Object.keys(formData).forEach(key => {
-        formDataToSend.append(key, formData[key]);
-      });
+      let featuredImageUrl = formData.featuredImage;
 
-      // Get CSRF token
+      // Upload image if file is selected
+      if (imageFile) {
+        const imageFormData = new FormData();
+        imageFormData.append('image', imageFile);
+
+        // Get CSRF token for image upload
+        let csrfToken;
+        try {
+          const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
+            credentials: 'include'
+          });
+          if (csrfResponse.ok) {
+            const csrfData = await csrfResponse.json();
+            csrfToken = csrfData.csrfToken;
+          }
+        } catch (error) {
+          console.warn('Failed to fetch CSRF token:', error);
+        }
+
+        const imageResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/news/upload`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+          },
+          credentials: 'include',
+          body: imageFormData
+        });
+
+        if (imageResponse.ok) {
+          const imageData = await imageResponse.json();
+          featuredImageUrl = imageData.imageUrl;
+        }
+      }
+
+      // Prepare news data
+      const newsData = {
+        title: formData.title,
+        content: formData.content,
+        excerpt: formData.excerpt || formData.content.substring(0, 200) + '...',
+        category: formData.category,
+        language: formData.language,
+        featuredImage: featuredImageUrl,
+        status: formData.status,
+        priority: formData.priority
+      };
+
+      // Get CSRF token for news creation
       let csrfToken;
       try {
         const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/csrf-token`, {
@@ -61,11 +110,12 @@ const AddNews = () => {
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/news`, {
         method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
           ...(csrfToken && { 'X-CSRF-Token': csrfToken })
         },
         credentials: 'include',
-        body: formDataToSend
+        body: JSON.stringify(newsData)
       });
 
       if (!response.ok) {
@@ -73,20 +123,28 @@ const AddNews = () => {
         throw new Error(errorText || 'Грешка при додавање на веста.');
       }
 
-      setSuccess('Веста е успешно додадена.');
+      const result = await response.json();
+      console.log('News created:', result);
+
+      setSuccess('Веста е успешно додадена и испратена кон блогот!');
       setFormData({
         title: '',
         content: '',
-        image: null,
-        category: 'general'
+        excerpt: '',
+        category: 'general',
+        language: 'mk',
+        featuredImage: '',
+        status: 'published',
+        priority: 'normal'
       });
+      setImageFile(null);
       
       const fileInput = document.querySelector('input[type="file"]');
       if (fileInput) fileInput.value = '';
 
       setTimeout(() => {
         navigate('/terminal/news');
-      }, 2000);
+      }, 3000);
     } catch (err) {
       setError(err.message || 'Грешка при додавање на веста.');
     } finally {
@@ -98,7 +156,19 @@ const AddNews = () => {
     { value: 'general', label: 'Општо' },
     { value: 'business', label: 'Бизнис' },
     { value: 'technology', label: 'Технологија' },
-    { value: 'economy', label: 'Економија' }
+    { value: 'economy', label: 'Економија' },
+    { value: 'legal', label: 'Правни прашања' },
+    { value: 'finance', label: 'Финансии' }
+  ];
+
+  const languages = [
+    { value: 'mk', label: 'Македонски' },
+    { value: 'en', label: 'English' }
+  ];
+
+  const statuses = [
+    { value: 'published', label: 'Објавено' },
+    { value: 'draft', label: 'Нацрт' }
   ];
 
   return (
@@ -127,23 +197,71 @@ const AddNews = () => {
             onChange={handleInputChange}
             required
             className={styles.input}
+            placeholder="Внесете наслов на веста"
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="category">Категорија*</label>
-          <select
-            id="category"
-            name="category"
-            value={formData.category}
+          <label htmlFor="excerpt">Краток опис</label>
+          <textarea
+            id="excerpt"
+            name="excerpt"
+            value={formData.excerpt}
             onChange={handleInputChange}
-            required
-            className={styles.select}
-          >
-            {categories.map(({ value, label }) => (
-              <option key={value} value={value}>{label}</option>
-            ))}
-          </select>
+            className={styles.textarea}
+            rows="3"
+            placeholder="Краток опис што ќе се прикаже како превју (ако е празно, автоматски ќе се генерира)"
+          />
+        </div>
+
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
+            <label htmlFor="category">Категорија*</label>
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              required
+              className={styles.select}
+            >
+              {categories.map(({ value, label }) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="language">Јазик*</label>
+            <select
+              id="language"
+              name="language"
+              value={formData.language}
+              onChange={handleInputChange}
+              required
+              className={styles.select}
+            >
+              {languages.map(({ value, label }) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="status">Статус*</label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleInputChange}
+              required
+              className={styles.select}
+            >
+              {statuses.map(({ value, label }) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className={styles.formGroup}>
@@ -155,13 +273,26 @@ const AddNews = () => {
             onChange={handleInputChange}
             required
             className={styles.textarea}
-            rows="10"
+            rows="12"
             placeholder="Внесете ја содржината на веста овде..."
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="image">Слика</label>
+          <label htmlFor="featuredImage">URL на слика</label>
+          <input
+            type="url"
+            id="featuredImage"
+            name="featuredImage"
+            value={formData.featuredImage}
+            onChange={handleInputChange}
+            className={styles.input}
+            placeholder="https://example.com/image.jpg (опционално)"
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="image">Или прикачете слика</label>
           <input
             type="file"
             id="image"
@@ -170,6 +301,7 @@ const AddNews = () => {
             accept="image/*"
             className={styles.fileInput}
           />
+          <small className={styles.helpText}>JPEG, PNG или WebP до 5MB</small>
         </div>
 
         <div className={styles.buttonGroup}>
