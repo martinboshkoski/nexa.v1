@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import DocumentStepProgress from './DocumentStepProgress';
 import DocumentPreview from './DocumentPreview';
-import styles from '../../../styles/terminal/documents/DocumentStepForm.module.css';
+import styles from '../../../styles/terminal/documents/DocumentGeneration.module.css';
 
 const DocumentStepForm = ({ template, categoryColor, onSuccess, onError }) => {
   const { currentUser } = useAuth();

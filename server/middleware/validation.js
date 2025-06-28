@@ -28,6 +28,21 @@ const schemas = {
     category: Joi.string().min(1).max(100).required().trim()
   }).unknown(true), // Allow additional fields for form data
 
+  // Consent for Personal Data Processing document validation
+  consentPersonalDataProcessing: Joi.object({
+    formData: Joi.object({
+      employeeName: Joi.string().min(1).max(200).required().trim(),
+      employeeAddress: Joi.string().min(1).max(500).required().trim(),
+      employeeWorkPosition: Joi.string().min(1).max(200).required().trim(),
+      // Optional fields that might be added later
+      processingPurposes: Joi.string().allow('').trim(),
+      dataTypes: Joi.string().allow('').trim(),
+      legalBasis: Joi.string().allow('').trim(),
+      retentionPeriod: Joi.string().allow('').trim(),
+      dataSubjectRights: Joi.string().allow('').trim()
+    }).required()
+  }),
+
   // Company verification validation
   companyVerification: Joi.object({
     companyName: Joi.string().min(1).max(200).required().trim(),

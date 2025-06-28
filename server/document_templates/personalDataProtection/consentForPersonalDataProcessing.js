@@ -1,135 +1,140 @@
-const { Document, Packer, Paragraph, TextRun, HeadingLevel } = require('docx');
+const { Document, Paragraph, TextRun } = require('docx');
 
 // Simple date formatting function
-const formatDate = (date, format) => {
+const formatDate = (date) => {
     const d = new Date(date);
-    if (format === 'dd.MM.yyyy') {
-        return d.toLocaleDateString('mk-MK');
-    } else if (format === 'yyyyMMdd') {
-        return d.toISOString().slice(0, 10).replace(/-/g, '');
-    }
     return d.toLocaleDateString('mk-MK');
 };
 
 function generateConsentForPersonalDataProcessingDoc(formData, user, company) {
-    const {
-        dataSubjectName = '[Име и презиме на субјектот]',
-        processingPurposes = '[Цели на обработка]',
-        dataCategories = '[Категории на лични податоци]',
-        consentDate = new Date(),
-        // ... other relevant fields from formData
-    } = formData;
-
+    // Get data with fallbacks
     const companyName = company?.name || '[Име на компанија]';
     const companyAddress = company?.address || '[Адреса на компанија]';
+    const employeeName = formData.employeeName || '[Име и презиме]';
+    const employeeAddress = formData.employeeAddress || '[Адреса]';
+    const employeePosition = formData.employeeWorkPosition || '[Позиција]';
+    const currentDate = formatDate(new Date());
 
+    // Create the simplest possible document with minimal formatting
     const doc = new Document({
-        creator: "Nexa Platform",
-        title: "Согласност за обработка на лични податоци",
-        description: "Согласност за обработка на лични податоци генерирана од Nexa Platform",
         sections: [{
-            properties: {},
             children: [
+                // Title - just text, no special formatting
                 new Paragraph({
                     children: [
-                        new TextRun({
-                            text: "СОГЛАСНОСТ ЗА ОБРАБОТКА НА ЛИЧНИ ПОДАТОЦИ",
-                            bold: true,
-                        }),
-                    ],
-                    heading: HeadingLevel.TITLE,
-                    alignment: 'center',
-                    spacing: { after: 200 },
+                        new TextRun("СОГЛАСНОСТ ЗА ОБРАБОТКА НА ЛИЧНИ ПОДАТОЦИ")
+                    ]
                 }),
+                
+                // Empty line
+                new Paragraph({
+                    children: [new TextRun("")]
+                }),
+                
+                // Company info
                 new Paragraph({
                     children: [
-                        new TextRun({
-                            text: `Контролор на збирката на лични податоци: ${companyName}, со седиште на ${companyAddress}.`,
-                        }),
-                    ],
-                    spacing: { after: 100 },
+                        new TextRun(`Контролор на збирката на лични податоци: ${companyName}, со седиште на ${companyAddress}.`)
+                    ]
                 }),
+                
+                // Empty line
+                new Paragraph({
+                    children: [new TextRun("")]
+                }),
+                
+                // Employee statement
                 new Paragraph({
                     children: [
-                        new TextRun({
-                            text: `Јас, долупотпишаниот(ата) ${dataSubjectName}, изјавувам дека сум согласен(а) моите лични податоци да се обработуваат од страна на ${companyName} за следните цели:`,
-                        }),
-                    ],
-                    spacing: { after: 100 },
+                        new TextRun(`Јас, долупотпишаниот(ата) ${employeeName}, со адреса ${employeeAddress}, на позицијата ${employeePosition}, изјавувам дека сум согласен(а) моите лични податоци да се обработуваат од страна на ${companyName} за следните цели:`)
+                    ]
                 }),
+                
+                // Empty line
+                new Paragraph({
+                    children: [new TextRun("")]
+                }),
+                
+                // Processing purposes
                 new Paragraph({
                     children: [
-                        new TextRun({
-                            text: processingPurposes,
-                        }),
-                    ],
-                    bullet: { level: 0 },
-                    spacing: { after: 100 },
+                        new TextRun("Цели на обработка: Администрирање на вработените, водење на персонална евиденција, исполнување на законските обврски")
+                    ]
                 }),
+                
+                // Data types
                 new Paragraph({
                     children: [
-                        new TextRun({
-                            text: "За горенаведените цели, Контролорот ќе ги обработува следните категории на мои лични податоци:",
-                        }),
-                    ],
-                    spacing: { after: 100 },
+                        new TextRun("Категории на лични податоци: Име и презиме, адреса, контакт телефон, е-маил адреса, позиција на работа")
+                    ]
                 }),
+                
+                // Legal basis
                 new Paragraph({
                     children: [
-                        new TextRun({
-                            text: dataCategories,
-                        }),
-                    ],
-                    bullet: { level: 0 },
-                    spacing: { after: 100 },
+                        new TextRun("Правен основ: Согласност на субјектот на лични податоци согласно член 6(1)(а) од GDPR")
+                    ]
                 }),
+                
+                // Retention period
                 new Paragraph({
                     children: [
-                        new TextRun({
-                            text: "Изјавувам дека сум запознаен(а) со моите права во однос на заштитата на личните податоци, вклучувајќи го правото на пристап, исправка, бришење, ограничување на обработката, право на преносливост на податоците и право на приговор, како и правото да ја повлечам оваа согласност во секое време.",
-                        }),
-                    ],
-                    spacing: { after: 200 },
+                        new TextRun("Рок на чување: 5 години по престанок на работниот однос")
+                    ]
                 }),
+                
+                // Empty line
+                new Paragraph({
+                    children: [new TextRun("")]
+                }),
+                
+                // Rights information
                 new Paragraph({
                     children: [
-                        new TextRun({
-                            text: `Датум: ${formatDate(consentDate, 'dd.MM.yyyy')}`, // Assuming formatDate utility
-                        }),
-                    ],
-                    spacing: { after: 100 },
+                        new TextRun("Изјавувам дека сум запознаен(а) со моите права во однос на заштитата на личните податоци, вклучувајќи го правото на пристап, исправка, бришење, ограничување на обработката, право на преносливост на податоците и право на приговор, како и правото да ја повлечам оваа согласност во секое време.")
+                    ]
                 }),
+                
+                // Empty line
+                new Paragraph({
+                    children: [new TextRun("")]
+                }),
+                
+                // Date
                 new Paragraph({
                     children: [
-                        new TextRun({
-                            text: "Субјект на лични податоци,",
-                        }),
-                    ],
-                    spacing: { after: 0 },
+                        new TextRun(`Датум: ${currentDate}`)
+                    ]
                 }),
+                
+                // Empty line
                 new Paragraph({
-                    children: [
-                        new TextRun({
-                            text: "___________________________",
-                        }),
-                    ],
-                    spacing: { after: 0 },
+                    children: [new TextRun("")]
                 }),
+                
+                // Signature section
                 new Paragraph({
-                    children: [
-                        new TextRun({
-                            text: `(${dataSubjectName})`,
-                        }),
-                    ],
-                    spacing: { after: 200 },
+                    children: [new TextRun("Субјект на лични податоци:")]
                 }),
-            ],
-        }],
+                
+                new Paragraph({
+                    children: [new TextRun("")]
+                }),
+                
+                new Paragraph({
+                    children: [new TextRun("___________________________")]
+                }),
+                
+                new Paragraph({
+                    children: [new TextRun(`(${employeeName})`)]
+                }),
+            ]
+        }]
     });
 
     return {
         doc,
-        filenameSuffix: `Soglasnost_obrabotka_LP_${dataSubjectName.replace(/\s+/g, '_')}_${formatDate(consentDate, 'yyyyMMdd')}`
+        filenameSuffix: `Soglasnost_obrabotka_LP_${employeeName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10).replace(/-/g, '')}`
     };
 }
 

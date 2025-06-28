@@ -6,6 +6,9 @@ const passport = require('passport');
 const path = require('path');
 const fs = require('fs').promises;
 
+// Settings Manager - Load first to control feature availability
+const settings = require('./config/settingsManager');
+
 // Security middleware imports
 const { 
   configureSecurityHeaders, 
@@ -15,12 +18,26 @@ const {
   requestSizeLimiter
 } = require('./middleware/security');
 const { sanitizeRequest } = require('./middleware/validation');
-const { setCSRFToken, verifyCSRFToken, getCSRFToken, exemptCSRF } = require('./middleware/csrf');
+
+// Conditional middleware imports based on settings
+let setCSRFToken, verifyCSRFToken, getCSRFToken, exemptCSRF;
+if (settings.isMiddlewareEnabled('csrf')) {
+  const csrfModule = require('./middleware/csrf');
+  setCSRFToken = csrfModule.setCSRFToken;
+  verifyCSRFToken = csrfModule.verifyCSRFToken;
+  getCSRFToken = csrfModule.getCSRFToken;
+  exemptCSRF = csrfModule.exemptCSRF;
+}
+
 const cookieParser = require('cookie-parser');
 
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5001;
+
+console.log('🚀 Nexa Platform Server Starting...');
+console.log(`📋 Current Environment: ${settings.getEnvironment()}`);
+console.log(`🔧 Active Features: ${settings.getEnabledFeatures().map(f => f.name).join(', ')}`);
 
 if (!process.env.JWT_SECRET) {
   console.error('WARNING: JWT_SECRET is not set in environment variables');
@@ -64,10 +81,21 @@ app.use(cookieParser()); // For CSRF token cookies
 // Input sanitization
 app.use(sanitizeRequest); // Sanitize all incoming requests
 
-// CSRF Protection setup
-app.use(setCSRFToken); // Set CSRF tokens for all requests
+// CSRF Protection setup (conditional)
+if (settings.isMiddlewareEnabled('csrf') && setCSRFToken) {
+  app.use(setCSRFToken); // Set CSRF tokens for all requests
+  console.log('✅ CSRF protection enabled');
+} else {
+  console.log('⚠️  CSRF protection disabled');
+}
 
 app.use(passport.initialize());
+
+// API Routes
+console.log('🔌 Wiring up API routes...');
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/documents', require('./routes/documents'));
 
 // Create uploads directories if they don't exist
 async function createUploadDirs() {
@@ -248,8 +276,11 @@ async function connectToDatabase() {
 
 // API Routes (registered after passport config)
 function registerRoutes() {
-  // CSRF token endpoint (before CSRF protection)
-  app.get('/api/csrf-token', getCSRFToken);
+  // CSRF token endpoint (only if CSRF is enabled)
+  if (settings.isMiddlewareEnabled('csrf') && getCSRFToken) {
+    app.get('/api/csrf-token', getCSRFToken);
+    console.log('✅ CSRF token endpoint registered');
+  }
   
   // Apply CSRF protection to all routes except exempted ones
   const csrfExemptRoutes = [
@@ -271,20 +302,86 @@ function registerRoutes() {
     /^\/social\/posts\/[^\/]+\/comments$/,    // Comment on posts
     /^\/social\/posts\/[^\/]+$/,             // Individual post operations
   ];
-  app.use('/api/', exemptCSRF(csrfExemptRoutes));
   
-  app.use('/api/auth', require('./routes/auth'));
-  app.use('/api/users', require('./routes/users'));
-  app.use('/api/documents', require('./routes/documents'));
-  app.use('/api/news', require('./routes/news'));
-  app.use('/api/investments', require('./routes/investments'));
-  app.use('/api/contact', require('./routes/contact'));
-  app.use('/api/social', require('./routes/social'));
-  app.use('/api/verification', require('./routes/verification'));
+  // Apply CSRF exemptions only if CSRF is enabled
+  if (settings.isMiddlewareEnabled('csrf') && exemptCSRF) {
+    app.use('/api/', exemptCSRF(csrfExemptRoutes));
+    console.log('✅ CSRF exemptions applied');
+  }
   
-  // New enhanced routes
-  app.use('/api/notifications', require('./routes/notifications'));
-  app.use('/api/analytics', require('./routes/analytics'));
+  // Core authentication routes (always enabled)
+  if (settings.isRouteEnabled('auth')) {
+    app.use('/api/auth', require('./routes/auth'));
+    console.log('✅ Auth routes loaded');
+  }
+  
+  if (settings.isRouteEnabled('profile')) {
+    app.use('/api/users', require('./routes/users'));
+    console.log('✅ User/Profile routes loaded');
+  }
+  
+  // Document automation routes (current focus)
+  if (settings.isRouteEnabled('documents')) {
+    app.use('/api/documents', require('./routes/documents'));
+    console.log('✅ Document routes loaded');
+  }
+  
+  // Contact/verification routes
+  if (settings.isRouteEnabled('contact')) {
+    app.use('/api/contact', require('./routes/contact'));
+    console.log('✅ Contact routes loaded');
+  }
+  
+  if (settings.isRouteEnabled('verification')) {
+    app.use('/api/verification', require('./routes/verification'));
+    console.log('✅ Verification routes loaded');
+  }
+  
+  // Conditional feature routes (disabled by default in current settings)
+  if (settings.isRouteEnabled('news') || settings.isRouteEnabled('blog')) {
+    try {
+      app.use('/api/news', require('./routes/news'));
+      console.log('✅ News/Blog routes loaded');
+    } catch (error) {
+      console.log('⚠️  News routes file not found - skipping');
+    }
+  }
+  
+  if (settings.isRouteEnabled('investments')) {
+    try {
+      app.use('/api/investments', require('./routes/investments'));
+      console.log('✅ Investment routes loaded');
+    } catch (error) {
+      console.log('⚠️  Investment routes file not found - skipping');
+    }
+  }
+  
+  if (settings.isRouteEnabled('social')) {
+    try {
+      app.use('/api/social', require('./routes/social'));
+      console.log('✅ Social media routes loaded');
+    } catch (error) {
+      console.log('⚠️  Social routes file not found - skipping');
+    }
+  }
+  
+  if (settings.isRouteEnabled('notifications')) {
+    try {
+      app.use('/api/notifications', require('./routes/notifications'));
+      console.log('✅ Notification routes loaded');
+    } catch (error) {
+      console.log('⚠️  Notification routes file not found - skipping');
+    }
+  }
+  
+  if (settings.isRouteEnabled('analytics')) {
+    try {
+      app.use('/api/analytics', require('./routes/analytics'));
+      console.log('✅ Analytics routes loaded');
+    } catch (error) {
+      console.log('⚠️  Analytics routes file not found - skipping');
+    }
+  }
   
   // Error handling for multer file upload errors
   app.use((err, req, res, next) => {

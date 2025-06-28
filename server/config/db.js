@@ -3,10 +3,11 @@ const { MongoClient } = require('mongodb');
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/nexa');
+    const uri = process.env.MONGODB_URI || 'mongodb+srv://terminalnexa:Dav1dBoshkosk1@nexacluster.ddjqk.mongodb.net/nexa';
+    const client = new MongoClient(uri);
     await client.connect();
-    console.log('MongoDB connected successfully');
-    return client.db();
+    console.log('MongoDB connected successfully to nexa database');
+    return client.db('nexa'); // Explicitly use nexa database
   } catch (error) {
     console.error('MongoDB connection error:', error);
     process.exit(1);

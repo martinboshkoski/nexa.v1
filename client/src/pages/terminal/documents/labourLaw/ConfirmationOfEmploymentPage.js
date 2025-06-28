@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../../contexts/AuthContext';
+import { useTheme } from '../../../../contexts/ThemeContext';
 import Header from '../../../../components/common/Header';
 import Sidebar from '../../../../components/terminal/Sidebar';
 import ProfileReminderBanner from '../../../../components/terminal/ProfileReminderBanner';
 import DocumentStepProgress from '../../../../components/terminal/documents/DocumentStepProgress';
 import DocumentPreview from '../../../../components/terminal/documents/DocumentPreview';
-import styles from '../../../../styles/terminal/documents/AnnexEmploymentAgreement.module.css'; // Reusing styles for now
+import styles from '../../../../styles/terminal/documents/DocumentGeneration.module.css';
 
 const ConfirmationOfEmploymentPage = () => {
   const { currentUser } = useAuth();
+  const { theme } = useTheme();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // Employee Info (Step 1)
@@ -270,7 +272,7 @@ const ConfirmationOfEmploymentPage = () => {
   };
 
   return (
-    <div>
+    <div className={`${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
       <Header isTerminal={true} />
       <div className={styles['dashboard-layout']}>
         <Sidebar />

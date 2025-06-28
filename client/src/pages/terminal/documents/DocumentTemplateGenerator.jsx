@@ -6,7 +6,7 @@ import Sidebar from '../../../components/terminal/Sidebar';
 import ProfileReminderBanner from '../../../components/terminal/ProfileReminderBanner';
 import DocumentStepForm from '../../../components/terminal/documents/DocumentStepForm';
 import documentCategoriesData from '../../../data/documentCategories.json';
-import styles from '../../../styles/terminal/documents/DocumentTemplateGenerator.module.css';
+import styles from '../../../styles/terminal/documents/DocumentGeneration.module.css';
 
 const DocumentTemplateGenerator = () => {
   const { currentUser } = useAuth();

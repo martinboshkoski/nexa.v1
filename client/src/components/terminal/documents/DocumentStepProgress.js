@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../../styles/terminal/documents/DocumentStepProgress.module.css';
+import styles from '../../../styles/terminal/documents/DocumentGeneration.module.css';
 
 const DocumentStepProgress = ({ steps, currentStep, onStepClick }) => {
   const calculateProgress = () => {
