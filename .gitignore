@@ -30,12 +30,16 @@ pids/
 # Coverage directory used by tools like istanbul
 coverage/
 
-# IDE files
-.vscode/
+# IDE files - Keep all VS Code settings local for solo development
+.vscode                        # Ignore entire .vscode directory (includes settings.json, extensions.json, etc.)
 .idea/
 *.swp
 *.swo
 *~
+
+# Allow some VS Code files to be committed if needed
+# .vscode/tasks.json           # Uncomment to commit build tasks
+# .vscode/launch.json          # Uncomment to commit debug configs
 
 # OS generated files
 .DS_Store
