@@ -31,7 +31,7 @@ pids/
 coverage/
 
 # IDE files - Keep all VS Code settings local for solo development
-.vscode                        # Ignore entire .vscode directory (includes settings.json, extensions.json, etc.)
+.vscode/                       # Ignore entire .vscode directory (includes settings.json, extensions.json, etc.)
 .idea/
 *.swp
 *.swo

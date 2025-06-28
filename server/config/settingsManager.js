@@ -106,23 +106,27 @@ class SettingsManager {
       features: {
         authentication: true,
         documentAutomation: true,
-        profileCompletion: false,
-        socialPosts: false,
-        legalHealthCheck: false,
-        blog: false
+        profileCompletion: true,
+        socialPosts: true,
+        legalHealthCheck: true,
+        blog: false  // Only the blog remains disabled (separate Next.js app)
       },
       database: {
         collections: {
           users: true,
           sessions: true,
           documents: true,
-          templates: true
+          templates: true,
+          social_posts: true,
+          legal_checks: true
         }
       },
       routes: {
         auth: true,
         profile: true,
-        documents: true
+        documents: true,
+        social: true,
+        legal: true
       },
       middleware: {
         authentication: true,
@@ -131,7 +135,7 @@ class SettingsManager {
         cors: true,
         csrf: true,
         rateLimit: true,
-        fileUpload: false,
+        fileUpload: true,  // Enable for document/social features
         analytics: false
       }
     };
