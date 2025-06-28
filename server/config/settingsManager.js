@@ -12,7 +12,16 @@ class SettingsManager {
     try {
       // Check for production override
       if (process.env.NODE_ENV === 'production' || process.env.NEXA_ALL_FEATURES === 'true') {
-        this.settings = this.getProductionSettings();
+        this.settings = this.getDefaultSettings();
+        // Enable all features in production
+        this.settings.features = {
+          authentication: true,
+          documentAutomation: true,
+          profileCompletion: true,
+          socialPosts: true,
+          legalHealthCheck: true,
+          blog: true
+        };
         console.log(`🏭 Production mode: ALL features enabled`);
         return;
       }
@@ -28,7 +37,7 @@ class SettingsManager {
         console.log(`🔧 Development mode: Settings loaded from VS Code`);
       } else {
         // Fallback to production settings if no local settings
-        this.settings = this.getProductionSettings();
+        this.settings = this.getDefaultSettings();
         console.log(`📝 No local settings found - using production defaults`);
       }
       
@@ -42,7 +51,7 @@ class SettingsManager {
     } catch (error) {
       console.error('❌ Failed to load settings:', error.message);
       // Fallback to production settings for safety
-      this.settings = this.getProductionSettings();
+      this.settings = this.getDefaultSettings();
       console.log(`🔧 Using fallback production settings`);
     }
   }
