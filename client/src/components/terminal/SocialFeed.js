@@ -16,6 +16,8 @@ const SocialFeed = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [companyModalOpen, setCompanyModalOpen] = useState(false);
 
   // Rotating placeholder texts
   const placeholderTexts = [
@@ -194,6 +196,16 @@ const SocialFeed = () => {
     }
   };
 
+  // Modal open/close handlers
+  const openCompanyModal = (companyInfo) => {
+    setSelectedCompany(companyInfo);
+    setCompanyModalOpen(true);
+  };
+  const closeCompanyModal = () => {
+    setCompanyModalOpen(false);
+    setSelectedCompany(null);
+  };
+
   if (loading && posts.length === 0) { // Show loading only if there are no posts yet
     return <div className={styles.loading}>Се вчитуваат објави...</div>;
   }
@@ -272,6 +284,7 @@ const SocialFeed = () => {
             currentUser={currentUser}
             onDelete={openDeleteModal} // Pass delete function
             canDeletePost={canDeletePost} // Pass delete permission function
+            onCompanyClick={openCompanyModal}
           />
         ))}
       </div>
@@ -293,12 +306,54 @@ const SocialFeed = () => {
           </div>
         </div>
       )}
+
+      {companyModalOpen && selectedCompany && (
+        <div className={styles.companyModalOverlay} onClick={closeCompanyModal}>
+          <div className={styles.companyModal} onClick={e => e.stopPropagation()}>
+            <button className={styles.closeModalButton} onClick={closeCompanyModal}>&times;</button>
+            <div className={styles.companyModalHeader}>
+              {selectedCompany.logoUrl || selectedCompany.profileImage ? (
+                <img src={selectedCompany.logoUrl || selectedCompany.profileImage} alt={selectedCompany.companyName || selectedCompany.username} className={styles.companyModalLogo} />
+              ) : (
+                <div className={styles.companyModalLogoPlaceholder}>
+                  {(selectedCompany.companyName || selectedCompany.username || 'C').charAt(0).toUpperCase()}
+                </div>
+              )}
+              <h2>{selectedCompany.companyName || selectedCompany.username}</h2>
+              {selectedCompany.isVerified && <span className={styles.verifiedBadge}>✔️ Верифицирана компанија</span>}
+              <div className={styles.companyModalIndustry}>{selectedCompany.industry || selectedCompany.companyInfo?.industry}</div>
+            </div>
+            <div className={styles.companyModalBody}>
+              {/* Company Info */}
+              {selectedCompany.mission && <div><strong>Мисија:</strong> {selectedCompany.mission}</div>}
+              {selectedCompany.description && <div><strong>Опис:</strong> {selectedCompany.description}</div>}
+              {selectedCompany.website && <div><strong>Веб-страница:</strong> <a href={selectedCompany.website} target="_blank" rel="noopener noreferrer">{selectedCompany.website}</a></div>}
+              {selectedCompany.industry && <div><strong>Индустрија:</strong> {selectedCompany.industry}</div>}
+              {selectedCompany.companySize && <div><strong>Големина:</strong> {selectedCompany.companySize}</div>}
+              {selectedCompany.role && <div><strong>Позиција:</strong> {selectedCompany.role}</div>}
+              {selectedCompany.crnNumber && <div><strong>Матичен број:</strong> {selectedCompany.crnNumber}</div>}
+              {selectedCompany.address && <div><strong>Адреса:</strong> {selectedCompany.address}</div>}
+              {selectedCompany.phone && <div><strong>Телефон:</strong> {selectedCompany.phone}</div>}
+              {selectedCompany.companyPIN && <div><strong>ПИН:</strong> {selectedCompany.companyPIN}</div>}
+              {selectedCompany.taxNumber && <div><strong>Даночен број:</strong> {selectedCompany.taxNumber}</div>}
+              {selectedCompany.contactEmail && <div><strong>Email (компанија):</strong> <a href={`mailto:${selectedCompany.contactEmail}`}>{selectedCompany.contactEmail}</a></div>}
+              {/* User Info */}
+              {selectedCompany.username && <div><strong>Корисничко име:</strong> {selectedCompany.username}</div>}
+              {selectedCompany.email && <div><strong>Email (корисник):</strong> <a href={`mailto:${selectedCompany.email}`}>{selectedCompany.email}</a></div>}
+              {selectedCompany.role && <div><strong>Улога:</strong> {selectedCompany.role}</div>}
+              {selectedCompany.profileImage && <div><strong>Профил слика:</strong> <img src={selectedCompany.profileImage} alt="Профил слика" style={{width:'40px',height:'40px',borderRadius:'50%',objectFit:'cover',verticalAlign:'middle'}} /></div>}
+              {selectedCompany.isVerified !== undefined && <div><strong>Верифициран:</strong> {selectedCompany.isVerified ? 'Да' : 'Не'}</div>}
+              {selectedCompany.createdAt && <div><strong>Креиран на:</strong> {new Date(selectedCompany.createdAt).toLocaleDateString('mk-MK')}</div>}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 // Individual Post Component
-const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, currentUser, onDelete, canDeletePost }) => { // Removed onLike
+const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, currentUser, onDelete, canDeletePost, onCompanyClick }) => { // Removed onLike
   const [showComments, setShowComments] = useState(false);
   const [commentContent, setCommentContent] = useState('');
   const [linkPreview, setLinkPreview] = useState(null);
@@ -346,7 +401,7 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
   return (
     <div className={styles.postCard}>
       {/* Company Information Section - 1/3 of the post */}
-      <div className={styles.companySection}> {/* Ensure this class is styled for 1/3 width */}
+      <div className={styles.companySection} onClick={() => onCompanyClick(post.author?.companyInfo)} style={{cursor:'pointer'}}>
         <div className={styles.companyDetails}>
           {/* Company Logo - Always show a logo (either the provided one or a placeholder) */}
           <div className={styles.companyLogoContainer}>

@@ -333,7 +333,6 @@
 /*  width: 16px; */
 /*  height: 16px; */
 /*  margin-bottom: 4px; */
-/*  border-radius: 2px; */
 /* } */
 
 /* .linkPreviewTitle { */ /* Renaming to match JS */
@@ -662,4 +661,118 @@
     -webkit-line-clamp: 3; /* Allow more lines on mobile */
     /* line-clamp: 3; */
   }
+}
+
+.companyModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.45);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s;
+}
+
+.companyModal {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  max-width: 95vw;
+  width: 400px;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  position: relative;
+  animation: modalSlideIn 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+.closeModalButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 1;
+}
+.closeModalButton:hover {
+  color: #222;
+}
+
+.companyModalHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.companyModalLogo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #4b5563;
+  margin-bottom: 0.5rem;
+}
+.companyModalLogoPlaceholder {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #4b5563;
+  font-size: 2.5rem;
+  font-weight: bold;
+  border-radius: 50%;
+  border: 2px solid #4b5563;
+  margin-bottom: 0.5rem;
+}
+.companyModalHeader h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0.5rem 0 0.25rem 0;
+  text-align: center;
+}
+.companyModalIndustry {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.companyModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #222;
+}
+.companyModalBody strong {
+  color: #4b5563;
+  font-weight: 600;
+}
+@media (max-width: 480px) {
+  .companyModal {
+    width: 98vw;
+    padding: 1rem 0.5rem 1rem 0.5rem;
+  }
+  .companyModalLogo, .companyModalLogoPlaceholder {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  .companyModalHeader h2 {
+    font-size: 1.05rem;
+  }
+  .companyModalBody {
+    font-size: 0.95rem;
+  }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
