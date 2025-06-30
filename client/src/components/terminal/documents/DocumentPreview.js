@@ -199,54 +199,34 @@ const DocumentPreview = ({ formData, documentType, currentStep }) => {
   };
 
   const renderConfirmationOfEmploymentPreview = () => {
-    const {
+    const { 
       fullName,
       position,
-      employeeId,
-      department,
       employmentStartDate,
-      confirmationDate,
       reasonForConfirmation,
-      // companyName, // Handled by getCompanyData
-      // companyAddress, // Handled by getCompanyData
-      // companyRegistrationNumber, // Handled by getCompanyData
+      additionalInfo,
       managerName,
-      managerPosition,
-      additionalInfo
+      managerPosition
     } = formData || {};
-
-    // Company details are now primarily from getCompanyData()
-    // const companyDetails = getCompanyData(); // Already available as 'company'
 
     return (
       <div className={styles.document}>
         <h2 className={styles.title}>ПОТВРДА ЗА ВРАБОТУВАЊЕ</h2>
-        <p className={styles.date}>Датум на издавање: {formatDate(confirmationDate) || '[Датум на издавање]'}</p>
+        <p className={styles.date}>Датум: {getCurrentDate()}</p>
 
         <div className={styles.section}>
-          <h4>ПОДАТОЦИ ЗА КОМПАНИЈАТА</h4>
+          <h4>ИНФОРМАЦИИ ЗА КОМПАНИЈАТА</h4>
           <div className={styles.infoBlock}>
-            <p><strong>Име на компанија:</strong> {company.companyName}</p>
-            <p><strong>Адреса:</strong> {company.address}</p>
-            <p><strong>Регистарски број:</strong> {company.registrationNumber}</p>
-            {/* <p><strong>Телефон:</strong> {company.phone}</p> 
-            <p><strong>Е-пошта:</strong> {company.email}</p> */}
+            <p><strong>Име на компанија:</strong> {company.companyName || '[Име на компанија]'}</p>
+            <p><strong>Адреса:</strong> {company.address || '[Адреса на компанија]'}</p>
+            <p><strong>Телефон:</strong> {company.phone || '[Телефон на компанија]'}</p>
+            <p><strong>Е-пошта:</strong> {company.email || '[Е-пошта на компанија]'}</p>
+            <p><strong>Регистарски број:</strong> {company.registrationNumber || '[Регистарски број]'}</p>
           </div>
         </div>
 
         <div className={styles.section}>
-          <h4>ПОДАТОЦИ ЗА ВРАБОТЕНИОТ</h4>
-          <div className={styles.infoBlock}>
-            <p><strong>Име и презиме:</strong> {fullName || '[Име и презиме на вработен]'}</p>
-            <p><strong>Работна позиција:</strong> {position || '[Позиција]'}</p>
-            <p><strong>ID на вработен:</strong> {employeeId || '[ID на вработен]'}</p>
-            <p><strong>Оддел:</strong> {department || '[Оддел]'}</p>
-            <p><strong>Датум на вработување:</strong> {formatDate(employmentStartDate) || '[Датум на вработување]'}</p>
-          </div>
-        </div>
-
-        <div className={styles.section}>
-          <h4>ПРЕДМЕТ НА ПОТВРДАТА</h4>
+          <h4>ПОТВРДА</h4>
           <div className={styles.infoBlock}>
             <p>
               Се потврдува дека <strong>{fullName || '[Име и презиме на вработен]'}</strong> е во редовен работен однос во компанијата <strong>{company.companyName}</strong>, на работна позиција <strong>{position || '[Позиција]'}</strong>, почнувајќи од <strong>{formatDate(employmentStartDate) || '[Датум на вработување]'}</strong>.
@@ -273,6 +253,119 @@ const DocumentPreview = ({ formData, documentType, currentStep }) => {
     );
   };
 
+  const renderConsentForPersonalDataProcessingPreview = () => {
+    const { 
+      employeeName,
+      employeeAddress,
+      employeeWorkPosition
+    } = formData || {};
+
+    return (
+      <div className={styles.document}>
+        <h2 className={styles.title}>СОГЛАСНОСТ ЗА ОБРАБОТКА НА ЛИЧНИ ПОДАТОЦИ</h2>
+        <p className={styles.date}>Датум: {getCurrentDate()}</p>
+
+        <div className={styles.section}>
+          <h4>ИНФОРМАЦИИ ЗА КОМПАНИЈАТА (КОНТРОЛОР НА ПОДАТОЦИ)</h4>
+          <div className={styles.infoBlock}>
+            <p><strong>Име на компанија:</strong> {company.companyName || '[Име на компанија]'}</p>
+            <p><strong>Адреса:</strong> {company.address || '[Адреса на компанија]'}</p>
+            <p><strong>Телефон:</strong> {company.phone || '[Телефон на компанија]'}</p>
+            <p><strong>Е-пошта:</strong> {company.email || '[Е-пошта на компанија]'}</p>
+            <p><strong>Регистарски број:</strong> {company.registrationNumber || '[Регистарски број]'}</p>
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <h4>ИНФОРМАЦИИ ЗА СУБЈЕКТОТ НА ПОДАТОЦИ (ВРАБОТЕН)</h4>
+          <div className={styles.infoBlock}>
+            <p><strong>Име и презиме:</strong> {employeeName || '[Име и презиме на вработен]'}</p>
+            <p><strong>Адреса:</strong> {employeeAddress || '[Адреса на вработен]'}</p>
+            <p><strong>Работна позиција:</strong> {employeeWorkPosition || '[Работна позиција]'}</p>
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <h4>СОГЛАСНОСТ</h4>
+          <div className={styles.infoBlock}>
+            <p>
+              Јас, <strong>{employeeName || '[Име и презиме]'}</strong>, со адреса <strong>{employeeAddress || '[Адреса]'}</strong>, 
+              вработен на позиција <strong>{employeeWorkPosition || '[Позиција]'}</strong> во компанијата <strong>{company.companyName || '[Име на компанија]'}</strong>, 
+              со ова давам <strong>изрична согласност</strong> за обработка на моите лични податоци во согласност со Општата уредба за заштита на податоци (GDPR).
+            </p>
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <h4>ЦЕЛИ НА ОБРАБОТКА</h4>
+          <div className={styles.infoBlock}>
+            <p>Личните податоци ќе се обработуваат за следните цели:</p>
+            <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem' }}>
+              <li>Управување со работниот однос и извршување на договорните обврски</li>
+              <li>Пресметување и исплата на плата и други надоместоци</li>
+              <li>Водење на евиденциите согласно законските обврски</li>
+              <li>Обезбедување на работна средина и безбедност на работа</li>
+              <li>Комуникација поврзана со работните активности</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <h4>ПРАВНИ ОСНОВИ</h4>
+          <div className={styles.infoBlock}>
+            <p>Обработката на личните податоци се базира на:</p>
+            <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem' }}>
+              <li>Член 6(1)(a) од GDPR - согласност на субјектот на податоци</li>
+              <li>Член 6(1)(b) од GDPR - извршување на договор</li>
+              <li>Член 6(1)(c) од GDPR - усогласеност со законска обврска</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <h4>ПРАВА НА СУБЈЕКТОТ НА ПОДАТОЦИ</h4>
+          <div className={styles.infoBlock}>
+            <p>Во согласност со GDPR, имам право на:</p>
+            <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem' }}>
+              <li>Пристап до моите лични податоци</li>
+              <li>Исправување на неточни податоци</li>
+              <li>Бришење на податоци ("право на заборав")</li>
+              <li>Ограничување на обработката</li>
+              <li>Преносливост на податоци</li>
+              <li>Приговор против обработката</li>
+              <li>Повлекување на согласноста во секое време</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <h4>ЗАДРЖУВАЊЕ НА ПОДАТОЦИ</h4>
+          <div className={styles.infoBlock}>
+            <p>
+              Личните податоци ќе се чуваат додека трае работниот однос и дополнително време согласно законските обврски за архивирање, 
+              но не подолго од потребното за постигнување на целите за кои се собираат.
+            </p>
+          </div>
+        </div>
+
+        <div className={styles.signatures}>
+          <div className={styles.signature}>
+            <p style={{ marginTop: '3rem' }}>_________________________</p>
+            <p><strong>Потпис на вработен</strong></p>
+            <p>{employeeName || '[Име и презиме на вработен]'}</p>
+            <p>Датум: {getCurrentDate()}</p>
+          </div>
+          <div className={styles.signature}>
+            <p style={{ marginTop: '3rem' }}>_________________________</p>
+            <p><strong>Потпис на работодавач</strong></p>
+            <p>{employerName}</p>
+            <p>{company.companyName || '[Име на компанија]'}</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderPreview = () => {
     switch (documentType) {
       case 'annexEmploymentAgreement':
@@ -281,6 +374,8 @@ const DocumentPreview = ({ formData, documentType, currentStep }) => {
         return renderAnnualLeaveDecisionPreview();
       case 'confirmationOfEmployment':
         return renderConfirmationOfEmploymentPreview();
+      case 'consentForPersonalDataProcessing':
+        return renderConsentForPersonalDataProcessingPreview();
       // Add other document types here as needed
       default:
         return <p>Прегледот не е достапен за овој тип на документ.</p>; // Translated

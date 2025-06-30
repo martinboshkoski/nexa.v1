@@ -3,6 +3,7 @@ import { useAuth } from '../../../../contexts/AuthContext';
 import Header from '../../../../components/common/Header';
 import Sidebar from '../../../../components/terminal/Sidebar';
 import ProfileReminderBanner from '../../../../components/terminal/ProfileReminderBanner';
+import DocumentPreview from '../../../../components/terminal/documents/DocumentPreview';
 import styles from '../../../../styles/terminal/documents/DocumentGeneration.module.css';
 
 const ConsentForPersonalDataProcessingPage = () => {
@@ -95,20 +96,23 @@ const ConsentForPersonalDataProcessingPage = () => {
   };
 
   return (
-    <div className={styles.pageContainer}>
-      <Header />
+    <>
+      <Header isTerminal={true} />
       <div className={styles.dashboardLayout}>
         <Sidebar />
         <main className={styles.dashboardMain}>
           {!currentUser?.profileComplete && <ProfileReminderBanner />}
           
-          <div className={styles.documentContainer}>
-            <div className={styles.documentHeader}>
-              <h1>Согласност за обработка на лични податоци</h1>
-              <p>Генерирајте согласност за обработка на лични податоци во согласност со GDPR</p>
-            </div>
+          {/* Elegant headline under navbar */}
+          <div className={styles.pageHeadline}>
+            <h1>Согласност за обработка на лични податоци</h1>
+            <p>Генерирајте согласност за обработка на лични податоци во согласност со GDPR</p>
+          </div>
 
-            <div className={styles['document-form']}>
+          {/* Split layout with form and preview */}
+          <div className={styles.splitLayout}>
+            {/* Form Section */}
+            <div className={styles.formSection}>
               <div className={styles['form-sections']}>
                 <div className={styles['form-section']}>
                   <div className={styles['form-group']}>
@@ -169,10 +173,19 @@ const ConsentForPersonalDataProcessingPage = () => {
                 </button>
               </div>
             </div>
+
+            {/* Preview Section */}
+            <div className={styles.previewSection}>
+              <DocumentPreview 
+                formData={formData}
+                documentType="consentForPersonalDataProcessing"
+                currentStep={1}
+              />
+            </div>
           </div>
         </main>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -73,7 +73,7 @@ const CompleteProfile = () => {
 
   return (
     <div className={styles.completeProfileContainer}>
-      <Header />
+      <Header isTerminal={true} />
       <div className={styles.contentWrapper}>
         <Sidebar />
         <main className={styles.mainContent}>

@@ -23,7 +23,7 @@ const LegalScreening = () => {
 
   return (
     <div className={styles.container}>
-      <Header />
+      <Header isTerminal={true} />
       <div className={styles.content}>
         <Sidebar />
         <main className={styles.mainContent}>

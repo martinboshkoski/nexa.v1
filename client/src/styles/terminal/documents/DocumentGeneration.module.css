@@ -74,54 +74,152 @@
 }
 
 /* ========================================
-   PAGE LAYOUT & STRUCTURE
+   UNIFIED TERMINAL LAYOUT SYSTEM
    ======================================== */
 
-.pageContainer {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  width: 100%;
-}
-
-.mainContent {
+/* Use the unified layout from Sidebar.module.css */
+.dashboardLayout {
   display: flex;
   min-height: calc(100vh - 60px);
-  width: 100%;
+  background-color: #f8f9fa;
+  position: relative;
 }
 
-.contentArea {
+.dashboardMain {
   flex: 1;
-  margin-left: 350px; /* Account for sidebar width */
-  padding: 0;
-  overflow-x: hidden;
-  background-color: var(--bg-primary);
-  min-width: 0; /* Prevent flex item from overflowing */
-  transition: margin-left 0.3s ease; /* Smooth sidebar transitions */
-  position: relative; /* Ensure proper stacking context */
-  z-index: 1; /* Place above any background elements */
-}
-
-/* Responsive sidebar adjustments */
-@media (max-width: 1024px) {
-  .contentArea {
-    margin-left: 0; /* Remove sidebar margin on smaller screens */
-  }
-  
-  .documentPage {
-    max-width: 100vw; /* Full width on mobile */
-  }
-}
-
-.documentPage {
-  background: var(--bg-primary);
+  margin-left: 280px;
+  background-color: #ffffff;
   min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
-  width: 100%;
-  box-sizing: border-box;
-  position: relative; /* Ensure proper positioning */
-  max-width: calc(100vw - 250px); /* Prevent overflow beyond sidebar */
+}
+
+/* Content sections */
+.pageHeadline {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+  margin: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pageHeadline h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.pageHeadline p {
+  margin: 0.25rem 0 0 0;
+  font-size: 1rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* Responsive Layout */
+@media (max-width: 1024px) {
+  .dashboardMain {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageHeadline {
+    padding: 1rem 1.5rem;
+  }
+  
+  .pageHeadline h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ========================================
+   ELEGANT HEADLINE UNDER NAVBAR
+   ======================================== */
+
+.pageHeadline {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+  margin: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pageHeadline h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.pageHeadline p {
+  margin: 0.25rem 0 0 0;
+  font-size: 1rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* ========================================
+   SPLIT LAYOUT WITH FORM AND PREVIEW
+   ======================================== */
+
+.splitLayout {
+  display: flex;
+  flex: 1;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 110%; /* Make layout 10% wider */
+  margin: 0 auto;
+  min-height: calc(100vh - 180px); /* Account for navbar and headline */
+}
+
+.formSection {
+  flex: 1;
+  background: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--shadow-medium);
+  padding: 2rem;
+  border: 1px solid var(--border-color);
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+}
+
+.previewSection {
+  flex: 1;
+  background: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--shadow-medium);
+  padding: 2rem;
+  border: 1px solid var(--border-color);
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+}
+
+/* Responsive split layout */
+@media (max-width: 1200px) {
+  .splitLayout {
+    flex-direction: column;
+    max-width: 100%;
+    gap: 1.5rem;
+  }
+  
+  .formSection,
+  .previewSection {
+    max-height: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .splitLayout {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .formSection,
+  .previewSection {
+    padding: 1.5rem;
+  }
 }
 
 /* ========================================

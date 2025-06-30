@@ -252,9 +252,8 @@
 }
 
 .profile-button:hover {
-  /* No background change on hover */
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  background: rgba(59, 130, 246, 0.1); /* Subtle hover background */
+  color: var(--color-accent); /* Accent color on hover for text */
 }
 
 .profile-icon {
@@ -263,7 +262,7 @@
 }
 
 .profile-button:hover .profile-icon {
-  /* Keep original icon color on hover */
+  color: var(--color-accent); /* Accent color on hover for icon */
 }
 
 .profile-name {
@@ -276,7 +275,7 @@
 }
 
 .profile-button:hover .profile-name {
-  color: var(--color-white);
+  color: var(--color-accent);
 }
 
 .dropdown-arrow {
@@ -286,7 +285,7 @@
 }
 
 .profile-button:hover .dropdown-arrow {
-  color: var(--color-white); /* White arrow on hover */
+  color: var(--color-accent); /* Accent color on hover for arrow */
 }
 
 .dropdown-arrow-open {
@@ -297,13 +296,12 @@
   position: absolute;
   top: calc(100% + 8px); /* Position below button with small gap */
   right: 0;
-  background-color: var(--color-white); /* Clean white background to match app theme */
-  border: 1px solid var(--color-border); /* Subtle border */
+  background-color: #1e293b; /* Updated background color */
   border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-lg); /* Elegant shadow */
+  box-shadow: var(--shadow-dropdown); /* Elegant shadow */
   padding: 0.5rem 0;
   z-index: 1050; /* Ensure it's above other elements */
-  min-width: 240px;
+  min-width: 220px;
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
@@ -321,56 +319,32 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1.25rem;
-  color: var(--color-text-primary); /* Darker text for better contrast on white */
+  color: var(--color-text-secondary);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
 }
 
 .dropdown-item:hover {
-  background-color: var(--color-neutral-100); /* Very subtle neutral hover */
-  color: var(--color-neutral-800); /* Darker neutral on hover */
+  background-color: rgba(59, 130, 246, 0.08); /* Very subtle hover */
+  color: var(--color-accent-dark); /* Darker accent on hover */
 }
 
 .dropdown-icon {
   font-size: 1rem;
-  color: var(--color-text-secondary); /* Slightly muted icon color */
-  min-width: 1rem; /* Ensure consistent icon alignment */
+  color: var(--color-text-tertiary); /* Muted icon color */
 }
 
 .dropdown-item:hover .dropdown-icon {
-  color: var(--color-neutral-800);
+  color: var(--color-accent);
 }
 
 .dropdown-divider {
   height: 1px;
   background-color: var(--color-border-soft);
   margin: 0.5rem 0;
-}
-
-/* Dropdown User Info Section */
-.dropdown-user-info {
-  padding: 1rem 1.25rem 0.5rem;
-}
-
-.user-email {
-  font-size: 0.85rem;
-  color: var(--color-text-tertiary);
-  font-weight: 400;
-  margin-bottom: 0.25rem;
-}
-
-.user-company {
-  font-size: 0.9rem;
-  color: var(--color-text-primary);
-  font-weight: 600;
 }
 
 /* Mobile Menu Updates */
@@ -385,7 +359,7 @@
     justify-content: space-between;
     border-radius: var(--border-radius-lg);
     padding: 1rem 1.25rem;
-    background: var(--color-neutral-100);
+    background: rgba(59, 130, 246, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: var(--shadow-md);
@@ -470,10 +444,10 @@
 
   .mobileMenuButton {
     display: block;
-    background: var(--color-neutral-100);
+    background: rgba(59, 130, 246, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--color-neutral-300);
+    border: 1px solid var(--color-accent);
     border-radius: var(--border-radius-md);
     padding: 0.75rem;
     cursor: pointer;
@@ -484,7 +458,7 @@
   }
 
   .mobileMenuButton:hover {
-    background: var(--color-neutral-200);
+    background: rgba(59, 130, 246, 0.2);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
   }
@@ -517,11 +491,7 @@
     align-items: center;
   }
 
-  .mobileControls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-4);
+  .mobileLangSwitcher {
     margin-top: var(--spacing-lg);
     padding-top: var(--spacing-lg);
     border-top: 1px solid var(--color-border);

@@ -212,7 +212,7 @@ const WorkplaceHarassmentPolicyPage = () => {
 
   return (
     <div className={`${styles.pageContainer} ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
-      <Header />
+      <Header isTerminal={true} />
       <div className={styles.mainContent}>
         <Sidebar />
         <div className={styles.contentArea}>

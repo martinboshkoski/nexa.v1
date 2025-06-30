@@ -4,7 +4,6 @@ import styles from './Header.module.css';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
-import ThemeToggle from './ThemeToggle';
 
 const Header = ({ isTerminal = false }) => {
   const { t } = useTranslation();
@@ -62,10 +61,8 @@ const Header = ({ isTerminal = false }) => {
           aria-expanded={profileDropdownOpen}
         >
           <span className={styles['profile-icon']}>👤</span>
-          {/* Display company name if available, otherwise email */}
-          <span className={styles['profile-name']}>
-            {currentUser?.companyName || currentUser?.email || 'User'}
-          </span>
+          {/* Display email if fullName is not available */}
+          <span className={styles['profile-name']}>{currentUser?.fullName || currentUser?.email}</span>
           <span 
             className={`${styles['dropdown-arrow']} ${profileDropdownOpen ? styles['dropdown-arrow-open'] : ''}`}
           >
@@ -76,15 +73,6 @@ const Header = ({ isTerminal = false }) => {
           <div 
             className={`${styles['profile-dropdown']} ${profileDropdownOpen ? styles['profile-dropdown-open'] : ''}`}
           >
-            {/* User info section */}
-            <div className={styles['dropdown-user-info']}>
-              <div className={styles['user-email']}>{currentUser?.email}</div>
-              {currentUser?.companyName && (
-                <div className={styles['user-company']}>{currentUser.companyName}</div>
-              )}
-            </div>
-            <div className={styles['dropdown-divider']}></div>
-            
             <Link 
               to="/terminal/profile" 
               className={styles['dropdown-item']}
@@ -153,7 +141,6 @@ const Header = ({ isTerminal = false }) => {
           <nav className={styles['nav-links']}>
             {renderNavLinks()}
           </nav>
-          <ThemeToggle />
           <LanguageSwitcher />
         </div>
 
@@ -175,11 +162,8 @@ const Header = ({ isTerminal = false }) => {
         <div className={`${styles.mobileMenu} ${mobileMenuOpen ? styles.open : ''}`}>
           <nav className={styles.mobileNav}>
             {renderNavLinks()}
-            <div className={styles.mobileControls}>
-              <ThemeToggle />
-              <div className={styles.mobileLangSwitcher}>
-                <LanguageSwitcher />
-              </div>
+            <div className={styles.mobileLangSwitcher}>
+              <LanguageSwitcher />
             </div>
           </nav>
         </div>
