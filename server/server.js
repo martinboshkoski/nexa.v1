@@ -270,7 +270,15 @@ async function connectToDatabase() {
     return db;
   } catch (error) {
     console.error('MongoDB connection error:', error);
-    process.exit(1);
+    
+    // In development with nodemon, don't exit immediately - allow for fixes
+    if (process.env.NODE_ENV === 'development' && process.env.npm_lifecycle_event === 'dev') {
+      console.log('💡 Development mode: Server will wait for file changes instead of exiting');
+      console.log('💡 Fix the MongoDB connection issue and save a file to restart');
+      return null; // Return null instead of exiting
+    } else {
+      process.exit(1);
+    }
   }
 }
 
@@ -405,31 +413,54 @@ async function initializeServer() {
   // Only initialize if not already done
   if (!app.locals.initialized) {
     await createUploadDirs();
-    await connectToDatabase();
-    require('./config/passport')(db); // Register passport strategies with db
-    registerRoutes();
-    app.locals.initialized = true;
+    const database = await connectToDatabase();
+    
+    // Only proceed if database connection was successful
+    if (database) {
+      require('./config/passport')(database); // Register passport strategies with db
+      registerRoutes();
+      app.locals.initialized = true;
+      console.log('✅ Server initialization complete');
+    } else {
+      console.log('❌ Server initialization failed - no database connection');
+      return null;
+    }
   }
   return app;
 }
 
 // Traditional server environment
 async function startServer() {
-  await initializeServer();
-  const server = app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+  try {
+    await initializeServer();
+    
+    // Only start the server if initialization was successful
+    if (app.locals.initialized) {
+      const server = app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+      });
 
-  // Handle EADDRINUSE error gracefully
-  server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-      console.warn(`Port ${PORT} is already in use. Nodemon will attempt to restart.`);
-      process.exit(1); // Exit the process so nodemon can restart
+      // Handle EADDRINUSE error gracefully
+      server.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+          console.warn(`Port ${PORT} is already in use. Nodemon will attempt to restart.`);
+          process.exit(1); // Exit the process so nodemon can restart
+        } else {
+          console.error('Server error:', err);
+          process.exit(1); // Exit on other server errors too
+        }
+      });
     } else {
-      console.error('Server error:', err);
-      process.exit(1); // Exit on other server errors too
+      console.log('🔄 Server not started due to initialization failure. Fix issues and save files to restart.');
     }
-  });
+  } catch (error) {
+    console.error('Server startup error:', error);
+    if (process.env.NODE_ENV === 'development' && process.env.npm_lifecycle_event === 'dev') {
+      console.log('🔄 Development mode: Fix errors and save files to restart');
+    } else {
+      process.exit(1);
+    }
+  }
 }
 
 startServer();

@@ -655,23 +655,70 @@
 }
 
 /* ========================================
-   DYNAMIC CONTENT STYLING
+   DASHBOARD LAYOUT STYLES
    ======================================== */
 
-.filled {
-  color: var(--text-primary);
-  font-weight: 600;
-  background: rgba(72, 187, 120, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
+.dashboardLayout {
+  display: flex;
+  min-height: calc(100vh - 60px);
+  width: 100%;
 }
 
-.placeholder {
-  color: var(--text-muted);
-  font-style: italic;
-  background: var(--bg-tertiary);
-  padding: 2px 6px;
-  border-radius: 4px;
+.dashboardMain {
+  flex: 1;
+  margin-left: 280px; /* Account for sidebar width */
+  padding: 20px;
+  background-color: var(--bg-primary);
+  min-width: 0;
+  transition: margin-left 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+/* Responsive adjustments for dashboard layout */
+@media (max-width: 1024px) {
+  .dashboardMain {
+    margin-left: 0;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboardMain {
+    padding: 10px;
+  }
+}
+
+.documentContainer {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: var(--shadow-medium);
+  padding: 30px;
+  margin: 0 auto;
+  max-width: 800px;
+  width: 100%;
+}
+
+.documentHeader {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.documentHeader h1 {
+  color: var(--text-primary);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  line-height: 1.2;
+}
+
+.documentHeader p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.4;
 }
 
 /* ========================================

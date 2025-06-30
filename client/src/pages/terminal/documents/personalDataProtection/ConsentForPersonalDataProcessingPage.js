@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../../contexts/AuthContext';
+import Header from '../../../../components/common/Header';
+import Sidebar from '../../../../components/terminal/Sidebar';
+import ProfileReminderBanner from '../../../../components/terminal/ProfileReminderBanner';
 import styles from '../../../../styles/terminal/documents/DocumentGeneration.module.css';
 
 const ConsentForPersonalDataProcessingPage = () => {
   const { currentUser } = useAuth();
+
   const [formData, setFormData] = useState({
+    // companyName: currentUser?.company?.name || '',
+    // companyAddress: currentUser?.company?.address || '',
+    // companyTaxNumber: currentUser?.company?.taxNumber || '',
     employeeName: '',
     employeeAddress: '',
     employeeWorkPosition: '',
@@ -88,70 +95,82 @@ const ConsentForPersonalDataProcessingPage = () => {
   };
 
   return (
-    <div className={styles.simplePageContainer}>
-      <div className={styles['document-form']}>
-        <div className={styles['form-header']}>
-          <h3>Генерирајте согласност за обработка на лични податоци</h3>
-        </div>
-        <div className={styles['form-sections']}>
-          <div className={styles['form-section']}>
-            <div className={styles['form-group']}>
-              <label htmlFor="employeeName">Име и презиме на вработениот *</label>
-              <input
-                type="text"
-                id="employeeName"
-                value={formData.employeeName}
-                onChange={(e) => handleInputChange('employeeName', e.target.value)}
-                placeholder="пр. Марко Петровски"
-                className={errors.employeeName ? styles.error : ''}
-              />
-              {errors.employeeName && <span className={styles['error-message']}>{errors.employeeName}</span>}
+    <div className={styles.pageContainer}>
+      <Header />
+      <div className={styles.dashboardLayout}>
+        <Sidebar />
+        <main className={styles.dashboardMain}>
+          {!currentUser?.profileComplete && <ProfileReminderBanner />}
+          
+          <div className={styles.documentContainer}>
+            <div className={styles.documentHeader}>
+              <h1>Согласност за обработка на лични податоци</h1>
+              <p>Генерирајте согласност за обработка на лични податоци во согласност со GDPR</p>
             </div>
 
-            <div className={styles['form-group']}>
-              <label htmlFor="employeeAddress">Адреса на вработениот *</label>
-              <input
-                type="text"
-                id="employeeAddress"
-                value={formData.employeeAddress}
-                onChange={(e) => handleInputChange('employeeAddress', e.target.value)}
-                placeholder="пр. ул. Македонија бр. 123, Скопје"
-                className={errors.employeeAddress ? styles.error : ''}
-              />
-              {errors.employeeAddress && <span className={styles['error-message']}>{errors.employeeAddress}</span>}
-            </div>
+            <div className={styles['document-form']}>
+              <div className={styles['form-sections']}>
+                <div className={styles['form-section']}>
+                  <div className={styles['form-group']}>
+                    <label htmlFor="employeeName">Име и презиме на вработениот *</label>
+                    <input
+                      type="text"
+                      id="employeeName"
+                      value={formData.employeeName}
+                      onChange={(e) => handleInputChange('employeeName', e.target.value)}
+                      placeholder="пр. Марко Петровски"
+                      className={errors.employeeName ? styles.error : ''}
+                    />
+                    {errors.employeeName && <span className={styles['error-message']}>{errors.employeeName}</span>}
+                  </div>
 
-            <div className={styles['form-group']}>
-              <label htmlFor="employeeWorkPosition">Работна позиција *</label>
-              <input
-                type="text"
-                id="employeeWorkPosition"
-                value={formData.employeeWorkPosition}
-                onChange={(e) => handleInputChange('employeeWorkPosition', e.target.value)}
-                placeholder="пр. Софтверски инженер"
-                className={errors.employeeWorkPosition ? styles.error : ''}
-              />
-              {errors.employeeWorkPosition && <span className={styles['error-message']}>{errors.employeeWorkPosition}</span>}
+                  <div className={styles['form-group']}>
+                    <label htmlFor="employeeAddress">Адреса на вработениот *</label>
+                    <input
+                      type="text"
+                      id="employeeAddress"
+                      value={formData.employeeAddress}
+                      onChange={(e) => handleInputChange('employeeAddress', e.target.value)}
+                      placeholder="пр. ул. Македонија бр. 123, Скопје"
+                      className={errors.employeeAddress ? styles.error : ''}
+                    />
+                    {errors.employeeAddress && <span className={styles['error-message']}>{errors.employeeAddress}</span>}
+                  </div>
+
+                  <div className={styles['form-group']}>
+                    <label htmlFor="employeeWorkPosition">Работна позиција *</label>
+                    <input
+                      type="text"
+                      id="employeeWorkPosition"
+                      value={formData.employeeWorkPosition}
+                      onChange={(e) => handleInputChange('employeeWorkPosition', e.target.value)}
+                      placeholder="пр. Софтверски инженер"
+                      className={errors.employeeWorkPosition ? styles.error : ''}
+                    />
+                    {errors.employeeWorkPosition && <span className={styles['error-message']}>{errors.employeeWorkPosition}</span>}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles['form-actions']}>
+                <button
+                  onClick={handleGenerateDocument}
+                  disabled={isGenerating}
+                  className={styles['generate-btn']}
+                >
+                  {isGenerating ? (
+                    <>
+                      <span className={styles['loading-spinner']}></span>
+                      Генерирање...
+                    </>
+                  ) : (
+                    'Генерирај документ'
+                  )}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className={styles['form-actions']}>
-          <button
-            onClick={handleGenerateDocument}
-            disabled={isGenerating}
-            className={styles['generate-btn']}
-          >
-            {isGenerating ? (
-              <>
-                <span className={styles['loading-spinner']}></span>
-                Генерирање...
-              </>
-            ) : (
-              'Генерирај документ'
-            )}
-          </button>
-        </div>
+        </main>
       </div>
     </div>
   );

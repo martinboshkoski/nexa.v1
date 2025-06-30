@@ -7,13 +7,17 @@ const formatDate = (date) => {
 };
 
 function generateConsentForPersonalDataProcessingDoc(formData, user, company) {
+
     // Get data with fallbacks
-    const companyName = company?.name || '[Име на компанија]';
+    const companyName = company?.companyName || '[Име на компанија]';
     const companyAddress = company?.address || '[Адреса на компанија]';
-    const employeeName = formData.employeeName || '[Име и презиме]';
-    const employeeAddress = formData.employeeAddress || '[Адреса]';
+    const companyTaxNumber = company?.taxNumber || '[Даночен број]';
+    const employeeName = formData.dataSubjectName || '[Име и презиме]';
+    const employeeAddress = formData.dataSubjectAddress || '[Адреса]';
     const employeePosition = formData.employeeWorkPosition || '[Позиција]';
     const currentDate = formatDate(new Date());
+
+    console.log(formData)
 
     // Create the simplest possible document with minimal formatting
     const doc = new Document({
