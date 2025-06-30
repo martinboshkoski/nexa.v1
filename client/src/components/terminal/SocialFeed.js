@@ -417,30 +417,17 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
       <div className={styles.postMainContent}> {/* Ensure this class is styled for 2/3 width */}
         <div className={styles.postHeader}>
           <div className={styles.authorInfo}>
-            {userAvatar ? (
+            {/* {userAvatar ? (
               <img src={userAvatar} alt={userName} className={styles.authorAvatar} />
             ) : (
               <div className={styles.authorAvatarPlaceholder}>{userName.substring(0, 1)}</div>
-            )}
+            )} */}
             <div>
-              <div className={styles.authorName}>{userName}</div>
-              <div className={styles.postTime}>{formatDate(post.createdAt)}</div>
             </div>
           </div>
           <div className={styles.postHeaderRight}>
-            <div className={styles.postTypeInfo}>
-              <span className={styles.postTypeIcon}>{getPostTypeIcon(post.postType)}</span>
-              <span className={styles.postTypeLabel}>{getPostTypeLabel(post.postType)}</span>
-            </div>
-            {canDeletePost(post) && (
-              <button 
-                onClick={() => onDelete(post)} 
-                className={styles.deleteButton}
-                title="Избриши објава"
-              >
-                🗑️
-              </button>
-            )}
+
+            
           </div>
         </div>
 
@@ -463,6 +450,12 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
             <span role="img" aria-label="like">👍</span> 
             <span>{isLikedByCurrentUser ? 'Ви се допаѓа' : 'Ми се допаѓа'} ({post.likes?.length || 0})</span>
           </button> */} {/* Like button removed */}
+                      <div className={styles.postTypeInfo}>
+              <span className={styles.postTypeIcon}>{getPostTypeIcon(post.postType)}</span>
+              <span className={styles.postTypeLabel}>{getPostTypeLabel(post.postType)}</span>
+              <div className={styles.postTime}>{formatDate(post.createdAt)}</div>
+    
+            </div>
           <button onClick={() => setShowComments(!showComments)} className={styles.actionButton}>
             <span role="img" aria-label="comment">💬</span> 
             <span>Коментари ({post.comments?.length || 0})</span>

@@ -61,8 +61,9 @@ const Header = ({ isTerminal = false }) => {
           aria-expanded={profileDropdownOpen}
         >
           <span className={styles['profile-icon']}>👤</span>
-          {/* Display email if fullName is not available */}
-          <span className={styles['profile-name']}>{currentUser?.fullName || currentUser?.email}</span>
+          <span className={styles['profile-name']}>
+            {currentUser?.companyInfo?.companyName || currentUser?.username || currentUser?.email}
+          </span>
           <span 
             className={`${styles['dropdown-arrow']} ${profileDropdownOpen ? styles['dropdown-arrow-open'] : ''}`}
           >

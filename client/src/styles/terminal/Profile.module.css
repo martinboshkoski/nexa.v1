@@ -90,3 +90,70 @@
   color: #43a047;
   margin-bottom: var(--spacing-md);
 }
+
+@media (max-width: 768px) {
+  .dashboard-layout {
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .dashboard-main {
+    margin-left: 0;
+    max-width: 100%;
+    padding: var(--spacing-md);
+    box-shadow: none;
+  }
+  .profile-container {
+    padding: var(--spacing-md);
+  }
+  .profile-header h1 {
+    font-size: 1.5rem;
+  }
+  .profile-form {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    box-shadow: none;
+  }
+  .form-section {
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm) 0;
+  }
+  .form-section-title {
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-xs);
+  }
+  .form-label {
+    font-size: 0.95rem;
+  }
+  .form-input, .form-select {
+    font-size: 1rem;
+    padding: var(--spacing-sm);
+  }
+  .save-button {
+    width: 100%;
+    padding: var(--spacing-md);
+    font-size: 1rem;
+  }
+}
+@media (max-width: 480px) {
+  .profile-header h1 {
+    font-size: 1.15rem;
+  }
+  .profile-form {
+    padding: var(--spacing-sm);
+  }
+  .form-section {
+    padding: 0;
+  }
+  .form-label {
+    font-size: 0.9rem;
+  }
+  .form-input, .form-select {
+    font-size: 0.95rem;
+    padding: var(--spacing-xs);
+  }
+  .save-button {
+    font-size: 0.95rem;
+    padding: var(--spacing-sm);
+  }
+}
