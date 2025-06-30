@@ -1,6 +1,7 @@
 /* filepath: /Users/martinboshkoski/Desktop/nexa-bilingual (working version)/client/src/styles/DocumentGenerator/DocumentItem.module.css */
 .documentItemContainer {
     background-color: #fff;
+    color: #1f2937;
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 15px; /* Space between items */

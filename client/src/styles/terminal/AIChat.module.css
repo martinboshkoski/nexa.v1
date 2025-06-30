@@ -306,27 +306,3 @@
     font-size: 1rem;
   }
 }
-
-/* Dark theme adjustments */
-:global(.dark-theme) .chatContainer {
-  background-color: var(--color-surface);
-}
-
-:global(.dark-theme) .messagesContainer {
-  background-color: var(--color-background);
-}
-
-:global(.dark-theme) .messageText {
-  background-color: var(--color-surface-elevated);
-  color: var(--color-text-primary);
-}
-
-:global(.dark-theme) .messageInput {
-  background-color: var(--color-surface);
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
-}
-
-:global(.dark-theme) .loadingIndicator {
-  background-color: var(--color-surface-elevated);
-}

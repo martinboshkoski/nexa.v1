@@ -179,67 +179,6 @@
   transform: none;
 }
 
-/* Dark mode support */
-[data-theme="dark"] .container {
-  background: rgba(30, 30, 30, 0.95);
-  color: #e0e0e0;
-}
-
-[data-theme="dark"] .header h1 {
-  background: linear-gradient(135deg, #8fa7ff 0%, #9d7bc4 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-[data-theme="dark"] .header p {
-  color: #b0b0b0;
-}
-
-[data-theme="dark"] .section {
-  background: rgba(40, 40, 40, 0.7);
-  border-color: #444;
-}
-
-[data-theme="dark"] .section h2 {
-  color: #e0e0e0;
-  border-bottom-color: #8fa7ff;
-}
-
-[data-theme="dark"] .inputGroup label {
-  color: #e0e0e0;
-}
-
-[data-theme="dark"] .inputGroup input,
-[data-theme="dark"] .inputGroup select,
-[data-theme="dark"] .inputGroup textarea {
-  background: #2a2a2a;
-  border-color: #555;
-  color: #e0e0e0;
-}
-
-[data-theme="dark"] .inputGroup input:focus,
-[data-theme="dark"] .inputGroup select:focus,
-[data-theme="dark"] .inputGroup textarea:focus {
-  border-color: #8fa7ff;
-  box-shadow: 0 0 0 3px rgba(143, 167, 255, 0.1);
-}
-
-[data-theme="dark"] .inputGroup input::placeholder,
-[data-theme="dark"] .inputGroup textarea::placeholder {
-  color: #777;
-}
-
-[data-theme="dark"] .cancelButton {
-  background: #444;
-  color: #e0e0e0;
-  border-color: #555;
-}
-
-[data-theme="dark"] .cancelButton:hover {
-  background: #555;
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
   .editProfile {

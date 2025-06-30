@@ -602,31 +602,6 @@
   }
 }
 
-/* Dark mode support for modal */
-[data-theme="dark"] .modalContent {
-  background: var(--color-neutral-800);
-  color: var(--color-white);
-}
-
-[data-theme="dark"] .modalContent h3 {
-  color: var(--color-white);
-}
-
-[data-theme="dark"] .modalContent p {
-  color: var(--color-neutral-300);
-}
-
-[data-theme="dark"] .cancelButton {
-  background: var(--color-neutral-700);
-  border-color: var(--color-neutral-600);
-  color: var(--color-white);
-}
-
-[data-theme="dark"] .cancelButton:hover {
-  background: var(--color-neutral-600);
-  border-color: var(--color-neutral-500);
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .socialFeed {

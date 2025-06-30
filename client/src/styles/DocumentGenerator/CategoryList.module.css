@@ -18,7 +18,8 @@
   }
   
   .categoryItem {
-    background-color: #ffffff; /* White background for items */
+    background-color: #fff; /* White background for items */
+    color: #1f2937; /* Dark text */
     border-radius: 8px;
     padding: 20px;
     cursor: pointer;

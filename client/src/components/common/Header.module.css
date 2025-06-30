@@ -294,13 +294,13 @@
 
 .profile-dropdown {
   position: absolute;
-  top: calc(100% + 8px); /* Position below button with small gap */
+  top: calc(100% + 8px);
   right: 0;
-  background-color: #1e293b; /* Updated background color */
+  background-color: #fff; /* Changed from #1e293b to white */
   border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-dropdown); /* Elegant shadow */
+  box-shadow: var(--shadow-dropdown);
   padding: 0.5rem 0;
-  z-index: 1050; /* Ensure it's above other elements */
+  z-index: 1050;
   min-width: 220px;
   opacity: 0;
   visibility: hidden;
@@ -319,17 +319,18 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1.25rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary); /* Use dark text */
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
+  background: #fff; /* Ensure background is white */
 }
 
 .dropdown-item:hover {
-  background-color: rgba(59, 130, 246, 0.08); /* Very subtle hover */
-  color: var(--color-accent-dark); /* Darker accent on hover */
+  background-color: #f3f4f6; /* Very light gray on hover */
+  color: var(--color-accent-dark);
 }
 
 .dropdown-icon {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../../contexts/AuthContext';
-import { useTheme } from '../../../../contexts/ThemeContext';
 import Header from '../../../../components/common/Header';
 import Sidebar from '../../../../components/terminal/Sidebar';
 import ProfileReminderBanner from '../../../../components/terminal/ProfileReminderBanner';
@@ -10,7 +9,6 @@ import styles from '../../../../styles/terminal/documents/DocumentGeneration.mod
 
 const ConfirmationOfEmploymentPage = () => {
   const { currentUser } = useAuth();
-  const { theme } = useTheme();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // Employee Info (Step 1)
@@ -272,7 +270,7 @@ const ConfirmationOfEmploymentPage = () => {
   };
 
   return (
-    <div className={`${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
+    <div className={`light-theme`}>
       <Header isTerminal={true} />
       <div className={styles['dashboard-layout']}>
         <Sidebar />
