@@ -5,9 +5,9 @@ import { Routes, Route } from 'react-router-dom';
 import Login from './pages/website/Login';
 
 // Admin Pages
-import AddNews from './pages/terminal/admin/AddNews';
 import AddInvestment from './pages/terminal/admin/AddInvestment';
 import ManageUsers from './pages/terminal/admin/ManageUsers';
+import AddBlog from './pages/terminal/admin/AddBlog';
 
 // Terminal Pages
 import Dashboard from './pages/terminal/Dashboard';
@@ -15,8 +15,9 @@ import DocumentGen from './pages/terminal/DocumentGen';
 import DocumentGeneratorPage from './pages/DocumentGeneratorPage';
 import DocumentTemplateGenerator from './pages/terminal/documents/DocumentTemplateGenerator';
 import LegalScreening from './pages/terminal/LegalScreening';
-import News from './pages/terminal/News';
 import Investments from './pages/terminal/Investments';
+import InvestmentDetail from './pages/terminal/InvestmentDetail';
+import BlogDetail from './pages/terminal/BlogDetail';
 import Contact from './pages/terminal/Contact';
 import EditProfile from './pages/terminal/EditProfile';
 import AIChat from './pages/terminal/AIChat';
@@ -66,14 +67,15 @@ function App() {
       <Route path="/terminal/documents/personal-data-protection/privacy-policy" element={<PrivateRoute><PrivacyPolicyPage /></PrivateRoute>} />
       <Route path="/terminal/legal-screening" element={<PrivateRoute><LegalScreening /></PrivateRoute>} />
       <Route path="/terminal/ai-chat" element={<PrivateRoute><AIChat /></PrivateRoute>} />
-      <Route path="/terminal/news" element={<PrivateRoute><News /></PrivateRoute>} />
       <Route path="/terminal/investments" element={<PrivateRoute><Investments /></PrivateRoute>} />
+      <Route path="/terminal/investments/:investmentId" element={<PrivateRoute><InvestmentDetail /></PrivateRoute>} />
+      <Route path="/terminal/blogs/:id" element={<PrivateRoute><BlogDetail /></PrivateRoute>} />
       <Route path="/terminal/contact" element={<PrivateRoute><Contact /></PrivateRoute>} />
       <Route path="/terminal/profile" element={<PrivateRoute><EditProfile /></PrivateRoute>} />
       <Route path="/terminal/verification" element={<PrivateRoute><CompanyVerification /></PrivateRoute>} />
       
       {/* Admin Routes */}
-      <Route path="/terminal/admin/news/add" element={<PrivateRoute><AddNews /></PrivateRoute>} />
+      <Route path="/terminal/admin/blogs/add" element={<PrivateRoute><AddBlog /></PrivateRoute>} />
       <Route path="/terminal/admin/investments/add" element={<PrivateRoute><AddInvestment /></PrivateRoute>} />
       <Route path="/terminal/admin/users" element={<PrivateRoute><ManageUsers /></PrivateRoute>} />
       <Route path="/terminal/admin/verification" element={<PrivateRoute><AdminVerification /></PrivateRoute>} />

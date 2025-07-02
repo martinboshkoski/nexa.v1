@@ -3,10 +3,11 @@ const router = express.Router();
 const passport = require('passport');
 const { validateInput, validateObjectId } = require('../middleware/validation');
 const documentController = require('../controllers/documentController');
-const consentController = require('../controllers/documents/consentForPersonalDataProcessingController');
+const { generateDocument } = require('../controllers/documentGeneratorController');
+const { authenticateJWT } = require('../middleware/auth');
 
 // Authentication middleware
-const auth = passport.authenticate('jwt', { session: false });
+const authMiddleware = passport.authenticate('jwt', { session: false });
 
 // Middleware to get DB instance
 router.use((req, res, next) => {
@@ -15,12 +16,12 @@ router.use((req, res, next) => {
 });
 
 // --- Document Management Routes ---
-router.get('/', auth, documentController.getAllDocuments);
-router.get('/:id', auth, validateObjectId('id'), documentController.getDocumentById);
-router.delete('/:id', auth, validateObjectId('id'), documentController.deleteDocument);
+router.get('/', authMiddleware, documentController.getAllDocuments);
+router.get('/:id', authMiddleware, validateObjectId('id'), documentController.getDocumentById);
+router.delete('/:id', authMiddleware, validateObjectId('id'), documentController.deleteDocument);
 
 // --- Document Generation Routes ---
-// Using proper authentication and validation
-router.post('/generate/consent-for-personal-data', auth, validateInput('consentPersonalDataProcessing'), consentController.generateDocument);
+// Generic document generation route
+router.post('/generate', authenticateJWT, generateDocument);
 
 module.exports = router;

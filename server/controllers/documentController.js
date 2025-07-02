@@ -1,36 +1,11 @@
 const { ObjectId } = require('mongodb');
 const { Packer } = require('docx');
 const { getUserAndCompanyForDocument, saveDocumentRecord } = require('../utils/documentUtils');
-const { generateAnnexEmploymentAgreementDoc } = require('../document_templates/employment/annexEmploymentAgreement');
-const { generateAnnualLeaveDecisionDoc } = require('../document_templates/employment/annualLeaveDecision');
-const { generateConfirmationOfEmploymentDoc } = require('../document_templates/employment/confirmationOfEmployment');
-const { generateEmploymentContractDoc } = require('../document_templates/employment/employmentContract');
-const { generateHealthAndSafetyPolicyDoc } = require('../document_templates/healthAndSafety/healthAndSafetyPolicy');
-const { generateWorkplaceHarassmentPolicyDoc } = require('../document_templates/healthAndSafety/workplaceHarassmentPolicy');
 const { generateConsentForPersonalDataProcessingDoc } = require('../document_templates/personalDataProtection/consentForPersonalDataProcessing');
-const { generatePrivacyPolicyDoc } = require('../document_templates/personalDataProtection/privacyPolicy');
-
-// Placeholder for other document generation functions
-const { generateTerminationLetterDoc } = require('../document_templates/employment/terminationLetter');
-const { generateJobDescriptionDoc } = require('../document_templates/employment/jobDescription');
-const { generatePerformanceReviewDoc } = require('../document_templates/employment/performanceReview');
-const { generateDisciplinaryActionDoc } = require('../document_templates/employment/disciplinaryAction');
-
 
 // A map to associate document types with their generation functions
 const documentGeneratorMap = {
-  'employment-annex': generateAnnexEmploymentAgreementDoc,
-  'annual-leave-decision': generateAnnualLeaveDecisionDoc,
-  'confirmation-of-employment': generateConfirmationOfEmploymentDoc,
-  'employment-contract': generateEmploymentContractDoc,
-  'health-safety-policy': generateHealthAndSafetyPolicyDoc,
-  'workplace-harassment-policy': generateWorkplaceHarassmentPolicyDoc,
   'consent-personal-data': generateConsentForPersonalDataProcessingDoc,
-  'privacy-policy': generatePrivacyPolicyDoc,
-  'termination-letter': generateTerminationLetterDoc,
-  'job-description': generateJobDescriptionDoc,
-  'performance-review': generatePerformanceReviewDoc,
-  'disciplinary-action': generateDisciplinaryActionDoc,
 };
 
 // Generic document generation controller

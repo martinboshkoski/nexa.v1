@@ -81,6 +81,9 @@ app.use(cookieParser()); // For CSRF token cookies
 // Input sanitization
 app.use(sanitizeRequest); // Sanitize all incoming requests
 
+// Mount auto-documents routes BEFORE CSRF middleware (no CSRF for JWT-protected API)
+app.use('/api/auto-documents', require('./routes/autoDocuments'));
+
 // CSRF Protection setup (conditional)
 if (settings.isMiddlewareEnabled('csrf') && setCSRFToken) {
   app.use(setCSRFToken); // Set CSRF tokens for all requests
@@ -101,7 +104,6 @@ app.use('/api/documents', require('./routes/documents'));
 async function createUploadDirs() {
   const dirs = [
     'public/uploads',
-    'public/uploads/news',
     'public/uploads/investments',
     'public/uploads/verification'
   ];
@@ -224,21 +226,16 @@ async function fixDatabaseIndexes(database) {
 // Service initialization function
 async function initializeServices(database) {
   try {
-    // Import all services
+    console.log('Initializing services and creating indexes...');
+    
+    // Import and initialize services
     const UserService = require('./services/userService');
     const SocialPostService = require('./services/socialPostService');
-    const NewsService = require('./services/newsService');
     const InvestmentService = require('./services/investmentService');
-    const CompanyVerificationService = require('./services/companyVerificationService');
-
-    // Initialize services (this will create indexes)
-    console.log('Initializing services and creating indexes...');
     
     new UserService(database);
     new SocialPostService(database);
-    new NewsService(database);
     new InvestmentService(database);
-    new CompanyVerificationService(database);
     
     console.log('All services initialized successfully');
   } catch (error) {
@@ -309,6 +306,7 @@ function registerRoutes() {
     /^\/social\/posts\/[^\/]+\/like$/,      // Like/unlike posts
     /^\/social\/posts\/[^\/]+\/comments$/,    // Comment on posts
     /^\/social\/posts\/[^\/]+$/,             // Individual post operations
+    '/blogs',                   // Blog posts (JWT protected)
   ];
   
   // Apply CSRF exemptions only if CSRF is enabled
@@ -346,12 +344,12 @@ function registerRoutes() {
   }
   
   // Conditional feature routes (disabled by default in current settings)
-  if (settings.isRouteEnabled('news') || settings.isRouteEnabled('blog')) {
+  if (settings.isRouteEnabled('blog')) {
     try {
-      app.use('/api/news', require('./routes/news'));
-      console.log('✅ News/Blog routes loaded');
+      app.use('/api/blogs', require('./routes/blogs'));
+      console.log('✅ Blog routes loaded');
     } catch (error) {
-      console.log('⚠️  News routes file not found - skipping');
+      console.log('⚠️  Blog routes file not found - skipping');
     }
   }
   

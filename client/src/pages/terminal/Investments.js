@@ -72,8 +72,13 @@ const Investments = () => {
                       <div key={investment._id} className={styles['investment-card']}>
                         <div className={styles['investment-content']}>
                           <h2 className={styles['investment-title']}>{investment.title}</h2>
-                          <p className={styles['investment-summary']}>{investment.summary}</p>
-                          <a href={investment.link} target="_blank" rel="noopener noreferrer" className={styles['investment-link']}>
+                          <p className={styles['investment-summary']}>{investment.summary || investment.description?.substring(0, 150) + '...'}</p>
+                          <div className={styles['investment-meta']}>
+                            <span className={styles['investment-amount']}>{investment.amount}€</span>
+                            <span className={styles['investment-sector']}>{investment.sector}</span>
+                            <span className={styles['investment-risk']}>{investment.riskLevel}</span>
+                          </div>
+                          <a href={`/terminal/investments/${investment._id}`} className={styles['investment-link']}>
                             Дознај повеќе
                           </a>
                         </div>

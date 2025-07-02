@@ -71,7 +71,6 @@ class SettingsManager {
         documents: features.documentAutomation,
         social: features.socialPosts,
         blog: features.blog,
-        news: features.blog,
         legal: features.legalHealthCheck
       },
       // Map features to collections automatically  
@@ -83,7 +82,6 @@ class SettingsManager {
           templates: features.documentAutomation,
           social_posts: features.socialPosts,
           blogs: features.blog,
-          news: features.blog,
           legal_checks: features.legalHealthCheck
         }
       },

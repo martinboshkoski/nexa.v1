@@ -12,8 +12,8 @@ function generateConsentForPersonalDataProcessingDoc(formData, user, company) {
     const companyName = company?.companyName || '[Име на компанија]';
     const companyAddress = company?.address || '[Адреса на компанија]';
     const companyTaxNumber = company?.taxNumber || '[Даночен број]';
-    const employeeName = formData.dataSubjectName || '[Име и презиме]';
-    const employeeAddress = formData.dataSubjectAddress || '[Адреса]';
+    const employeeName = formData.employeeName || '[Име и презиме]';
+    const employeeAddress = formData.employeeAddress || '[Адреса]';
     const employeePosition = formData.employeeWorkPosition || '[Позиција]';
     const currentDate = formatDate(new Date());
 
@@ -142,4 +142,4 @@ function generateConsentForPersonalDataProcessingDoc(formData, user, company) {
     };
 }
 
-module.exports = { generateConsentForPersonalDataProcessingDoc };
+module.exports = generateConsentForPersonalDataProcessingDoc;

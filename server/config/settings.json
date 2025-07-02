@@ -10,11 +10,11 @@
         "description": "Document generation and templates"
       },
       "blog": {
-        "enabled": false,
+        "enabled": true,
         "description": "News and blog posting system"
       },
       "socialMedia": {
-        "enabled": false,
+        "enabled": true,
         "description": "Social media posting and management"
       },
       "legalHealthCheck": {
@@ -22,7 +22,7 @@
         "description": "Legal compliance health checks"
       },
       "investments": {
-        "enabled": false,
+        "enabled": true,
         "description": "Investment tracking and management"
       },
       "companyVerification": {
@@ -50,8 +50,8 @@
         "templates": true,
         "news": false,
         "blogs": false,
-        "social_posts": false,
-        "investments": false,
+        "social_posts": true,
+        "investments": true,
         "companies": false,
         "uploads": false,
         "analytics": false
@@ -63,9 +63,9 @@
       "documents": true,
       "templates": true,
       "news": false,
-      "blog": false,
-      "social": false,
-      "investments": false,
+      "blog": true,
+      "social": true,
+      "investments": true,
       "companies": false,
       "uploads": false,
       "analytics": false

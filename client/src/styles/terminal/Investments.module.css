@@ -52,12 +52,60 @@
 
 .investment-summary {
   margin-bottom: var(--spacing-md);
+  color: var(--color-gray);
+  line-height: 1.5;
+}
+
+.investment-meta {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.investment-amount {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.investment-sector {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.investment-risk {
+  background-color: #fff3e0;
+  color: #f57c00;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
 .investment-link {
   display: inline-block;
   color: var(--color-accent);
   font-weight: 500;
+  text-decoration: none;
+  padding: 8px 16px;
+  background-color: var(--color-accent);
+  color: white;
+  border-radius: var(--border-radius-sm);
+  transition: background-color var(--transition-medium);
+}
+
+.investment-link:hover {
+  background-color: var(--color-accent-dark);
+  text-decoration: none;
 }
 
 .pagination {

@@ -78,7 +78,7 @@ const SocialPostSchema = {
   },
   postType: {
     type: 'string',
-    enum: ['user_post', 'admin_news', 'admin_investment'],
+    enum: ['user_post', 'admin_investment'],
     default: 'user_post'
   },
   originalContentId: {
@@ -133,7 +133,7 @@ function validateSocialPost(post) {
   }
   
   // Validate post type
-  const validPostTypes = ['user_post', 'admin_news', 'admin_investment'];
+  const validPostTypes = ['user_post', 'admin_investment'];
   if (post.postType && !validPostTypes.includes(post.postType)) {
     errors.push('Invalid post type');
   }

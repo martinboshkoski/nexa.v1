@@ -25,10 +25,10 @@ class SocialController {
       // Apply filters
       if (filter === 'posts') {
         matchCondition.postType = 'user_post';
-      } else if (filter === 'news') {
-        matchCondition.postType = 'admin_news';
       } else if (filter === 'investments') {
         matchCondition.postType = 'admin_investment';
+      } else if (filter === 'blogs') {
+        matchCondition.postType = 'admin_blog';
       }
 
       const db = req.app.locals.db;

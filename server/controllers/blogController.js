@@ -53,35 +53,47 @@ class BlogController {
       // Handle both 'language' and 'lang' parameters for compatibility
       const language = req.query.language || req.query.lang || 'en'; // Default to English
       
-      // Build query
+      // Build query - handle both old and new blog structures
       const query = {};
       
-      // Language filter
-      if (language) {
-        query.language = language;
+      // For now, just get all blogs without filters to debug
+      console.log('Fetching all blogs without filters');
+      
+      // Language filter - check both contentLanguage and old structure
+      if (language && language !== 'en') {
+        query.$or = [
+          { contentLanguage: language },
+          { language: language }
+        ];
       }
       
-      // Category filter
+      // Category filter - check both category and old structure
       if (category && category !== 'all') {
-        query.category = category;
+        query.$or = [
+          { category: category },
+          { category: { $exists: false } } // Include old blogs without category
+        ];
       }
       
-      // Tag filter
+      // Tag filter - only for new structure
       if (tag) {
         query.tags = { $in: [tag] };
       }
       
-      // Search filter
+      // Search filter - check both old and new fields
       if (search) {
         query.$or = [
           { title: { $regex: search, $options: 'i' } },
           { content: { $regex: search, $options: 'i' } },
-          { excerpt: { $regex: search, $options: 'i' } }
+          { excerpt: { $regex: search, $options: 'i' } },
+          { summary: { $regex: search, $options: 'i' } } // Old structure
         ];
       }
       
       // Get total count for pagination
       const totalBlogs = await blogsCollection.countDocuments(query);
+      console.log('Total blogs found:', totalBlogs);
+      console.log('Query used:', JSON.stringify(query));
       
       // Calculate pagination
       const skip = (page - 1) * limit;
@@ -95,8 +107,43 @@ class BlogController {
         .limit(limit)
         .toArray();
       
+      console.log('Blogs fetched:', blogs.length);
+      if (blogs.length > 0) {
+        console.log('Sample blog structure:', JSON.stringify(blogs[0], null, 2));
+      }
+      
+      // Transform old blog structure to new format
+      const transformedBlogs = blogs.map(blog => {
+        // Check if this is an old blog structure
+        if (blog.summary && !blog.excerpt) {
+          return {
+            _id: blog._id,
+            title: blog.title,
+            content: blog.content,
+            excerpt: blog.summary, // Map summary to excerpt
+            category: blog.category || 'General', // Default category
+            tags: blog.tags || [],
+            contentLanguage: blog.language || 'en', // Map language to contentLanguage
+            featuredImage: blog.featuredImage || null,
+            status: blog.status || 'published',
+            author: blog.author ? {
+              id: blog.author,
+              name: blog.author
+            } : {
+              id: 'unknown',
+              name: 'Unknown Author'
+            },
+            createdAt: blog.createdAt,
+            updatedAt: blog.updatedAt || blog.createdAt,
+            views: blog.views || 0,
+            likes: blog.likes || 0
+          };
+        }
+        return blog; // Return as-is if it's already in new format
+      });
+      
       res.json({
-        blogs,
+        blogs: transformedBlogs,
         pagination: {
           currentPage: page,
           totalPages,
@@ -124,7 +171,34 @@ class BlogController {
         return res.status(404).json({ message: 'Blog post not found' });
       }
       
-      res.json(blog);
+      // Transform old blog structure to new format
+      let transformedBlog = blog;
+      if (blog.summary && !blog.excerpt) {
+        transformedBlog = {
+          _id: blog._id,
+          title: blog.title,
+          content: blog.content,
+          excerpt: blog.summary, // Map summary to excerpt
+          category: blog.category || 'General', // Default category
+          tags: blog.tags || [],
+          contentLanguage: blog.language || 'en', // Map language to contentLanguage
+          featuredImage: blog.featuredImage || null,
+          status: blog.status || 'published',
+          author: blog.author ? {
+            id: blog.author,
+            name: blog.author
+          } : {
+            id: 'unknown',
+            name: 'Unknown Author'
+          },
+          createdAt: blog.createdAt,
+          updatedAt: blog.updatedAt || blog.createdAt,
+          views: blog.views || 0,
+          likes: blog.likes || 0
+        };
+      }
+      
+      res.json(transformedBlog);
     } catch (error) {
       console.error('Error fetching blog:', error);
       res.status(500).json({ message: 'Server error' });
@@ -158,7 +232,7 @@ class BlogController {
       // Get user ID - handle both req.user.id (from JWT payload) and req.user._id (from database object)
       const userId = req.user.id || req.user._id;
 
-      // Create blog object
+      // Create blog object - use contentLanguage instead of language to avoid MongoDB text index conflicts
       const newBlog = {
         _id: uuidv4(),
         title: title.trim(),
@@ -166,7 +240,7 @@ class BlogController {
         excerpt: excerpt || content.substring(0, 200) + '...',
         category,
         tags: tags || [],
-        language,
+        contentLanguage: language, // Changed from 'language' to 'contentLanguage'
         featuredImage: featuredImage || null,
         status,
         author: {
@@ -181,6 +255,31 @@ class BlogController {
 
       // Insert blog
       await blogsCollection.insertOne(newBlog);
+
+      // Create social post for the blog
+      try {
+        const socialPostsCollection = db.collection('socialPosts');
+        const socialPost = {
+          _id: uuidv4(),
+          content: `Нов блог: ${newBlog.title}`,
+          postType: 'admin_blog',
+          blogId: newBlog._id,
+          author: {
+            _id: userId,
+            email: req.user.email,
+            username: req.user.username,
+            companyInfo: req.user.companyInfo
+          },
+          createdAt: new Date(),
+          comments: [],
+          likes: []
+        };
+        
+        await socialPostsCollection.insertOne(socialPost);
+      } catch (socialError) {
+        console.error('Error creating social post for blog:', socialError);
+        // Don't fail the blog creation if social post fails
+      }
 
       res.status(201).json({
         message: 'Blog post created successfully',
@@ -202,6 +301,12 @@ class BlogController {
       delete updateData._id;
       delete updateData.author;
       delete updateData.createdAt;
+      
+      // Handle language field conversion
+      if (updateData.language) {
+        updateData.contentLanguage = updateData.language;
+        delete updateData.language;
+      }
       
       // Add updated timestamp
       updateData.updatedAt = new Date();

@@ -88,13 +88,18 @@ class InvestmentController {
         return res.status(400).json({ message: 'Invalid investment ID' });
       }
       
-      const investment = await investmentsCollection.findOne({ _id: new ObjectId(id) });
+      // Increment views and get the investment
+      const result = await investmentsCollection.findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        { $inc: { views: 1 } },
+        { returnDocument: 'after' }
+      );
       
-      if (!investment) {
+      if (!result.value) {
         return res.status(404).json({ message: 'Investment not found' });
       }
       
-      res.json(investment);
+      res.json(result.value);
     } catch (error) {
       console.error('Error fetching investment:', error);
       res.status(500).json({ message: 'Server error' });
@@ -107,22 +112,20 @@ class InvestmentController {
       const {
         title,
         description,
-        company,
+        amount,
+        duration,
+        returnRate,
+        riskLevel,
         sector,
         location,
-        amount,
-        riskLevel,
-        expectedReturn,
-        duration,
-        contactEmail,
-        website,
+        requirements,
         status = 'active'
       } = req.body;
 
       // Validation
-      if (!title || !description || !company || !sector || !amount) {
+      if (!title || !description || !amount || !sector) {
         return res.status(400).json({ 
-          message: 'Title, description, company, sector, and amount are required' 
+          message: 'Title, description, amount, and sector are required' 
         });
       }
 
@@ -132,23 +135,44 @@ class InvestmentController {
       const newInvestment = {
         title: title.trim(),
         description: description.trim(),
-        company: company.trim(),
-        sector,
-        location: location || '',
+        summary: description.trim().substring(0, 200) + '...', // For social feed display
         amount: parseFloat(amount),
+        minInvestment: parseFloat(amount), // For display purposes
+        duration: duration || '',
+        returnRate: returnRate || '',
         riskLevel: riskLevel || 'medium',
-        expectedReturn: expectedReturn || null,
-        duration: duration || null,
-        contactEmail: contactEmail || '',
-        website: website || '',
+        sector: sector.trim(),
+        location: location || '',
+        requirements: requirements || '',
         status,
         createdAt: new Date(),
         updatedAt: new Date(),
-        views: 0
+        views: 0,
+        author: req.user._id // Add the admin user as author
       };
 
       const result = await investmentsCollection.insertOne(newInvestment);
       const createdInvestment = await investmentsCollection.findOne({ _id: result.insertedId });
+
+      // Create a social post for the new investment
+      try {
+        const socialPostsCollection = db.collection('socialPosts');
+        const socialPost = {
+          content: `Нова инвестициона можност: ${title}`,
+          type: 'admin_investment',
+          author: req.user._id,
+          investmentId: result.insertedId,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          likes: [],
+          comments: [],
+          shares: 0
+        };
+        await socialPostsCollection.insertOne(socialPost);
+      } catch (socialError) {
+        console.error('Error creating social post for investment:', socialError);
+        // Don't fail the investment creation if social post fails
+      }
 
       res.status(201).json({
         message: 'Investment created successfully',

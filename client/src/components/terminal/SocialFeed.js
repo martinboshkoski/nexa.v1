@@ -42,8 +42,13 @@ const SocialFeed = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const data = await ApiService.request(`/social/newsfeed?filter=${filter}`);
-      setPosts(data?.posts || []); // Ensure posts is an array
+      if (filter === 'blogs') {
+        const data = await ApiService.request('/blogs');
+        setPosts(data?.blogs || []); // Use blogs data for blogs filter
+      } else {
+        const data = await ApiService.request(`/social/newsfeed?filter=${filter}`);
+        setPosts(data?.posts || []); // Ensure posts is an array
+      }
     } catch (error) {
       setError('Настана грешка при вчитување на објавите. Обидете се повторно.');
       setPosts([]); // Ensure posts is an array even on error
@@ -192,6 +197,7 @@ const SocialFeed = () => {
     switch (postType) {
       case 'admin_news': return '📰';
       case 'admin_investment': return '💰';
+      case 'admin_blog': return '📝';
       default: return '👤'; // Changed from '🏢' to represent user/company post more generally
     }
   };
@@ -260,6 +266,12 @@ const SocialFeed = () => {
         >
           Инвестиции
         </button>
+        <button
+          className={`${styles.filterButton} ${filter === 'blogs' ? styles.active : ''}`}
+          onClick={() => setFilter('blogs')}
+        >
+          Блогови
+        </button>
       </div>
 
       {error && (
@@ -272,21 +284,32 @@ const SocialFeed = () => {
       {!loading && posts.length === 0 && !error && (
          <div className={styles.noPosts}>Нема објави за прикажување.</div>
       )}
+      
       <div className={styles.postsList}>
-        {posts.map(post => (
-          <PostCard
-            key={post._id}
-            post={post}
-            // onLike={handleLike} // Removing like functionality
-            onComment={handleComment}
-            formatDate={formatDate}
-            getPostTypeIcon={getPostTypeIcon}
-            currentUser={currentUser}
-            onDelete={openDeleteModal} // Pass delete function
-            canDeletePost={canDeletePost} // Pass delete permission function
-            onCompanyClick={openCompanyModal}
-          />
-        ))}
+        {filter === 'blogs' ? (
+          posts.map(blog => (
+            <BlogCard
+              key={blog._id}
+              blog={blog}
+              formatDate={formatDate}
+            />
+          ))
+        ) : (
+          posts.map(post => (
+            <PostCard
+              key={post._id}
+              post={post}
+              // onLike={handleLike} // Removing like functionality
+              onComment={handleComment}
+              formatDate={formatDate}
+              getPostTypeIcon={getPostTypeIcon}
+              currentUser={currentUser}
+              onDelete={openDeleteModal} // Pass delete function
+              canDeletePost={canDeletePost} // Pass delete permission function
+              onCompanyClick={openCompanyModal}
+            />
+          ))
+        )}
       </div>
 
       {/* Delete confirmation modal */}
@@ -390,6 +413,7 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
     switch (postType) {
       case 'admin_news': return 'Вест';
       case 'admin_investment': return 'Инвестиција';
+      case 'admin_blog': return 'Блог';
       default: return 'Објава'; // General user post
     }
   };
@@ -487,7 +511,23 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
         </div>
 
         <div className={styles.postContent}>
-          <p>{post.content}</p>
+          {post.postType === 'admin_investment' && post.investmentId ? (
+            <a href={`/terminal/investments/${post.investmentId}`} className={styles.investmentLink}>
+              <p>{post.content}</p>
+              <div className={styles.investmentPreview}>
+                <span className={styles.investmentPreviewText}>Кликнете за да видите детали за инвестицијата →</span>
+              </div>
+            </a>
+          ) : post.postType === 'admin_blog' && post.blogId ? (
+            <a href={`/terminal/blogs/${post.blogId}`} className={styles.blogLink}>
+              <p>{post.content}</p>
+              <div className={styles.blogPreview}>
+                <span className={styles.blogPreviewText}>Кликнете за да го прочитате целиот блог →</span>
+              </div>
+            </a>
+          ) : (
+            <p>{post.content}</p>
+          )}
           {linkPreview && (
             <a href={linkPreview.url} target="_blank" rel="noopener noreferrer" className={styles.linkPreview}>
               {linkPreview.image && <img src={linkPreview.image} alt={linkPreview.title || 'Link preview'} />}
@@ -560,6 +600,96 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+};
+
+// Blog Card Component
+const BlogCard = ({ blog, formatDate }) => {
+  return (
+    <div className={styles.postCard}>
+      {/* Company Information Section - 1/3 of the post */}
+      <div className={styles.companySection}>
+        <div className={styles.companyDetails}>
+          {/* Blog Image */}
+          <div className={styles.companyLogoContainer}>
+            {blog.featuredImage ? (
+              <img 
+                src={`${process.env.REACT_APP_API_URL || 'http://localhost:5002'}/uploads/blogs/${blog.featuredImage}`} 
+                alt={blog.title}
+                className={styles.companyLogo}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  const placeholderElement = document.createElement('div');
+                  placeholderElement.className = styles.companyLogoPlaceholder;
+                  placeholderElement.innerText = '📝';
+                  e.target.parentNode.appendChild(placeholderElement);
+                }}
+              />
+            ) : (
+              <div className={styles.companyLogoPlaceholder}>
+                📝
+              </div>
+            )}
+          </div>
+          
+          <div className={styles.companyName}>
+            {blog.category}
+          </div>
+          
+          {blog.author && (
+            <div className={styles.companyAddress}>
+              ✍️ {blog.author.name}
+            </div>
+          )}
+          
+          {blog.tags && blog.tags.length > 0 && (
+            <div className={styles.companyIndustry}>
+              {blog.tags.slice(0, 2).map((tag, index) => (
+                <span key={index} style={{ marginRight: '5px' }}>#{tag}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Main Blog Content Section - 2/3 of the post */}
+      <div className={styles.postMainContent}>
+        <div className={styles.postHeader}>
+          <div className={styles.authorInfo}>
+            <div>
+            </div>
+          </div>
+          <div className={styles.postHeaderRight}>
+          </div>
+        </div>
+
+        <div className={styles.postContent}>
+          <a href={`/terminal/blogs/${blog._id}`} className={styles.blogLink}>
+            <h3 className={styles.blogTitle}>{blog.title}</h3>
+            {blog.excerpt && (
+              <p className={styles.blogExcerpt}>{blog.excerpt}</p>
+            )}
+            <div className={styles.blogPreview}>
+              <span className={styles.blogPreviewText}>Кликнете за да го прочитате целиот блог →</span>
+            </div>
+          </a>
+        </div>
+
+        <div className={styles.postActions}>
+          <div className={styles.postTypeInfo}>
+            <span className={styles.postTypeIcon}>📝</span>
+            <span className={styles.postTypeLabel}>Блог</span>
+            <div className={styles.postTime}>{formatDate(blog.createdAt)}</div>
+          </div>
+          {blog.views !== undefined && (
+            <span className={styles.blogViews}>👁️ {blog.views} прегледи</span>
+          )}
+          {blog.likes !== undefined && (
+            <span className={styles.blogLikes}>👍 {blog.likes} допаѓања</span>
+          )}
+        </div>
       </div>
     </div>
   );

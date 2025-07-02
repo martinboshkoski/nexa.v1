@@ -33,12 +33,10 @@ async function seedDatabase() {
     console.log("⚠️  WARNING: This will DELETE ALL existing data!");
     console.log("📊 Current collections status:");
     
-    const newsCount = await db.collection("news").countDocuments();
     const investmentsCount = await db.collection("investments").countDocuments();
     const usersCount = await db.collection("users").countDocuments();
     const companiesCount = await db.collection("companies").countDocuments();
     
-    console.log(`📰 News items: ${newsCount}`);
     console.log(`💰 Investments: ${investmentsCount}`);
     console.log(`👥 Users: ${usersCount}`);
     console.log(`🏢 Companies: ${companiesCount}`);
@@ -51,18 +49,12 @@ async function seedDatabase() {
     }
 
     // Only clear collections if no users exist (safer approach)
-    await db.collection("news").deleteMany({});
     await db.collection("investments").deleteMany({});
     await db.collection("companies").deleteMany({});
 
     console.log("✅ Cleared existing collections (users were already empty)");
 
     // Insert sample data
-
-    if (sampleNews.length > 0) {
-      await db.collection("news").insertMany(sampleNews);
-      console.log(`Inserted ${sampleNews.length} news items`);
-    }
 
     if (sampleInvestments.length > 0) {
       await db.collection("investments").insertMany(sampleInvestments);
