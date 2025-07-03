@@ -130,15 +130,21 @@ const BlogDetail = () => {
                 )}
               </header>
 
-              {blog.featuredImage && (
-                <div className={styles.blogImage}>
+              <div className={styles.blogImage}>
+                {blog.featuredImage ? (
                   <img 
-                    src={`${process.env.REACT_APP_API_URL || 'http://localhost:5002'}/uploads/blogs/${blog.featuredImage}`} 
+                    src={blog.featuredImage.startsWith('http') ? blog.featuredImage : `${process.env.REACT_APP_API_URL || 'http://localhost:5002'}/uploads/blogs/${blog.featuredImage}`} 
                     alt={blog.title}
                     className={styles.featuredImage}
                   />
-                </div>
-              )}
+                ) : (
+                  <img 
+                    src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+                    alt="Blog placeholder"
+                    className={styles.featuredImage}
+                  />
+                )}
+              </div>
 
               <div className={styles.blogContent}>
                 <div 

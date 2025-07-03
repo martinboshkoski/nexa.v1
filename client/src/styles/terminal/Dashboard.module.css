@@ -57,52 +57,81 @@
 
 .dashboard-layout {
   display: flex;
-  min-height: calc(100vh - 64px);
-  background-color: var(--color-background);
+  min-height: 100vh;
+  background-color: #f8f9fa;
   position: relative;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.dashboard-sidebar {
+  width: 260px;
+  min-width: 200px;
+  background-color: #fff;
+  border-right: 1px solid #e9ecef;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  z-index: 10;
+  transition: all 0.3s ease;
 }
 
 .dashboard-main {
-  flex: 1;
-  padding: var(--spacing-xl);
-  margin-left: 336px;
-  margin-right: 336px;
-  max-width: calc(100% - 672px);
-  background-color: var(--color-white);
-  color: var(--color-neutral-800);
-  overflow-y: auto;
+  flex: 1 1 0;
+  max-width: 850px;
+  min-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 32px 32px 32px;
+  background: #fff;
   min-height: calc(100vh - 64px);
-  box-shadow: var(--shadow-xl);
-  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-  border: 1px solid var(--color-neutral-200);
-  transition: var(--transition-medium);
+  overflow-y: auto;
+  box-sizing: border-box;
+  align-self: flex-start;
 }
 
-/* Responsive adjustments */
-@media (max-width: 1400px) {
-  .dashboard-main {
-    margin-right: 336px; /* Keep right sidebar width consistent */
-    max-width: calc(100% - 672px); /* Both sidebars: 336px + 336px = 672px */
-  }
+.right-sidebar {
+  width: 300px;
+  min-width: 200px;
+  background: transparent;
+  position: fixed;
+  right: 0;
+  top: 64px;
+  height: calc(100vh - 64px);
+  z-index: 9;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 @media (max-width: 1200px) {
   .dashboard-main {
-    margin-right: 0; /* Hide right sidebar on small screens */
-    max-width: calc(100% - 280px);
+    max-width: 100vw;
+    min-width: 0;
+  }
+  .right-sidebar {
+    display: none;
   }
 }
 
-.dashboard-sidebar { /* This class is used in Sidebar.module.css, applying general theme here */
-  width: 280px;
-  background-color: var(--light-surface); /* White or very light surface for sidebar */
-  color: var(--dark-purple-text); /* Dark purple text in sidebar */
-  padding: var(--spacing-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  border-right: 1px solid var(--dark-purple-border); /* Dark purple border */
+@media (max-width: 900px) {
+  .dashboard-main {
+    margin: 0;
+    max-width: 100vw;
+    padding: 16px 0 8px 0;
+  }
+  .dashboard-sidebar,
+  .right-sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-main {
+    padding: 4vw 0 4vw 0;
+  }
 }
 
 /* Styles for elements directly within Dashboard.js or its main content area */
@@ -256,17 +285,6 @@
   background-color: var(--dark-purple-accent-hover); /* Darker purple on hover */
   color: var(--light-surface);
   transform: translateY(-2px);
-}
-
-@media (max-width: 768px) {
-  .dashboard-main {
-    margin-left: 0;
-    max-width: 100%;
-  }
-  /* .dashboard-grid might be an old class, ensure it's still relevant or remove */
-  .dashboard-grid { 
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Ensure global styles or App.css also reflect light theme for body, header, footer if they are not already light */
