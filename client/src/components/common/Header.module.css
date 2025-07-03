@@ -505,3 +505,8 @@
     display: none;
   }
 }
+
+.logoTerminal {
+  /* margin-left: calc(80px + var(--spacing-lg) - var(--spacing-md)); */
+  margin-left: -350px;
+}

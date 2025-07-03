@@ -132,7 +132,7 @@ const Header = ({ isTerminal = false }) => {
       <div className={styles['header-container']}>
         {/* Left section with logo */}
         <div className={styles['left-section']}>
-          <Link to={isTerminal ? '/terminal' : '/'} className={styles.logo}>
+          <Link to={isTerminal ? '/terminal' : '/'} className={`${styles.logo} ${isTerminal ? styles.logoTerminal : ''}`}>
             Nexa
           </Link>
         </div>

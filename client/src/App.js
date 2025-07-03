@@ -23,6 +23,7 @@ import EditProfile from './pages/terminal/EditProfile';
 import AIChat from './pages/terminal/AIChat';
 // import CompleteProfile from './pages/terminal/CompleteProfile';
 import SimpleCompleteProfile from './pages/terminal/SimpleCompleteProfile';
+import Education from './pages/terminal/Education';
 
 // Document Pages
 import AnnexEmploymentAgreement from './pages/terminal/documents/contracts/AnnexEmploymentAgreement';
@@ -73,6 +74,7 @@ function App() {
       <Route path="/terminal/contact" element={<PrivateRoute><Contact /></PrivateRoute>} />
       <Route path="/terminal/profile" element={<PrivateRoute><EditProfile /></PrivateRoute>} />
       <Route path="/terminal/verification" element={<PrivateRoute><CompanyVerification /></PrivateRoute>} />
+      <Route path="/terminal/education" element={<PrivateRoute><Education /></PrivateRoute>} />
       
       {/* Admin Routes */}
       <Route path="/terminal/admin/blogs/add" element={<PrivateRoute><AddBlog /></PrivateRoute>} />
