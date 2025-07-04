@@ -9,6 +9,9 @@ router.get('/profile', authenticateJWT, userController.getProfile);
 // Update user profile
 router.put('/profile', authenticateJWT, userController.updateProfile);
 
+// Update user credentials (username and password)
+router.put('/credentials', authenticateJWT, userController.updateCredentials);
+
 // Create or update company profile
 router.post('/company', authenticateJWT, userController.createOrUpdateCompany);
 

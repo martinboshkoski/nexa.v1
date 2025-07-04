@@ -33,13 +33,14 @@ const Sidebar = () => {
 
   return (
     <>
-      <button 
+      {/* Remove the mobile menu button to eliminate the floating circle */}
+      {/* <button 
         className={styles["mobile-menu-button"]} 
         onClick={toggleSidebar}
         aria-label="Toggle menu"
       >
         <span className={styles["hamburger-icon"]}></span>
-      </button>
+      </button> */}
 
       <aside className={`${styles["dashboard-sidebar"]} ${isOpen ? styles["open"] : ""}`}>
         {/* <div className={styles["dashboard-welcome"]}>

@@ -74,21 +74,29 @@ const Header = ({ isTerminal = false }) => {
           <div 
             className={`${styles['profile-dropdown']} ${profileDropdownOpen ? styles['profile-dropdown-open'] : ''}`}
           >
-            <Link 
+            {/* <Link 
               to="/terminal/profile" 
               className={styles['dropdown-item']}
               onClick={() => setProfileDropdownOpen(false)}
             >
               <span className={styles['dropdown-icon']}>⚙️</span>
               {t('dashboard.editProfile')}
-            </Link>
+            </Link> */}
             <Link 
               to="/terminal/verification" 
               className={styles['dropdown-item']}
               onClick={() => setProfileDropdownOpen(false)}
             >
               <span className={styles['dropdown-icon']}>🏢</span>
-              {t('dashboard.companyVerification')}
+              Профил
+            </Link>
+            <Link 
+              to="/terminal/user" 
+              className={styles['dropdown-item']}
+              onClick={() => setProfileDropdownOpen(false)}
+            >
+              <span className={styles['dropdown-icon']}>👤</span>
+              Корисник
             </Link>
             <button 
               onClick={(e) => {

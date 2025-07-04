@@ -41,11 +41,8 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  background: rgba(255, 255, 255, 0.15);
   padding: 0.4rem 0.8rem;
   border-radius: 8px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .blogButton {
@@ -460,63 +457,54 @@
   .mainContainer {
     flex-direction: column;
   }
-  
-  .businessContent {
-    flex: none;
-    min-height: 50vh;
-    padding: 2rem;
-  }
-  
   .loginSidebar {
-    flex: none;
-    min-height: 50vh;
+    order: 1;
+    min-height: unset;
+    margin-bottom: 2rem;
   }
-  
+  .businessContent {
+    order: 2;
+    min-height: unset;
+  }
   .nexaTitle {
     font-size: 4rem;
   }
-  
   .heroSection {
     padding-top: 4rem;
   }
 }
 
 @media (max-width: 768px) {
-  .topBar {
-    padding: 1rem;
+  .mainContainer {
+    flex-direction: column;
   }
-  
-  .businessContent {
-    padding: 1.5rem;
-    gap: 2rem;
-  }
-  
   .loginSidebar {
-    padding: 1.5rem;
+    order: 1;
+    margin-bottom: 2rem;
+    padding: 1rem 0.5rem;
   }
-  
+  .businessContent {
+    order: 2;
+    padding: 0.5rem;
+    gap: 1.5rem;
+  }
   .nexaTitle {
     font-size: 3rem;
   }
-  
   .sectionTitle {
     font-size: 1.75rem;
   }
-  
   .whatGrid {
     flex-direction: column;
   }
-  
   .whatCard {
     justify-content: center;
   }
-  
   .sampleDemo {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
     gap: 1rem;
   }
-  
   .demoArrow {
     transform: rotate(90deg);
     justify-self: center;

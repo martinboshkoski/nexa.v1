@@ -20,6 +20,7 @@ import InvestmentDetail from './pages/terminal/InvestmentDetail';
 import BlogDetail from './pages/terminal/BlogDetail';
 import Contact from './pages/terminal/Contact';
 import EditProfile from './pages/terminal/EditProfile';
+import User from './pages/terminal/User';
 import AIChat from './pages/terminal/AIChat';
 // import CompleteProfile from './pages/terminal/CompleteProfile';
 import SimpleCompleteProfile from './pages/terminal/SimpleCompleteProfile';
@@ -73,6 +74,7 @@ function App() {
       <Route path="/terminal/blogs/:id" element={<PrivateRoute><BlogDetail /></PrivateRoute>} />
       <Route path="/terminal/contact" element={<PrivateRoute><Contact /></PrivateRoute>} />
       <Route path="/terminal/profile" element={<PrivateRoute><EditProfile /></PrivateRoute>} />
+      <Route path="/terminal/user" element={<PrivateRoute><User /></PrivateRoute>} />
       <Route path="/terminal/verification" element={<PrivateRoute><CompanyVerification /></PrivateRoute>} />
       <Route path="/terminal/education" element={<PrivateRoute><Education /></PrivateRoute>} />
       

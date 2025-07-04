@@ -380,7 +380,8 @@ export const AuthProvider = ({ children }) => {
     registerSimple,
     updateProfile,
     logout,
-    handleAuthError
+    handleAuthError,
+    setCurrentUser
   };
 
   return (

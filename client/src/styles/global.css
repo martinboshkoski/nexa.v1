@@ -628,3 +628,9 @@ label {
   outline-offset: 2px;
   border-radius: var(--border-radius-sm);
 }
+
+html::before, html::after, body::before, body::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
