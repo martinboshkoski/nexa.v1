@@ -8,6 +8,7 @@ import Login from './pages/website/Login';
 import AddInvestment from './pages/terminal/admin/AddInvestment';
 import ManageUsers from './pages/terminal/admin/ManageUsers';
 import AddBlog from './pages/terminal/admin/AddBlog';
+import MarketingAdmin from './pages/terminal/admin/Marketing';
 
 // Terminal Pages
 import Dashboard from './pages/terminal/Dashboard';
@@ -83,6 +84,7 @@ function App() {
       <Route path="/terminal/admin/investments/add" element={<PrivateRoute><AddInvestment /></PrivateRoute>} />
       <Route path="/terminal/admin/users" element={<PrivateRoute><ManageUsers /></PrivateRoute>} />
       <Route path="/terminal/admin/verification" element={<PrivateRoute><AdminVerification /></PrivateRoute>} />
+      <Route path="/terminal/admin/marketing" element={<PrivateRoute><MarketingAdmin /></PrivateRoute>} />
     </Routes>
   );
 }

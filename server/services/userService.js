@@ -90,134 +90,32 @@ class UserService {
     return await this.collection.findOne({ linkedinId });
   }
 
-  // Update user
+  // Update user (single method for all profile updates)
   async updateUser(id, updateData) {
-    if (!ObjectId.isValid(id)) {
-      throw new Error('Invalid user ID');
-    }
-
-    console.log('🔄 UserService updateUser called with ID:', id);
-
+    if (!ObjectId.isValid(id)) throw new Error('Invalid user ID');
     const updateDoc = { updatedAt: new Date() };
 
-    // Handle nested companyInfo update properly
+    // Merge companyInfo if present
     if (updateData.companyInfo) {
-      console.log('🏢 Processing companyInfo update');
-      // Get current user to merge with existing companyInfo
       const currentUser = await this.findById(id);
-      if (currentUser) {
-        console.log('👤 Current user found, merging companyInfo');
-        // Merge existing companyInfo with new values, ensuring all fields are preserved
-        const mergedCompanyInfo = {
-          companyName: '',
-          mission: '',
-          website: '',
-          industry: '',
-          companySize: '',
-          role: '',
-          description: '',
-          crnNumber: '',
-          address: '',
-          phone: '',
-          companyPIN: '',
-          taxNumber: '',
-          contactEmail: '',
-          ...currentUser.companyInfo, // Existing values
-          ...updateData.companyInfo   // New values (will override existing)
-        };
-        
-        updateDoc.companyInfo = mergedCompanyInfo;
-      } else {
-        console.log('❌ Current user not found, using updateData directly');
-        updateDoc.companyInfo = updateData.companyInfo;
-      }
+      updateDoc.companyInfo = {
+        ...currentUser.companyInfo,
+        ...updateData.companyInfo
+      };
     }
 
-    // Handle other fields normally
+    // Other fields (email, profileComplete, etc.)
     Object.keys(updateData).forEach(key => {
       if (key !== 'companyInfo') {
-        // Handle email field specially to ensure proper format
-        if (key === 'email') {
-          updateDoc[key] = updateData[key] ? updateData[key].toLowerCase().trim() : updateData[key];
-        } else {
-          updateDoc[key] = updateData[key];
-        }
+        updateDoc[key] = updateData[key];
       }
     });
 
-    console.log('📤 Final update document keys:', Object.keys(updateDoc));
-
     const result = await this.collection.findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: updateDoc },
       { returnDocument: 'after' }
     );
-
-    console.log('✅ MongoDB update result:', result.value ? 'Success' : 'Failed');
-
-    return result.value;
-  }
-
-  // Update user profile
-  async updateProfile(id, profileData) {
-    if (!ObjectId.isValid(id)) {
-      throw new Error('Invalid user ID');
-    }
-
-    const updateDoc = {
-      // email field is updated directly in updateUser if provided
-      companyInfo: {
-        companyName: profileData.companyInfo?.companyName?.trim() || '',
-        mission: profileData.companyInfo?.mission?.trim() || '',
-        website: profileData.companyInfo?.website?.trim() || '',
-        industry: profileData.companyInfo?.industry?.trim() || '',
-        description: profileData.companyInfo?.description?.trim() || '',
-        crnNumber: profileData.companyInfo?.crnNumber?.trim() || '',
-        address: profileData.companyInfo?.address?.trim() || '', // Maps to companyAddress
-        phone: profileData.companyInfo?.phone?.trim() || '',
-        companyPIN: profileData.companyInfo?.companyPIN?.trim() || '', // Added
-        taxNumber: profileData.companyInfo?.taxNumber?.trim() || '' // Added
-        // contactEmail: profileData.companyInfo?.contactEmail?.trim() || '' // Add if a separate contact email is needed
-      },
-      // profileComplete: !!(profileData.companyInfo?.companyName && profileData.companyInfo?.industry), // Profile complete logic might need adjustment based on new fields
-      updatedAt: new Date()
-    };
-    
-    // Update email separately if provided, to handle unique constraint correctly
-    if (profileData.email !== undefined) {
-        updateDoc.email = profileData.email === '' ? null : profileData.email.toLowerCase().trim();
-    }
-    if (profileData.profileComplete !== undefined) {
-        updateDoc.profileComplete = profileData.profileComplete;
-    }
-
-
-    const result = await this.collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: updateDoc },
-      { returnDocument: 'after' }
-    );
-
-    return result.value;
-  }
-
-  // Update user verification status (simplified)
-  async updateVerificationStatus(id, status) {
-    if (!ObjectId.isValid(id)) {
-      throw new Error('Invalid user ID');
-    }
-
-    const updateDoc = {
-      isVerified: status === 'approved',
-      updatedAt: new Date()
-    };
-
-    const result = await this.collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: updateDoc },
-      { returnDocument: 'after' }
-    );
-
     return result.value;
   }
 

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../../styles/terminal/RightSidebar.module.css';
+import ApiService from '../../services/api';
 
 const RightSidebar = () => {
   const [investments, setInvestments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [marketingPosts, setMarketingPosts] = useState([]);
 
   useEffect(() => {
     const fetchTopInvestments = async () => {
@@ -22,11 +24,40 @@ const RightSidebar = () => {
       }
     };
 
+    const fetchMarketing = async () => {
+      try {
+        const posts = await ApiService.request('/marketing?limit=3');
+        setMarketingPosts(posts);
+      } catch (e) {
+        setMarketingPosts([]);
+      }
+    };
+
     fetchTopInvestments();
+    fetchMarketing();
   }, []);
 
   return (
     <aside className={styles.rightSidebar}>
+      {/* Marketing Posts */}
+      {marketingPosts.length > 0 && (
+        <div className={styles.marketingSection}>
+          <h4 className={styles.marketingTitle}>Маркетинг</h4>
+          {marketingPosts.map((post) => (
+            <a
+              key={post._id}
+              href={post.websiteLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.marketingCard}
+            >
+              <img src={post.imageUrl} alt={post.quote} className={styles.marketingImage} />
+              <div className={styles.marketingQuote}>{post.quote}</div>
+            </a>
+          ))}
+        </div>
+      )}
+
       {/* Top Investment Opportunities */}
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>

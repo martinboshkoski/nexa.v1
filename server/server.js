@@ -100,6 +100,9 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/documents', require('./routes/documents'));
 
+const marketingRoutes = require('./routes/marketing');
+app.use('/api/marketing', marketingRoutes);
+
 // Create uploads directories if they don't exist
 async function createUploadDirs() {
   const dirs = [

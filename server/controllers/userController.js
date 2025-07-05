@@ -39,84 +39,61 @@ class UserController {
   // Update user profile
   async updateProfile(req, res) {
     try {
-      const { 
-        // Direct user fields
-        email,
-        // Company Info fields from req.body
-        companyName, 
-        mission, 
-        website, 
-        industry, 
-        description, 
-        crnNumber, 
-        address, 
-        phone, 
-        companyPIN, 
-        taxNumber, 
-        contactEmail
-      } = req.body;
-
-      let profileComplete = req.body.profileComplete;
-
       const db = req.app.locals.db;
       const userService = new UserService(db);
-      
-      // Ensure user ID is properly formatted
-      const userId = req.user._id.toString ? req.user._id : req.user._id;
-      console.log('🔧 Profile update - Processed user ID:', userId);
-      console.log('📧 Email update requested:', email);
-      
-      // Prepare update data for user's direct fields
+
+      // Get user ID from JWT/session
+      const userId = req.user._id || req.user.id;
+
+      // Get the update data from the request body
+      const { email, companyInfo, profileComplete } = req.body;
+
+      // Fetch current user
+      const currentUser = await userService.findById(userId);
+      if (!currentUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Prepare updateData
       const updateData = {};
-      
-      // Handle email update if provided
-      if (email !== undefined) {
-        updateData.email = email;
-      }
 
-      // Prepare companyInfo update
-      const companyInfoUpdate = {};
-      if (companyName !== undefined) companyInfoUpdate.companyName = companyName;
-      if (mission !== undefined) companyInfoUpdate.mission = mission;
-      if (website !== undefined) companyInfoUpdate.website = website;
-      if (industry !== undefined) companyInfoUpdate.industry = industry;
-      if (description !== undefined) companyInfoUpdate.description = description;
-      if (crnNumber !== undefined) companyInfoUpdate.crnNumber = crnNumber;
-      if (address !== undefined) companyInfoUpdate.address = address;
-      if (phone !== undefined) companyInfoUpdate.phone = phone;
-      if (companyPIN !== undefined) companyInfoUpdate.companyPIN = companyPIN;
-      if (taxNumber !== undefined) companyInfoUpdate.taxNumber = taxNumber;
-      if (contactEmail !== undefined) companyInfoUpdate.contactEmail = contactEmail;
-
-      // If any company info fields are present, add the companyInfo object to updateData
-      if (Object.keys(companyInfoUpdate).length > 0) {
-        updateData.companyInfo = companyInfoUpdate;
-        // If profileComplete is not explicitly set to false, and company info is being updated,
-        // we can infer profile is now more complete.
-        if (profileComplete === undefined || profileComplete === true) {
-          updateData.profileComplete = true;
+      // Email update (check for uniqueness)
+      if (typeof email === 'string' && email.trim() !== currentUser.email) {
+        const existingUser = await userService.findByEmail(email.trim());
+        if (existingUser && existingUser._id.toString() !== currentUser._id.toString()) {
+          return res.status(400).json({ message: 'Email already exists' });
         }
+        updateData.email = email.trim();
       }
-      
-      // Handle explicit profileComplete status from request body
-      if (profileComplete !== undefined) {
+
+      // Company info update (merge with existing)
+      if (companyInfo) {
+        updateData.companyInfo = {
+          ...currentUser.companyInfo,
+          ...companyInfo
+        };
+        // Trim all string fields
+        Object.keys(updateData.companyInfo).forEach(key => {
+          if (typeof updateData.companyInfo[key] === 'string') {
+            updateData.companyInfo[key] = updateData.companyInfo[key].trim();
+          }
+        });
+      }
+
+      // Profile complete
+      if (typeof profileComplete === 'boolean') {
         updateData.profileComplete = profileComplete;
       }
-      
-      console.log('📤 Profile update data:', updateData);
-      
-      // Update user profile
-      const result = await userService.updateUser(userId, updateData);
-      
-      // Fetch the updated user to send back
-      const updatedUser = await userService.findById(userId);
-      
-      res.json({ 
+
+      // Actually update the user
+      const updatedUser = await userService.updateUser(currentUser._id, updateData);
+
+      res.json({
         message: 'Profile updated successfully',
         user: userService.sanitizeUser(updatedUser)
       });
     } catch (error) {
-      console.error('❌ Profile update error:', error);
+      console.error('Profile update error:', error);
       res.status(500).json({ message: 'Server error', error: error.message });
     }
   }
