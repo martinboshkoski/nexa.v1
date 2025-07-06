@@ -107,7 +107,7 @@ class SettingsManager {
         profileCompletion: true,
         socialPosts: true,
         legalHealthCheck: true,
-        blog: false  // Only the blog remains disabled (separate Next.js app)
+        blog: true  // Enable blogs for online version
       },
       database: {
         collections: {
@@ -116,6 +116,7 @@ class SettingsManager {
           documents: true,
           templates: true,
           social_posts: true,
+          blogs: true,  // Enable blogs collection
           legal_checks: true
         }
       },
@@ -124,6 +125,7 @@ class SettingsManager {
         profile: true,
         documents: true,
         social: true,
+        blog: true,  // Enable blog routes
         legal: true
       },
       middleware: {
