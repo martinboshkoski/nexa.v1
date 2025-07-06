@@ -41,6 +41,10 @@ class BlogController {
   // Get all blog posts
   async getAllBlogs(req, res) {
     try {
+      console.log('getAllBlogs called');
+      console.log('Request headers:', req.headers);
+      console.log('Request query:', req.query);
+      
       const db = req.app.locals.db;
       const blogsCollection = db.collection('blogs');
       
@@ -52,6 +56,8 @@ class BlogController {
       const search = req.query.search;
       // Handle both 'language' and 'lang' parameters for compatibility
       const language = req.query.language || req.query.lang || 'en'; // Default to English
+      
+      console.log('Query parameters:', { page, limit, category, tag, search, language });
       
       // Build query - handle both old and new blog structures
       const query = {};
@@ -142,6 +148,7 @@ class BlogController {
         return blog; // Return as-is if it's already in new format
       });
       
+      console.log('Sending response with', transformedBlogs.length, 'blogs');
       res.json({
         blogs: transformedBlogs,
         pagination: {

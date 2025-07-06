@@ -43,13 +43,27 @@ const SocialFeed = () => {
     try {
       setLoading(true);
       if (filter === 'blogs') {
-        const data = await ApiService.request('/blogs');
+        console.log('Fetching blogs...');
+        console.log('Environment:', process.env.NODE_ENV);
+        console.log('API URL:', process.env.REACT_APP_API_URL || 'http://localhost:5002/api');
+        // Try with explicit limit and page parameters
+        const data = await ApiService.request('/blogs?limit=10&page=1');
+        console.log('Blogs API response:', data);
         setPosts(data?.blogs || []); // Use blogs data for blogs filter
       } else {
         const data = await ApiService.request(`/social/newsfeed?filter=${filter}`);
         setPosts(data?.posts || []); // Ensure posts is an array
       }
     } catch (error) {
+      console.error('Error fetching posts:', error);
+      console.error('Error details:', {
+        message: error.message,
+        status: error.status,
+        isAuthError: error.isAuthError,
+        stack: error.stack
+      });
+      console.error('Environment:', process.env.NODE_ENV);
+      console.error('API URL:', process.env.REACT_APP_API_URL || 'http://localhost:5002/api');
       setError('Настана грешка при вчитување на објавите. Обидете се повторно.');
       setPosts([]); // Ensure posts is an array even on error
     } finally {
