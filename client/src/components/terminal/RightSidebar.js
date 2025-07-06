@@ -5,6 +5,8 @@ import ApiService from '../../services/api';
 const RightSidebar = () => {
   const [investments, setInvestments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [socialPosts, setSocialPosts] = useState([]);
+  const [blogs, setBlogs] = useState([]);
   const [marketingPosts, setMarketingPosts] = useState([]);
 
   useEffect(() => {
@@ -24,6 +26,15 @@ const RightSidebar = () => {
       }
     };
 
+    const fetchSocialPosts = async () => {
+      try {
+        const posts = await ApiService.request('/social?limit=3');
+        setSocialPosts(posts);
+      } catch (e) {
+        setSocialPosts([]);
+      }
+    };
+
     const fetchMarketing = async () => {
       try {
         const posts = await ApiService.request('/marketing?limit=3');
@@ -33,8 +44,19 @@ const RightSidebar = () => {
       }
     };
 
+    const fetchBlogs = async () => {
+      try {
+        const blogs = await ApiService.request('/blogs?limit=3');
+        setBlogs(blogs);
+      } catch (e) {
+        setBlogs([]);
+      }
+    };
+
     fetchTopInvestments();
+    fetchSocialPosts();
     fetchMarketing();
+    fetchBlogs();
   }, []);
 
   return (
@@ -42,7 +64,7 @@ const RightSidebar = () => {
       {/* Marketing Posts */}
       {marketingPosts.length > 0 && (
         <div className={styles.marketingSection}>
-          <h4 className={styles.marketingTitle}>Маркетинг</h4>
+          {/* <h4 className={styles.marketingTitle}>Маркетинг</h4> */}
           {marketingPosts.map((post) => (
             <a
               key={post._id}
@@ -53,8 +75,38 @@ const RightSidebar = () => {
             >
               <img src={post.imageUrl} alt={post.quote} className={styles.marketingImage} />
               <div className={styles.marketingQuote}>{post.quote}</div>
+              {post.websiteLink && (
+                <div className={styles.marketingLink}>{post.websiteLink}</div>
+              )}
             </a>
           ))}
+        </div>
+      )}
+
+      {/* Social Posts */}
+      {socialPosts.length > 0 && (
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>
+            <span className={styles.sectionIcon}>📱</span>
+            Социјални Мрежи
+          </h3>
+          <div className={styles.sectionContent}>
+            {socialPosts.map((post) => (
+              <div key={post._id} className={styles.socialCard}>
+                <div className={styles.socialHeader}>
+                  <span className={styles.socialPlatform}>{post.platform}</span>
+                  <span className={styles.socialDate}>{new Date(post.createdAt).toLocaleDateString('mk-MK')}</span>
+                </div>
+                <p className={styles.socialContent}>{post.content}</p>
+                {post.imageUrl && (
+                  <img src={post.imageUrl} alt="Social post" className={styles.socialImage} />
+                )}
+              </div>
+            ))}
+            <a href="/terminal/social" className={styles.sectionLink}>
+              Видете сè →
+            </a>
+          </div>
         </div>
       )}
 
@@ -94,77 +146,35 @@ const RightSidebar = () => {
         </div>
       </div>
 
-      {/* Start New Project Section */}
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>
-          <span className={styles.sectionIcon}>🚀</span>
-          Започнете Нов Проект
-        </h3>
-        <div className={styles.sectionContent}>
-          <div className={styles.projectActions}>
-            <a href="/terminal/documents" className={styles.actionButton}>
-              <span className={styles.actionIcon}>📄</span>
-              <div className={styles.actionText}>
-                <div className={styles.actionTitle}>Генерирај Документи</div>
-                <div className={styles.actionDesc}>Договори, барања, извештаи</div>
+      {/* Latest Blogs */}
+      {blogs.length > 0 && (
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>
+            <span className={styles.sectionIcon}>📝</span>
+            Последни Блогови
+          </h3>
+          <div className={styles.sectionContent}>
+            {blogs.map((blog) => (
+              <div key={blog._id} className={styles.blogCard}>
+                <div className={styles.blogHeader}>
+                  <h4 className={styles.blogTitle}>{blog.title}</h4>
+                  <span className={styles.blogDate}>{new Date(blog.createdAt).toLocaleDateString('mk-MK')}</span>
+                </div>
+                <p className={styles.blogExcerpt}>
+                  {blog.content?.substring(0, 100)}...
+                </p>
+                <div className={styles.blogMeta}>
+                  <span className={styles.blogAuthor}>{blog.author}</span>
+                  <span className={styles.blogCategory}>{blog.category}</span>
+                </div>
               </div>
+            ))}
+            <a href="/terminal/blogs" className={styles.sectionLink}>
+              Видете сè →
             </a>
-            
-            <a href="/terminal/legal-screening" className={styles.actionButton}>
-              <span className={styles.actionIcon}>⚖️</span>
-              <div className={styles.actionText}>
-                <div className={styles.actionTitle}>Правен Скрининг</div>
-                <div className={styles.actionDesc}>Проверка на законски услови</div>
-              </div>
-            </a>
-            
-            <button className={styles.actionButton}>
-              <span className={styles.actionIcon}>💼</span>
-              <div className={styles.actionText}>
-                <div className={styles.actionTitle}>Бизнис План</div>
-                <div className={styles.actionDesc}>AI-генерирана стратегија</div>
-              </div>
-            </button>
           </div>
         </div>
-      </div>
-
-      {/* Marketing Banner */}
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>
-          <span className={styles.sectionIcon}>📢</span>
-          Маркетинг
-        </h3>
-        <div className={styles.sectionContent}>
-          <div className={styles.marketingBanner}>
-            <div className={styles.bannerContent}>
-              <h4 className={styles.bannerTitle}>Промовирајте го вашиот бизнис!</h4>
-              <p className={styles.bannerDescription}>
-                Достигнете до илјадници потенцијални клиенти преку нашата платформа.
-              </p>
-              <div className={styles.bannerFeatures}>
-                <div className={styles.feature}>✨ Таргетирана реклама</div>
-                <div className={styles.feature}>📊 Детални аналитики</div>
-                <div className={styles.feature}>🎯 Висока конверзија</div>
-              </div>
-              <button className={styles.bannerButton}>
-                Започнете Кампања
-              </button>
-            </div>
-          </div>
-          
-          <div className={styles.quickStats}>
-            <div className={styles.stat}>
-              <div className={styles.statNumber}>2,847</div>
-              <div className={styles.statLabel}>Активни корисници</div>
-            </div>
-            <div className={styles.stat}>
-              <div className={styles.statNumber}>156</div>
-              <div className={styles.statLabel}>Партнерски компании</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </aside>
   );
 };

@@ -246,20 +246,20 @@ const SocialFeed = () => {
           className={`${styles.filterButton} ${filter === 'all' ? styles.active : ''}`}
           onClick={() => setFilter('all')}
         >
-          Сите објави
+          Oбјави
         </button>
-        <button
+        {/* <button
           className={`${styles.filterButton} ${filter === 'posts' ? styles.active : ''}`}
           onClick={() => setFilter('posts')}
         >
           Кориснички објави
-        </button>
-        <button
+        </button> */}
+        {/* <button
           className={`${styles.filterButton} ${filter === 'news' ? styles.active : ''}`}
           onClick={() => setFilter('news')}
         >
           Вести
-        </button>
+        </button> */}
         <button
           className={`${styles.filterButton} ${filter === 'investments' ? styles.active : ''}`}
           onClick={() => setFilter('investments')}
