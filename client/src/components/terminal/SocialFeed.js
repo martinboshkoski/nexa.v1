@@ -237,11 +237,15 @@ const SocialFeed = () => {
         <form onSubmit={handleCreatePost}>
           <textarea
             value={newPostContent}
-            onChange={(e) => setNewPostContent(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value.length <= 280) setNewPostContent(e.target.value);
+            }}
             placeholder={placeholderTexts[placeholderIndex]}
             className={styles.postTextarea}
             rows={3}
+            maxLength={280}
           />
+          <div className={styles.charCounter}>{newPostContent.length}/280</div>
           <div className={styles.postActions}>
             <button
               type="submit"
@@ -449,7 +453,6 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
                 alt={`${post.author?.companyInfo?.companyName || 'Company'} logo`}
                 className={styles.companyLogo}
                 onError={(e) => {
-                  // If logo fails to load, show the first letter of company name as fallback
                   e.target.style.display = 'none';
                   const placeholderElement = document.createElement('div');
                   placeholderElement.className = styles.companyLogoPlaceholder;
@@ -465,39 +468,21 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
           </div>
           
           <div className={styles.companyName}>
-            {/* Use company name from user's companyInfo */}
             {post.author?.companyInfo?.companyName || 'Анонимен корисник'}
           </div>
           
-          {/* Display company address */}
-          {post.author?.companyInfo?.address && (
-            <div className={styles.companyAddress}>
-              📍 {post.author.companyInfo.address}
-            </div>
-          )}
-          
-          {/* Display company website */}
           {post.author?.companyInfo?.website && (
             <a href={post.author.companyInfo.website} target="_blank" rel="noopener noreferrer" className={styles.companyWebsite}>
               🌐 {post.author.companyInfo.website}
             </a>
           )}
           
-          {/* Display company contact email */}
-          {post.author?.companyInfo?.contactEmail && (
-            <a href={`mailto:${post.author.companyInfo.contactEmail}`} className={styles.companyEmail}>
-              ✉️ {post.author.companyInfo.contactEmail}
-            </a>
-          )}
-          
-          {/* Display company industry/business activity if available */}
           {post.author?.companyInfo?.industry && (
             <div className={styles.companyIndustry}>
               📊 {post.author.companyInfo.industry}
             </div>
           )}
           
-          {/* Display company mission if available */}
           {post.author?.companyInfo?.mission && (
             <div className={styles.companyMission}>
               💼 {post.author.companyInfo.mission}
@@ -527,20 +512,20 @@ const PostCard = ({ post, /* onLike, */ onComment, formatDate, getPostTypeIcon, 
         <div className={styles.postContent}>
           {post.postType === 'admin_investment' && post.investmentId ? (
             <a href={`/terminal/investments/${post.investmentId}`} className={styles.investmentLink}>
-              <p>{post.content}</p>
+              <p>{post.content.length > 280 ? post.content.slice(0, 280) + '...' : post.content}</p>
               <div className={styles.investmentPreview}>
                 <span className={styles.investmentPreviewText}>Кликнете за да видите детали за инвестицијата →</span>
               </div>
             </a>
           ) : post.postType === 'admin_blog' && post.blogId ? (
             <a href={`/terminal/blogs/${post.blogId}`} className={styles.blogLink}>
-              <p>{post.content}</p>
+              <p>{post.content.length > 280 ? post.content.slice(0, 280) + '...' : post.content}</p>
               <div className={styles.blogPreview}>
                 <span className={styles.blogPreviewText}>Кликнете за да го прочитате целиот блог →</span>
               </div>
             </a>
           ) : (
-            <p>{post.content}</p>
+            <p>{post.content.length > 280 ? post.content.slice(0, 280) + '...' : post.content}</p>
           )}
           {linkPreview && (
             <a href={linkPreview.url} target="_blank" rel="noopener noreferrer" className={styles.linkPreview}>
@@ -683,7 +668,7 @@ const BlogCard = ({ blog, formatDate }) => {
           <a href={`/terminal/blogs/${blog._id}`} className={styles.blogLink}>
             <h3 className={styles.blogTitle}>{blog.title}</h3>
             {blog.excerpt && (
-              <p className={styles.blogExcerpt}>{blog.excerpt}</p>
+              <p className={styles.blogExcerpt}>{blog.excerpt.length > 280 ? blog.excerpt.slice(0, 280) + '...' : blog.excerpt}</p>
             )}
             <div className={styles.blogPreview}>
               <span className={styles.blogPreviewText}>Кликнете за да го прочитате целиот блог →</span>

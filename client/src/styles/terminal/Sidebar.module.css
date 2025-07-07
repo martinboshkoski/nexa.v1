@@ -10,8 +10,8 @@
 }
 
 .dashboard-sidebar {
-  width: 280px;
-  min-width: 220px;
+  width: 252px;
+  min-width: 198px;
   background-color: #fff;
   border-right: 1px solid #e9ecef;
   padding: 0;
@@ -28,7 +28,7 @@
 
 .dashboard-main {
   flex: 1;
-  margin-left: 280px;
+  margin-left: 252px;
   background-color: #ffffff;
   min-height: calc(100vh - 60px);
   overflow-y: auto;
@@ -91,7 +91,7 @@
 }
 
 .menu-icon {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   min-width: 24px;
   text-align: center;
   color: inherit; /* Inherit from .menu-item */
@@ -197,13 +197,12 @@
 
 @media (max-width: 1024px) {
   .dashboard-sidebar {
-    width: 220px;
-    min-width: 160px;
+    width: 198px;
+    min-width: 144px;
   }
-
   .dashboard-main {
-    margin-left: 220px;
-    max-width: calc(100% - 220px);
+    margin-left: 198px;
+    max-width: calc(100% - 198px);
   }
 }
 

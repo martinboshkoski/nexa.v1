@@ -157,6 +157,7 @@
   --z-popover: 1060;
   --z-tooltip: 1070;
   --z-toast: 1080;
+  font-size: 14.4px;
 }
 
 * {
