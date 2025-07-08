@@ -7,12 +7,13 @@ import DocumentPreview from "../../../../components/terminal/documents/DocumentP
 import styles from "../../../../styles/terminal/documents/DocumentGeneration.module.css";
 import { getCSRFToken } from "../../../../services/csrfService";
 
-const ConfirmationOfEmploymentPage = () => {
+const TerminationAgreementPage = () => {
   const { currentUser } = useAuth();
   const [formData, setFormData] = useState({
     employeeName: "",
     employeePIN: "",
     employeeAddress: "",
+    endDate: "",
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [errors, setErrors] = useState({});
@@ -32,13 +33,14 @@ const ConfirmationOfEmploymentPage = () => {
       newErrors.employeePIN = "Ова поле е задолжително";
     if (!formData.employeeAddress.trim())
       newErrors.employeeAddress = "Ова поле е задолжително";
+    if (!formData.endDate.trim())
+      newErrors.endDate = "Ова поле е задолжително";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleGenerateDocument = async () => {
-    if (!validateForm())         
-        return;
+    if (!validateForm()) return;
     if (!currentUser) {
       alert("Мора да бидете најавени за да генерирате документ.");
       return;
@@ -48,7 +50,7 @@ const ConfirmationOfEmploymentPage = () => {
       const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5001/api";
       const csrfToken = await getCSRFToken();
       const response = await fetch(
-        `${apiUrl}/auto-documents/confirmation-of-employment`,
+        `${apiUrl}/auto-documents/termination-agreement`,
         {
           method: "POST",
           headers: {
@@ -71,7 +73,7 @@ const ConfirmationOfEmploymentPage = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `Потврда_за_вработување.docx`;
+      a.download = `Спогодба_за_престанок_на_работен_однос.docx`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -137,6 +139,19 @@ const ConfirmationOfEmploymentPage = () => {
                       <span className={styles["error-message"]}>{errors.employeeAddress}</span>
                     )}
                   </div>
+                  <div className={styles["form-group"]}>
+                    <label htmlFor="endDate">Датум на престанок *</label>
+                    <input
+                      type="date"
+                      id="endDate"
+                      value={formData.endDate}
+                      onChange={(e) => handleInputChange("endDate", e.target.value)}
+                      className={errors.endDate ? styles.error : ""}
+                    />
+                    {errors.endDate && (
+                      <span className={styles["error-message"]}>{errors.endDate}</span>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className={styles["form-actions"]}>
@@ -160,7 +175,7 @@ const ConfirmationOfEmploymentPage = () => {
             <div className={styles.previewSection}>
               <DocumentPreview
                 formData={formData}
-                documentType="confirmationOfEmployment"
+                documentType="terminationAgreement"
                 currentStep={1}
               />
             </div>
@@ -171,4 +186,4 @@ const ConfirmationOfEmploymentPage = () => {
   );
 };
 
-export default ConfirmationOfEmploymentPage; 
+export default TerminationAgreementPage; 
