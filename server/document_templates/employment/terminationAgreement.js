@@ -2,15 +2,10 @@ const { Document, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType 
 const moment = require('moment');
 
 function generateTerminationAgreementDoc(formData, user, company) {
-
-  console.log(company);
   const companyName = company?.companyName || '[Име на компанија]';
   const companyAddress = company?.address || '[Адреса на компанија]';
-  const companyPIN = company?.taxNumber || '[ЕМБС/Единствен број на компанија]';
-  const employeeName = formData.employeeName || '[Име на вработен]';
-  const employeePIN = formData.employeePIN || '[ЕМБГ]';
-  const employeeAddress = formData.employeeAddress || '[Адреса на вработен]';
-  const endDate = moment(formData.endDate).format('DD.MM.YYYY') || '[Датум на престанок]';
+  const companyNumber = company?.taxNumber || '[ЕМБС/Единствен број на компанија]';
+  const companyManager = company?.manager || '[Управител]';
   const currentDate = moment().format('DD.MM.YYYY');
 
   const doc = new Document({
@@ -36,7 +31,7 @@ function generateTerminationAgreementDoc(formData, user, company) {
         }),
         new Paragraph({
           children: [
-            new TextRun({ text: `1. ${companyName}, со седиште на ул. ${companyAddress}, ЕМБС: ${companyPIN}, Република Северна Македонија (во понатамошниот текст: Работодавачот); и`, bold: true })
+            new TextRun({ text: `1. ${companyName}, со седиште на ул. ${companyAddress}, ЕМБС: ${companyNumber}, Република Северна Македонија (во понатамошниот текст: Работодавачот); и`, bold: true })
           ],
           alignment: AlignmentType.JUSTIFIED
         }),

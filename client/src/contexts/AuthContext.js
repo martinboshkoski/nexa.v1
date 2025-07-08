@@ -103,62 +103,55 @@ export const AuthProvider = ({ children }) => {
 
   // Login with username and password (for simplified signup users)
   const loginWithUsername = async (username, password) => {
-    setError(null);
-    
-    console.log('loginWithUsername called with:', { username, password: '[HIDDEN]' });
-    
     try {
-      // Fetch CSRF token
-      console.log('Fetching CSRF token for login...');
-      
-      const csrfResponse = await fetch(`${API_BASE_URL}/csrf-token`, {
-        credentials: 'include',
-      });
-      
-      console.log('CSRF response status:', csrfResponse.status);
-      
-      if (!csrfResponse.ok) {
-        throw new Error(`Failed to fetch CSRF token: ${csrfResponse.status} ${csrfResponse.statusText}`);
-      }
-      
-      const csrfData = await csrfResponse.json();
-      const csrfToken = csrfData.csrfToken;
-      
-      console.log('CSRF token obtained for login:', csrfToken.substring(0, 20) + '...');
-      console.log('Sending login request...');
+      setLoading(true);
+      setError(null);
 
+      // Get CSRF token first
+      const csrfResponse = await fetch(`${API_BASE_URL}/csrf-token`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      if (!csrfResponse.ok) {
+        throw new Error('Failed to get CSRF token');
+      }
+
+      const { csrfToken } = await csrfResponse.json();
+
+      // Login request
       const response = await fetch(`${API_BASE_URL}/auth/login-username`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-Token': csrfToken,
+          'X-CSRF-Token': csrfToken
         },
-        body: JSON.stringify({ username, password }),
         credentials: 'include',
+        body: JSON.stringify({ username, password })
       });
 
-      console.log('Login response status:', response.status);
-      
       const data = await response.json();
-      console.log('Login response data:', data);
-      
+
       if (!response.ok) {
-        throw new Error(data.message || `Login failed: ${response.status} ${response.statusText}`);
+        throw new Error(data.message || 'Login failed');
       }
 
-      console.log('Login successful, setting user data...');
+      // Store token and user data
       localStorage.setItem('token', data.token);
-      setToken(data.token);
       setCurrentUser(data.user);
-      
+      setToken(data.token);
+
       // Clear CSRF token cache on successful login
       clearCSRFTokenCache();
       
-      return { success: true };
+      return { success: true, user: data.user };
     } catch (error) {
-      console.error('Login error:', error);
       setError(error.message);
+      setCurrentUser(null);
+      setToken(null);
       return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -166,17 +159,11 @@ export const AuthProvider = ({ children }) => {
   const registerSimple = async (username, password) => {
     setError(null);
     
-    console.log('registerSimple called with:', { username, password: '[HIDDEN]' });
-    
     try {
       // Fetch CSRF token
-      console.log('Fetching CSRF token...');
-      
       const csrfResponse = await fetch(`${API_BASE_URL}/csrf-token`, {
         credentials: 'include',
       });
-      
-      console.log('CSRF response status:', csrfResponse.status);
       
       if (!csrfResponse.ok) {
         throw new Error(`Failed to fetch CSRF token: ${csrfResponse.status} ${csrfResponse.statusText}`);
@@ -185,9 +172,6 @@ export const AuthProvider = ({ children }) => {
       const csrfData = await csrfResponse.json();
       const csrfToken = csrfData.csrfToken;
       
-      console.log('CSRF token obtained:', csrfToken.substring(0, 20) + '...');
-      console.log('Sending registration request...');
-
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
@@ -198,23 +182,18 @@ export const AuthProvider = ({ children }) => {
         credentials: 'include',
       });
 
-      console.log('Registration response status:', response.status);
-      
       const data = await response.json();
-      console.log('Registration response data:', data);
       
       if (!response.ok) {
         throw new Error(data.message || `Registration failed: ${response.status} ${response.statusText}`);
       }
 
-      console.log('Registration successful, setting user data...');
       localStorage.setItem('token', data.token);
       setToken(data.token);
       setCurrentUser(data.user);
       
       return { success: true, user: data.user };
     } catch (error) {
-      console.error('Registration error:', error);
       setError(error.message);
       return { success: false, error: error.message };
     }
@@ -358,16 +337,19 @@ export const AuthProvider = ({ children }) => {
   }, [token, navigate]);
 
   // Auto-logout on token expiration or error
-  const handleAuthError = useCallback(() => {
-    console.log('Handling auth error, clearing token and user');
-    localStorage.removeItem('token');
-    setToken(null);
-    setCurrentUser(null);
-    if (window.location.pathname.startsWith('/terminal')) {
-      console.log('Redirecting to login from terminal due to auth error');
-      navigate('/login', { state: { from: { pathname: window.location.pathname }, authError: true } });
+  const handleAuthError = useCallback((error) => {
+    if (error.isAuthError) {
+      localStorage.removeItem('token');
+      setToken(null);
+      setCurrentUser(null);
+      setAuthenticated(false);
+      
+      // Redirect to login if we're in the terminal
+      if (window.location.pathname.startsWith('/terminal')) {
+        window.location.href = '/login';
+      }
     }
-  }, [navigate]);
+  }, []);
 
   const value = {
     currentUser,

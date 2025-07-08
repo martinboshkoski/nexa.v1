@@ -68,8 +68,6 @@ function toggleFeature(featureName, newValue = null) {
     updateFileExclusions(lines, featureName, newValue !== null ? newValue : !getCurrentSettings()[featureName]);
     
     fs.writeFileSync(SETTINGS_PATH, lines.join('\n'));
-    console.log(`🔄 Feature '${featureName}' set to: ${newValue !== null ? newValue : !getCurrentSettings()[featureName]}`);
-    console.log('📁 VS Code file exclusions updated automatically');
     return true;
   } catch (error) {
     console.error('❌ Error updating settings:', error.message);
@@ -163,41 +161,32 @@ function showCurrentStatus() {
 
 // Parse command line arguments
 const args = process.argv.slice(2);
+const featureName = args[0];
+const action = args[1];
 
-if (args.length === 0) {
+// Handle feature toggling
+if (featureName && featureName !== 'auth') {
+  if (action === 'on' || action === 'off') {
+    const newValue = action === 'on';
+    toggleFeature(featureName, newValue);
+  } else {
+    const newValue = toggleFeature(featureName);
+  }
+} else if (featureName === 'auth') {
+  // Authentication cannot be disabled
+} else {
+  // Show current status
   showCurrentStatus();
+  
   console.log('Usage:');
   console.log('  node toggle-features.js                    # Show current status');
   console.log('  node toggle-features.js <feature>          # Toggle a feature');
   console.log('  node toggle-features.js <feature> on|off   # Set feature on/off');
   console.log('\nAvailable features:');
   console.log('  - documentAutomation');
-  console.log('  - profileCompletion'); 
+  console.log('  - profileCompletion');
   console.log('  - socialPosts');
   console.log('  - legalHealthCheck');
   console.log('  - blog');
   console.log('\nNote: authentication is always enabled');
-} else if (args.length === 1) {
-  const feature = args[0];
-  if (feature === 'authentication') {
-    console.log('❌ Authentication cannot be disabled - it\'s always required');
-  } else {
-    toggleFeature(feature);
-    showCurrentStatus();
-  }
-} else if (args.length === 2) {
-  const feature = args[0];
-  const action = args[1].toLowerCase();
-  
-  if (feature === 'authentication') {
-    console.log('❌ Authentication cannot be disabled - it\'s always required');
-  } else if (action === 'on' || action === 'true') {
-    toggleFeature(feature, true);
-    showCurrentStatus();
-  } else if (action === 'off' || action === 'false') {
-    toggleFeature(feature, false);
-    showCurrentStatus();
-  } else {
-    console.log('❌ Action must be "on" or "off"');
-  }
 }

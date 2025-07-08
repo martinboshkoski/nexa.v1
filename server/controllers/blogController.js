@@ -38,132 +38,71 @@ class BlogController {
     this.getTags = this.getTags.bind(this);
   }
 
-  // Get all blog posts
-  async getAllBlogs(req, res) {
+  // Get all blogs with filtering and pagination
+  getAllBlogs: async (req, res) => {
     try {
-      console.log('getAllBlogs called');
-      console.log('Request headers:', req.headers);
-      console.log('Request query:', req.query);
-      
-      const db = req.app.locals.db;
-      const blogsCollection = db.collection('blogs');
-      
-      // Query parameters
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
-      const category = req.query.category;
-      const tag = req.query.tag;
-      const search = req.query.search;
-      // Handle both 'language' and 'lang' parameters for compatibility
-      const language = req.query.language || req.query.lang || 'en'; // Default to English
-      
-      console.log('Query parameters:', { page, limit, category, tag, search, language });
-      
-      // Build query - handle both old and new blog structures
-      const query = {};
-      
-      // For now, just get all blogs without filters to debug
-      console.log('Fetching all blogs without filters');
-      
-      // Language filter - check both contentLanguage and old structure
-      if (language && language !== 'en') {
-        query.$or = [
-          { contentLanguage: language },
-          { language: language }
-        ];
+      const { page = 1, limit = 10, category, tag, search, language } = req.query;
+
+      // Build query based on filters
+      let query = {};
+
+      if (category) {
+        query.category = category;
       }
-      
-      // Category filter - check both category and old structure
-      if (category && category !== 'all') {
-        query.$or = [
-          { category: category },
-          { category: { $exists: false } } // Include old blogs without category
-        ];
-      }
-      
-      // Tag filter - only for new structure
+
       if (tag) {
         query.tags = { $in: [tag] };
       }
-      
-      // Search filter - check both old and new fields
+
       if (search) {
         query.$or = [
           { title: { $regex: search, $options: 'i' } },
-          { content: { $regex: search, $options: 'i' } },
-          { excerpt: { $regex: search, $options: 'i' } },
-          { summary: { $regex: search, $options: 'i' } } // Old structure
+          { content: { $regex: search, $options: 'i' } }
         ];
       }
-      
-      // Get total count for pagination
-      const totalBlogs = await blogsCollection.countDocuments(query);
-      console.log('Total blogs found:', totalBlogs);
-      console.log('Query used:', JSON.stringify(query));
-      
-      // Calculate pagination
-      const skip = (page - 1) * limit;
-      const totalPages = Math.ceil(totalBlogs / limit);
-      
-      // Fetch blogs
-      const blogs = await blogsCollection
-        .find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .toArray();
-      
-      console.log('Blogs fetched:', blogs.length);
-      if (blogs.length > 0) {
-        console.log('Sample blog structure:', JSON.stringify(blogs[0], null, 2));
+
+      if (language) {
+        query.language = language;
       }
-      
-      // Transform old blog structure to new format
-      const transformedBlogs = blogs.map(blog => {
-        // Check if this is an old blog structure
-        if (blog.summary && !blog.excerpt) {
-          return {
-            _id: blog._id,
-            title: blog.title,
-            content: blog.content,
-            excerpt: blog.summary, // Map summary to excerpt
-            category: blog.category || 'General', // Default category
-            tags: blog.tags || [],
-            contentLanguage: blog.language || 'en', // Map language to contentLanguage
-            featuredImage: blog.featuredImage || null,
-            status: blog.status || 'published',
-            author: blog.author ? {
-              id: blog.author,
-              name: blog.author
-            } : {
-              id: 'unknown',
-              name: 'Unknown Author'
-            },
-            createdAt: blog.createdAt,
-            updatedAt: blog.updatedAt || blog.createdAt,
-            views: blog.views || 0,
-            likes: blog.likes || 0
-          };
-        }
-        return blog; // Return as-is if it's already in new format
-      });
-      
-      console.log('Sending response with', transformedBlogs.length, 'blogs');
+
+      // Execute query with pagination
+      const totalBlogs = await Blog.countDocuments(query);
+      const blogs = await Blog.find(query)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(parseInt(limit))
+        .populate('author', 'username email profileImage');
+
+      // Transform blogs for response
+      const transformedBlogs = blogs.map(blog => ({
+        id: blog._id,
+        title: blog.title,
+        content: blog.content,
+        category: blog.category,
+        tags: blog.tags,
+        language: blog.language,
+        author: blog.author,
+        createdAt: blog.createdAt,
+        updatedAt: blog.updatedAt,
+        featured: blog.featured,
+        status: blog.status
+      }));
+
       res.json({
         blogs: transformedBlogs,
         pagination: {
-          currentPage: page,
-          totalPages,
-          totalBlogs,
-          hasNextPage: page < totalPages,
-          hasPrevPage: page > 1
+          page: parseInt(page),
+          limit: parseInt(limit),
+          total: totalBlogs,
+          pages: Math.ceil(totalBlogs / limit)
         }
       });
+
     } catch (error) {
       console.error('Error fetching blogs:', error);
-      res.status(500).json({ message: 'Server error' });
+      res.status(500).json({ message: 'Error fetching blogs' });
     }
-  }
+  },
 
   // Get single blog post by ID
   async getBlogById(req, res) {
@@ -361,7 +300,7 @@ class BlogController {
           const imagePath = path.join(__dirname, '..', 'public', result.value.featuredImage);
           await fs.unlink(imagePath);
         } catch (imageError) {
-          console.log('Could not delete image file:', imageError.message);
+          // Image file deletion failed silently
         }
       }
 

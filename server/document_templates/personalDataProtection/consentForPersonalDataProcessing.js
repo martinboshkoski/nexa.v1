@@ -1,4 +1,5 @@
-const { Document, Paragraph, TextRun } = require('docx');
+const { Document, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType } = require('docx');
+const moment = require('moment');
 
 // Simple date formatting function
 const formatDate = (date) => {
@@ -11,13 +12,9 @@ function generateConsentForPersonalDataProcessingDoc(formData, user, company) {
     // Get data with fallbacks
     const companyName = company?.companyName || '[Име на компанија]';
     const companyAddress = company?.address || '[Адреса на компанија]';
-    const companyTaxNumber = company?.taxNumber || '[Даночен број]';
-    const employeeName = formData.employeeName || '[Име и презиме]';
-    const employeeAddress = formData.employeeAddress || '[Адреса]';
-    const employeePosition = formData.employeeWorkPosition || '[Позиција]';
-    const currentDate = formatDate(new Date());
-
-    console.log(formData)
+    const companyNumber = company?.taxNumber || '[ЕМБС/Единствен број на компанија]';
+    const companyManager = company?.manager || '[Управител]';
+    const currentDate = moment().format('DD.MM.YYYY');
 
     // Create the simplest possible document with minimal formatting
     const doc = new Document({

@@ -33,11 +33,6 @@ const cookieParser = require('cookie-parser');
 
 // Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 5001;
-
-console.log('🚀 Nexa Platform Server Starting...');
-console.log(`📋 Current Environment: ${settings.getEnvironment()}`);
-console.log(`🔧 Active Features: ${settings.getEnabledFeatures().map(f => f.name).join(', ')}`);
 
 if (!process.env.JWT_SECRET) {
   console.error('WARNING: JWT_SECRET is not set in environment variables');
@@ -87,15 +82,11 @@ app.use('/api/auto-documents', require('./routes/autoDocuments'));
 // CSRF Protection setup (conditional)
 if (settings.isMiddlewareEnabled('csrf') && setCSRFToken) {
   app.use(setCSRFToken); // Set CSRF tokens for all requests
-  console.log('✅ CSRF protection enabled');
-} else {
-  console.log('⚠️  CSRF protection disabled');
 }
 
 app.use(passport.initialize());
 
 // API Routes
-console.log('🔌 Wiring up API routes...');
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/documents', require('./routes/documents'));
@@ -116,7 +107,6 @@ async function createUploadDirs() {
       await fs.access(dir);
     } catch {
       await fs.mkdir(dir, { recursive: true });
-      console.log(`Created directory: ${dir}`);
     }
   }
 }
@@ -149,7 +139,6 @@ let db;
 // Database index cleanup function to fix authentication issues
 async function fixDatabaseIndexes(database) {
   try {
-    console.log('🔧 Checking and fixing database indexes...');
     const collection = database.collection('users');
     
     // Step 1: Drop problematic indexes (keep only _id)
@@ -162,9 +151,8 @@ async function fixDatabaseIndexes(database) {
     for (const index of indexesToDrop) {
       try {
         await collection.dropIndex(index.name);
-        console.log(`✅ Dropped problematic index: ${index.name}`);
       } catch (error) {
-        console.log(`⚠️ Could not drop index ${index.name}: ${error.message}`);
+        // Could not drop index
       }
     }
     
@@ -204,9 +192,8 @@ async function fixDatabaseIndexes(database) {
         { email: 1 }, 
         { unique: true, sparse: true, name: 'email_unique_sparse' }
       );
-      console.log('✅ Created email unique sparse index');
     } catch (error) {
-      console.log('⚠️ Email index creation:', error.message);
+      // Email index creation failed
     }
     
     try {
@@ -214,12 +201,10 @@ async function fixDatabaseIndexes(database) {
         { username: 1 }, 
         { unique: true, sparse: true, name: 'username_unique_sparse' }
       );
-      console.log('✅ Created username unique sparse index');
     } catch (error) {
-      console.log('⚠️ Username index creation:', error.message);
+      // Username index creation failed
     }
     
-    console.log('🎉 Database index cleanup completed successfully');
   } catch (error) {
     console.error('❌ Database index fix failed:', error.message);
     // Don't exit - continue with normal startup
@@ -229,8 +214,6 @@ async function fixDatabaseIndexes(database) {
 // Service initialization function
 async function initializeServices(database) {
   try {
-    console.log('Initializing services and creating indexes...');
-    
     // Import and initialize services
     const UserService = require('./services/userService');
     const SocialPostService = require('./services/socialPostService');
@@ -240,7 +223,6 @@ async function initializeServices(database) {
     new SocialPostService(database);
     new InvestmentService(database);
     
-    console.log('All services initialized successfully');
   } catch (error) {
     console.error('Error initializing services:', error);
     // Don't exit, just log the error as services might still work
@@ -252,12 +234,9 @@ async function connectToDatabase() {
     const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/nexa';
     // Debug log (hide password for security)
     const safeUri = mongoUri.replace(/:([^:@]+)@/, ':****@');
-    console.log('Attempting to connect to MongoDB with URI:', safeUri);
-    console.log('MONGODB_URI environment variable is set:', !!process.env.MONGODB_URI);
     
     const client = new MongoClient(mongoUri);
     await client.connect();
-    console.log('Connected to MongoDB');
     db = client.db();
     app.locals.db = db;
     
@@ -287,7 +266,6 @@ function registerRoutes() {
   // CSRF token endpoint (only if CSRF is enabled)
   if (settings.isMiddlewareEnabled('csrf') && getCSRFToken) {
     app.get('/api/csrf-token', getCSRFToken);
-    console.log('✅ CSRF token endpoint registered');
   }
   
   // Apply CSRF protection to all routes except exempted ones
@@ -315,80 +293,69 @@ function registerRoutes() {
   // Apply CSRF exemptions only if CSRF is enabled
   if (settings.isMiddlewareEnabled('csrf') && exemptCSRF) {
     app.use('/api/', exemptCSRF(csrfExemptRoutes));
-    console.log('✅ CSRF exemptions applied');
   }
   
   // Core authentication routes (always enabled)
   if (settings.isRouteEnabled('auth')) {
     app.use('/api/auth', require('./routes/auth'));
-    console.log('✅ Auth routes loaded');
   }
   
   if (settings.isRouteEnabled('profile')) {
     app.use('/api/users', require('./routes/users'));
-    console.log('✅ User/Profile routes loaded');
   }
   
   // Document automation routes (current focus)
   if (settings.isRouteEnabled('documents')) {
     app.use('/api/documents', require('./routes/documents'));
-    console.log('✅ Document routes loaded');
   }
   
   // Contact/verification routes
   if (settings.isRouteEnabled('contact')) {
     app.use('/api/contact', require('./routes/contact'));
-    console.log('✅ Contact routes loaded');
   }
   
   if (settings.isRouteEnabled('verification')) {
     app.use('/api/verification', require('./routes/verification'));
-    console.log('✅ Verification routes loaded');
   }
   
   // Conditional feature routes (disabled by default in current settings)
   if (settings.isRouteEnabled('blog')) {
     try {
       app.use('/api/blogs', require('./routes/blogs'));
-      console.log('✅ Blog routes loaded');
     } catch (error) {
-      console.log('⚠️  Blog routes file not found - skipping');
+      // Blog routes file not found - skipping
     }
   }
   
   if (settings.isRouteEnabled('investments')) {
     try {
       app.use('/api/investments', require('./routes/investments'));
-      console.log('✅ Investment routes loaded');
     } catch (error) {
-      console.log('⚠️  Investment routes file not found - skipping');
+      // Investment routes file not found - skipping
     }
   }
   
   if (settings.isRouteEnabled('social')) {
     try {
       app.use('/api/social', require('./routes/social'));
-      console.log('✅ Social media routes loaded');
     } catch (error) {
-      console.log('⚠️  Social routes file not found - skipping');
+      // Social routes file not found - skipping
     }
   }
   
   if (settings.isRouteEnabled('notifications')) {
     try {
       app.use('/api/notifications', require('./routes/notifications'));
-      console.log('✅ Notification routes loaded');
     } catch (error) {
-      console.log('⚠️  Notification routes file not found - skipping');
+      // Notification routes file not found - skipping
     }
   }
   
   if (settings.isRouteEnabled('analytics')) {
     try {
       app.use('/api/analytics', require('./routes/analytics'));
-      console.log('✅ Analytics routes loaded');
     } catch (error) {
-      console.log('⚠️  Analytics routes file not found - skipping');
+      // Analytics routes file not found - skipping
     }
   }
   
@@ -421,7 +388,6 @@ async function initializeServer() {
       require('./config/passport')(database); // Register passport strategies with db
       registerRoutes();
       app.locals.initialized = true;
-      console.log('✅ Server initialization complete');
     } else {
       console.log('❌ Server initialization failed - no database connection');
       return null;
@@ -437,30 +403,15 @@ async function startServer() {
     
     // Only start the server if initialization was successful
     if (app.locals.initialized) {
-      const server = app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-      });
-
-      // Handle EADDRINUSE error gracefully
-      server.on('error', (err) => {
-        if (err.code === 'EADDRINUSE') {
-          console.warn(`Port ${PORT} is already in use. Nodemon will attempt to restart.`);
-          process.exit(1); // Exit the process so nodemon can restart
-        } else {
-          console.error('Server error:', err);
-          process.exit(1); // Exit on other server errors too
-        }
+      const PORT = process.env.PORT || 5002;
+      app.listen(PORT, () => {
+        // Server started successfully
       });
     } else {
-      console.log('🔄 Server not started due to initialization failure. Fix issues and save files to restart.');
+      // Server initialization failed
     }
   } catch (error) {
-    console.error('Server startup error:', error);
-    if (process.env.NODE_ENV === 'development' && process.env.npm_lifecycle_event === 'dev') {
-      console.log('🔄 Development mode: Fix errors and save files to restart');
-    } else {
-      process.exit(1);
-    }
+    console.error('❌ Server startup error:', error);
   }
 }
 

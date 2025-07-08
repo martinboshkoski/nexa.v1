@@ -39,64 +39,56 @@ class UserController {
   // Update user profile
   async updateProfile(req, res) {
     try {
-      const db = req.app.locals.db;
-      const userService = new UserService(db);
+      const { companyName, industry, address, email } = req.body;
+      const currentUser = req.user;
 
-      // Get user ID from JWT/session
-      const userId = req.user._id || req.user.id;
-
-      // Get the update data from the request body
-      const { email, companyInfo, profileComplete } = req.body;
-
-      // Fetch current user
-      const currentUser = await userService.findById(userId);
       if (!currentUser) {
+        return res.status(401).json({ message: 'User not authenticated' });
+      }
+
+      // Prepare company info update
+      const companyInfo = {
+        companyName: companyName?.trim(),
+        industry: industry?.trim(),
+        address: address?.trim()
+      };
+
+      // Update company info in companies collection
+      const companyUpdateResult = await Company.findOneAndUpdate(
+        { _id: currentUser.companyInfo?._id },
+        { $set: companyInfo },
+        { upsert: true, new: true }
+      );
+
+      // Prepare user update payload
+      const userUpdatePayload = {
+        email: email?.trim(),
+        companyInfo: companyUpdateResult._id,
+        profileComplete: true,
+        updatedAt: new Date()
+      };
+
+      // Update user
+      const userUpdateResult = await User.findByIdAndUpdate(
+        currentUser._id,
+        { $set: userUpdatePayload },
+        { new: true }
+      ).populate('companyInfo');
+
+      if (!userUpdateResult) {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      // Prepare updateData
-      const updateData = {};
-
-      // Email update (check for uniqueness)
-      if (typeof email === 'string' && email.trim() !== currentUser.email) {
-        const existingUser = await userService.findByEmail(email.trim());
-        if (existingUser && existingUser._id.toString() !== currentUser._id.toString()) {
-          return res.status(400).json({ message: 'Email already exists' });
-        }
-        updateData.email = email.trim();
-      }
-
-      // Company info update (merge with existing)
-      if (companyInfo) {
-        updateData.companyInfo = {
-          ...currentUser.companyInfo,
-          ...companyInfo
-        };
-        // Trim all string fields
-        Object.keys(updateData.companyInfo).forEach(key => {
-          if (typeof updateData.companyInfo[key] === 'string') {
-            updateData.companyInfo[key] = updateData.companyInfo[key].trim();
-          }
-        });
-      }
-
-      // Profile complete
-      if (typeof profileComplete === 'boolean') {
-        updateData.profileComplete = profileComplete;
-      }
-
-      // Actually update the user
-      const updatedUser = await userService.updateUser(currentUser._id, updateData);
-
       res.json({
         message: 'Profile updated successfully',
-        user: userService.sanitizeUser(updatedUser)
+        user: userUpdateResult
       });
+
     } catch (error) {
-      console.error('Profile update error:', error);
-      res.status(500).json({ message: 'Server error', error: error.message });
+      console.error('Error updating profile:', error);
+      res.status(500).json({ message: 'Error updating profile' });
     }
-  }
+  },
 
   // Create or update company profile (separate companies collection)
   async createOrUpdateCompany(req, res) {
@@ -129,9 +121,6 @@ class UserController {
       if (!companyName) {
         return res.status(400).json({ message: 'Company name is required' });
       }
-      
-      console.log('👤 Updating profile for user ID:', req.user._id);
-      console.log('📊 Company data received:', { companyName, industry, address });
       
       // Check if company profile already exists
       const existingCompany = await companiesCollection.findOne({ userId: userId });
@@ -172,7 +161,6 @@ class UserController {
       // Get current user to see existing data
       const currentUser = await userService.findById(userId);
       
-      console.log('🔍 Current user found:', currentUser ? 'Yes' : 'No');
       if (!currentUser) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -182,31 +170,23 @@ class UserController {
         companyInfo: userCompanyInfoUpdate
       };
       
-      console.log('📤 User update payload:', userUpdatePayload);
-      
       // Update or create company in companies collection
       if (existingCompany) {
-        console.log('🔄 Updating existing company in companies collection');
         await companiesCollection.updateOne(
           { userId: userId },
           { $set: companyData }
         );
       } else {
-        console.log('✨ Creating new company in companies collection');
         companyData.userId = userId;
         companyData.createdAt = new Date();
         await companiesCollection.insertOne(companyData);
       }
       
       // CRITICAL: Update user's companyInfo and profileComplete status
-      console.log('🔄 Updating user companyInfo...');
       const userUpdateResult = await userService.updateUser(userId, userUpdatePayload);
-      console.log('✅ User update result:', userUpdateResult ? 'Success' : 'Failed');
       
       // Verify the update by fetching the user again
       const updatedUser = await userService.findById(userId);
-      console.log('🔍 Updated user companyInfo:', updatedUser?.companyInfo);
-      console.log('📊 Updated user profileComplete:', updatedUser?.profileComplete);
       
       res.json({ 
         message: 'Company profile saved successfully',

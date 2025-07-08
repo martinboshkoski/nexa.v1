@@ -22,7 +22,6 @@ class SettingsManager {
           legalHealthCheck: true,
           blog: true
         };
-        console.log(`🏭 Production mode: ALL features enabled`);
         return;
       }
 
@@ -34,25 +33,15 @@ class SettingsManager {
         const cleanJson = vscodeContent.replace(/\/\/.*$/gm, '').replace(/,(\s*[}\]])/g, '$1');
         const vscodeSettings = JSON.parse(cleanJson);
         this.settings = this.extractNexaSettings(vscodeSettings);
-        console.log(`🔧 Development mode: Settings loaded from VS Code`);
       } else {
         // Fallback to production settings if no local settings
         this.settings = this.getDefaultSettings();
-        console.log(`📝 No local settings found - using production defaults`);
       }
-      
-      // Log enabled features
-      const enabledFeatures = Object.entries(this.settings.features || {})
-        .filter(([, enabled]) => enabled === true)
-        .map(([name]) => name);
-      
-      console.log(`✅ Enabled features: ${enabledFeatures.join(', ')}`);
       
     } catch (error) {
       console.error('❌ Failed to load settings:', error.message);
       // Fallback to production settings for safety
       this.settings = this.getDefaultSettings();
-      console.log(`🔧 Using fallback production settings`);
     }
   }
 
@@ -193,13 +182,12 @@ class SettingsManager {
       this.settings.features[featureName] = enabled;
     }
 
-    console.log(`🔄 Feature '${featureName}' ${this.settings.features[featureName] ? 'enabled' : 'disabled'}`);
     return this.settings.features[featureName];
   }
 
   // Get current environment
   getEnvironment() {
-    return this.environment;
+    return this.settings.environment;
   }
 
   // Get all settings

@@ -37,7 +37,6 @@ const CompanyVerification = () => {
 
   useEffect(() => {
     if (currentUser) {
-      console.log('Loading user data:', currentUser);
       setFormData({
         email: currentUser.email || currentUser.username || '',
         companyName: currentUser.companyInfo?.companyName || '',
@@ -82,8 +81,6 @@ const CompanyVerification = () => {
         profileComplete: true
       };
       
-      console.log('📤 Sending profile update:', updateData);
-      
       await ApiService.request('/users/profile', {
         method: 'PUT',
         body: JSON.stringify(updateData),
@@ -99,7 +96,6 @@ const CompanyVerification = () => {
       
       setTimeout(() => setSuccess(''), 3000);
     } catch (error) {
-      console.error('❌ Profile update error:', error);
       setError(error.message || 'Настана грешка при зачувување на профилот.');
     } finally {
       setSaving(false);

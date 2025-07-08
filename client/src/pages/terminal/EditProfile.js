@@ -102,40 +102,42 @@ const EditProfile = () => {
       const companyInfo = { ...formData };
       delete companyInfo.email; // Remove email from company info
 
-      console.log('Sending company update:', companyInfo);
-
-      // Update company profile
-      const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5002/api';
-      
-      const response = await ApiService.request(`/users/company`, {
-        method: 'POST', // Use POST as that's what the backend expects
-        body: JSON.stringify({
-          ...companyInfo
-        }),
+      // Update company info
+      const companyResponse = await fetch('/api/users/company', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(companyInfo)
       });
 
-      console.log('Company update response:', response);
-
-      if (response) {
-        // Also update email if changed
-        if (formData.email !== currentUser.email) {
-          console.log('Updating email from', currentUser.email, 'to', formData.email);
-          const profileResponse = await ApiService.request(`/users/profile`, {
-            method: 'PUT',
-            body: JSON.stringify({
-              email: formData.email
-            }),
-          });
-          console.log('Profile update response:', profileResponse);
-        }
-
-        setSuccess('Профилот е успешно ажуриран!');
-        
-        // Show success message for 2 seconds then redirect
-        setTimeout(() => {
-          navigate('/terminal');
-        }, 2000);
+      if (!companyResponse.ok) {
+        throw new Error('Failed to update company info');
       }
+
+      // Update user profile
+      const profileResponse = await fetch('/api/users/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          email: formData.email
+        })
+      });
+
+      if (!profileResponse.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      setSuccess('Профилот е успешно ажуриран!');
+      
+      // Show success message for 2 seconds then redirect
+      setTimeout(() => {
+        navigate('/terminal');
+      }, 2000);
     } catch (error) {
       console.error('Error updating profile:', error);
       console.error('Error details:', {

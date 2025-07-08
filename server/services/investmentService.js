@@ -18,9 +18,9 @@ class InvestmentService {
       for (const index of InvestmentIndexes) {
         await this.collection.createIndex(index.key, { name: index.name });
       }
-      console.log('Investment indexes created successfully');
+      
     } catch (error) {
-      console.log('Investment indexes already exist or error creating them:', error.message);
+      // Index creation error handled silently
     }
   }
 

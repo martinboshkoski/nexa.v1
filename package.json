@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Nexa AI-powered business document generator",
   "scripts": {
-    "start": "cd server && npm start",
-    "build": "cd server && npm install",
+    "start": "cd client && npm start",
+    "build": "cd client && npm install && npm run build",
     "install-server": "cd server && npm install",
     "install-client": "cd client && npm install",
     "dev": "cd server && npm run dev"

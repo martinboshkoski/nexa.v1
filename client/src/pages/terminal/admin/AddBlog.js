@@ -65,25 +65,20 @@ const AddBlog = () => {
       }
 
       const result = await response.json();
-      console.log('Blog created:', result);
-
-      setSuccess('Блог постот е успешно додаден!');
+      setSuccess('Blog created successfully!');
       setFormData({
         title: '',
         content: '',
-        excerpt: '',
-        category: 'general',
-        language: 'mk',
-        featuredImage: '',
-        status: 'published',
-        tags: ''
+        category: '',
+        tags: '',
+        language: 'mk'
       });
 
       setTimeout(() => {
         navigate('/terminal');
       }, 3000);
-    } catch (err) {
-      setError(err.message || 'Грешка при додавање на блог постот.');
+    } catch (error) {
+      setError(error.message);
     } finally {
       setLoading(false);
     }

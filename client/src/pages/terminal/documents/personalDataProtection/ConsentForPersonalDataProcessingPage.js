@@ -43,61 +43,55 @@ const ConsentForPersonalDataProcessingPage = () => {
     if (!validateForm()) return;
 
     if (!currentUser) {
-      console.error("User not authenticated");
       alert("Мора да бидете најавени за да генерирате документ.");
       return;
     }
 
-    console.log("Step 1: Sending form data from frontend", formData);
-
     try {
-      setIsGenerating(true);
-      // Use explicit URL to ensure we're hitting the right port
-      const apiUrl =
-        process.env.REACT_APP_API_URL || "http://localhost:5001/api";
-      const response = await fetch(
-        `${apiUrl}/auto-documents/consent-for-personal-data`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ formData }),
-        }
-      );
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('No authentication token found');
+        return;
+      }
+
+      const response = await fetch('/api/auto-documents/consent-for-personal-data-processing', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ formData })
+      });
 
       if (!response.ok) {
-        console.log(`HTTP Error: ${response.status} ${response.statusText}`);
-        let errorMessage = `HTTP error! status: ${response.status}`;
-
+        const errorText = await response.text();
+        let errorMessage = 'Failed to generate document';
+        
         try {
-          const errorData = await response.json();
+          const errorData = JSON.parse(errorText);
           errorMessage = errorData.message || errorMessage;
-        } catch (jsonError) {
-          console.log("Could not parse error response as JSON");
+        } catch (parseError) {
+          // If response is not JSON, use the text as error message
         }
-
+        
         throw new Error(errorMessage);
       }
 
-      // Handle document download
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
-      a.download = `Согласност_за_обработка_на_лични_податоци.docx`;
+      a.download = 'consent-for-personal-data-processing.docx';
       document.body.appendChild(a);
       a.click();
-      a.remove();
       window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
-      console.log("Document downloaded successfully!");
+      setSuccess('Document downloaded successfully!');
+      setError(null);
     } catch (error) {
-      console.error("Error generating document:", error);
-      alert(`Неуспешно генерирање на документот: ${error.message}`);
-    } finally {
-      setIsGenerating(false);
+      setError(error.message);
+      setSuccess(null);
     }
   };
 

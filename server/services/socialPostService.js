@@ -18,9 +18,9 @@ class SocialPostService {
       for (const index of SocialPostIndexes) {
         await this.collection.createIndex(index.key, { name: index.name });
       }
-      console.log('SocialPost indexes created successfully');
+      
     } catch (error) {
-      console.log('SocialPost indexes already exist or error creating them:', error.message);
+      // Index creation error handled silently
     }
   }
 
