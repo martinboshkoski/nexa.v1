@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '../../../contexts/AuthContext'; // Corrected path
 import styles from '../../../styles/terminal/documents/DocumentGeneration.module.css';
 import moment from 'moment';
+import documentCategories from '../../../data/documentCategories.json';
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
