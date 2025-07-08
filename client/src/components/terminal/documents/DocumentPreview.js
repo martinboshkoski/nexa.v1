@@ -96,3 +96,4 @@ const DocumentPreview = ({ formData, documentType, currentStep }) => {
 };
 
 export default DocumentPreview;
+
