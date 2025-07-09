@@ -19,6 +19,8 @@ const ConsentForPersonalDataProcessingPage = () => {
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [errors, setErrors] = useState({});
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

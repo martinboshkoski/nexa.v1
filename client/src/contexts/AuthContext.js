@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [authenticated, setAuthenticated] = useState(false);
 
   const validateToken = useCallback(async (authToken) => {
     try {
